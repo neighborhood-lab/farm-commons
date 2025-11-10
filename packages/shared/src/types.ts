@@ -166,3 +166,45 @@ export interface FarmStats {
   total_hours_this_week: number;
   scheduled_shifts_today: number;
 }
+
+// Invoice Types
+export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
+
+export interface Invoice {
+  id: string;
+  farm_id: string;
+  invoice_number: string;
+  invoice_date: Date;
+  due_date: Date;
+  client_name: string;
+  client_address: string | null;
+  client_email: string | null;
+  period_start: Date;
+  period_end: Date;
+  subtotal: number;
+  tax_rate: number;
+  tax_amount: number;
+  total_amount: number;
+  status: InvoiceStatus;
+  paid_date: Date | null;
+  notes: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface InvoiceItem {
+  id: string;
+  invoice_id: string;
+  time_entry_id: string | null;
+  worker_id: string | null;
+  description: string;
+  quantity: number; // hours worked
+  rate: number; // hourly rate
+  amount: number; // quantity * rate
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface InvoiceWithItems extends Invoice {
+  items: InvoiceItem[];
+}

@@ -161,3 +161,66 @@ export const rejectTimeEntrySchema = z.object({
 export const batchApprovalSchema = z.object({
   time_entry_ids: z.array(z.string().uuid()).min(1, 'At least one time entry ID is required'),
 });
+
+// Invoice Schemas
+export const createInvoiceSchema = z.object({
+  client_name: z.string().min(1).max(200),
+  client_address: z.string().optional().nullable(),
+  client_email: z.string().email().optional().nullable(),
+  invoice_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val)),
+  due_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val)),
+  period_start: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val)),
+  period_end: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val)),
+  tax_rate: z.number().min(0).max(100).default(0),
+  notes: z.string().optional().nullable(),
+  time_entry_ids: z.array(z.string().uuid()).optional(), // Optional: for auto-generating items
+});
+
+export const invoiceItemSchema = z.object({
+  time_entry_id: z.string().uuid().optional().nullable(),
+  worker_id: z.string().uuid().optional().nullable(),
+  description: z.string().min(1),
+  quantity: z.number().positive(),
+  rate: z.number().positive(),
+});
+
+export const updateInvoiceSchema = z.object({
+  client_name: z.string().min(1).max(200).optional(),
+  client_address: z.string().optional().nullable(),
+  client_email: z.string().email().optional().nullable(),
+  invoice_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional(),
+  due_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional(),
+  period_start: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional(),
+  period_end: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional(),
+  tax_rate: z.number().min(0).max(100).optional(),
+  notes: z.string().optional().nullable(),
+  status: z.enum(['draft', 'sent', 'paid', 'overdue', 'cancelled']).optional(),
+});
