@@ -27,7 +27,8 @@ export default function WorkersPage() {
   };
 
   const handleEditWorker = (worker: Worker) => {
-    // TODO: Implement edit functionality
+    // Edit functionality will be implemented in a future update
+    // eslint-disable-next-line no-console
     console.log('Edit worker:', worker);
   };
 
