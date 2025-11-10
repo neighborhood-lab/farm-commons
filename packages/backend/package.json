@@ -20,7 +20,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@farm-commons/shared": "workspace:*",
+    "@farm-commons/shared": "file:../shared",
     "express": "^5.1.0",
     "cors": "^2.8.5",
     "helmet": "^8.0.0",
@@ -37,7 +37,9 @@
     "pino-pretty": "^14.0.0",
     "dotenv": "^16.4.7",
     "dompurify": "^3.2.5",
-    "isomorphic-dompurify": "^2.18.0"
+    "isomorphic-dompurify": "^2.18.0",
+    "swagger-ui-express": "^5.0.1",
+    "swagger-jsdoc": "^6.2.8"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
@@ -47,6 +49,8 @@
     "@types/pg": "^8.11.10",
     "@types/node": "^22.10.2",
     "@types/dompurify": "^3.2.0",
+    "@types/swagger-ui-express": "^4.1.6",
+    "@types/swagger-jsdoc": "^6.0.4",
     "tsx": "^4.19.2",
     "tsc-alias": "^1.8.10",
     "typescript": "^5.9.0",

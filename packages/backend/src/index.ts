@@ -7,6 +7,8 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './docs/swagger.js';
 
 // Routes
 import authRoutes from './routes/auth.js';
@@ -39,7 +41,7 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", 'data:', 'https:'],
     },
   },
@@ -80,6 +82,19 @@ app.get('/health', (req, res) => {
   });
 });
 
+// API Documentation
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'Farm Commons API Documentation',
+  customfavIcon: '/favicon.ico',
+}));
+
+// OpenAPI JSON specification
+app.get('/api/docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/workers', workerRoutes);
@@ -93,6 +108,7 @@ app.get('/', (req, res) => {
     version: '0.1.0',
     description: 'Shared farm management software, community owned. For the humans who feed us.',
     documentation: '/api/docs',
+    openapi_spec: '/api/docs.json',
   });
 });
 
@@ -107,6 +123,7 @@ app.listen(PORT, () => {
   logger.info(`🚜 Farm Commons API server running on port ${PORT}`);
   logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
   logger.info(`Health check: http://localhost:${PORT}/health`);
+  logger.info(`API Documentation: http://localhost:${PORT}/api/docs`);
 });
 
 // Graceful shutdown
