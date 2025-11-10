@@ -32,6 +32,7 @@ describe('Statistics Calculations', () => {
       });
     } catch (error) {
       // Migrations might already be run, continue
+      // eslint-disable-next-line no-console
       console.log('Migration setup:', error);
     }
   });
@@ -239,7 +240,7 @@ describe('Statistics Calculations', () => {
         .whereNotNull('clock_out')
         .countDistinct(testDb.raw('DATE(clock_in) as days'));
 
-      const daysValue = (daysResult[0] as any)?.days || 0;
+      const daysValue = (daysResult[0] as Record<string, unknown>)?.days || 0;
       expect(Number.parseInt(String(daysValue))).toBe(2);
     });
 
