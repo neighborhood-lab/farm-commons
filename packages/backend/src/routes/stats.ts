@@ -116,7 +116,7 @@ router.get('/workers/:workerId', async (req: AuthRequest, res, next) => {
     const daysResult = await db('time_entries')
       .where({ worker_id: workerId, farm_id: farmId })
       .whereNotNull('clock_out')
-      .countDistinct(db.raw('DATE(clock_in) as days_worked'));
+      .countDistinct({ days_worked: db.raw('DATE(clock_in)') });
     const days_worked = Number((daysResult[0] as Record<string, unknown>)?.days_worked || 0);
 
     // Get current month hours
