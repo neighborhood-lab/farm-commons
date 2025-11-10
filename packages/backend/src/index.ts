@@ -174,13 +174,15 @@ app.listen(PORT, () => {
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   logger.info('SIGTERM signal received: closing HTTP server');
+  await closeWeatherService();
   process.exit(0);
 });
 
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
   logger.info('SIGINT signal received: closing HTTP server');
+  await closeWeatherService();
   process.exit(0);
 });
 
