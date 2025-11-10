@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Clock, Coffee, Moon, AlertTriangle, Play, Square } from 'lucide-react';
+import { Clock, Coffee, Moon, AlertTriangle, Square } from 'lucide-react';
 import { formatHoursAsTime } from '@farm-commons/shared';
 import { format, differenceInSeconds } from 'date-fns';
 
@@ -47,9 +47,16 @@ const BREAK_TYPE_CONFIG = {
   },
 } as const;
 
+// Format elapsed time
+function formatElapsed(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
 export default function BreakTimer({
   timeEntryId,
-  workerId,
+  workerId: _workerId,
   onBreakComplete,
   existingBreaks = [],
   minLunchBreakMinutes = 30,
@@ -70,11 +77,11 @@ export default function BreakTimer({
       return;
     }
 
-    const interval = setInterval(() => {
+    const interval = globalThis.setInterval(() => {
       setElapsedSeconds(differenceInSeconds(new Date(), activeBreak.start));
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => globalThis.clearInterval(interval);
   }, [activeBreak]);
 
   const startBreak = useCallback((type: BreakType) => {
@@ -117,15 +124,9 @@ export default function BreakTimer({
     .reduce((sum, b) => sum + b.durationMinutes, 0);
 
   // Compliance checks
-  const needsLunchBreak = workHoursForLunchRequirement > 0 && lunchBreakMinutes < minLunchBreakMinutes;
+  const needsLunchBreak =
+    workHoursForLunchRequirement > 0 && lunchBreakMinutes < minLunchBreakMinutes;
   const needsRestBreak = restBreakMinutes < minRestBreakMinutes;
-
-  // Format elapsed time
-  const formatElapsed = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
 
   return (
     <div className="bg-white rounded-lg shadow border border-gray-200">
@@ -186,15 +187,12 @@ export default function BreakTimer({
             <div className="flex items-start gap-3">
               <AlertTriangle className="text-yellow-600 flex-shrink-0 mt-0.5" size={20} />
               <div>
-                <p className="font-semibold text-yellow-900 mb-2">
-                  Break Requirements
-                </p>
+                <p className="font-semibold text-yellow-900 mb-2">Break Requirements</p>
                 <ul className="space-y-1 text-sm text-yellow-800">
                   {needsLunchBreak && (
                     <li>
-                      • Lunch break required: Minimum {minLunchBreakMinutes} minutes for
-                      shifts over {workHoursForLunchRequirement} hours (
-                      {lunchBreakMinutes} minutes taken)
+                      • Lunch break required: Minimum {minLunchBreakMinutes} minutes for shifts over{' '}
+                      {workHoursForLunchRequirement} hours ({lunchBreakMinutes} minutes taken)
                     </li>
                   )}
                   {needsRestBreak && (
@@ -272,9 +270,7 @@ export default function BreakTimer({
                         <Icon className={textColors[config.color]} size={16} />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          {config.label}
-                        </p>
+                        <p className="text-sm font-medium text-gray-900">{config.label}</p>
                         <p className="text-xs text-gray-600">
                           {format(break_.start, 'h:mm a')} -{' '}
                           {break_.end ? format(break_.end, 'h:mm a') : 'In progress'}
