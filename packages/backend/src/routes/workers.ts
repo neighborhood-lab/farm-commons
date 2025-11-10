@@ -53,13 +53,34 @@ router.get('/:id', auditReadAccess('worker'), async (req: AuthRequest, res, next
 
     const worker = await db('workers').where({ id, farm_id: farmId }).first();
 
-    if (!worker) {
+    if (!worker || !worker.id) {
       throw new AppError('Worker not found', 404);
     }
 
     res.json({
       success: true,
       data: worker,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get worker statistics
+router.get('/:id/stats', async (req: AuthRequest, res, next) => {
+  try {
+    const { id } = req.params;
+    const farmId = req.user?.farm_id;
+
+    const stats = await getWorkerStatistics(farmId!, id);
+
+    if (!stats) {
+      throw new AppError('Worker not found', 404);
+    }
+
+    res.json({
+      success: true,
+      data: stats,
     });
   } catch (error) {
     next(error);

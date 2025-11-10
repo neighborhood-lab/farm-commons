@@ -35,6 +35,7 @@ import invoiceRoutes from './routes/invoices.js';
 
 // Middleware
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import { setupQueryMonitoring, queryMetricsMiddleware, createMetricsRoute } from './middleware/queryMonitoring.js';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3001;
@@ -107,6 +108,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // HTTP logging
 app.use(httpLogger);
+
+// Query metrics tracking (per request)
+app.use(queryMetricsMiddleware);
 
 // Health check
 app.get('/health', (_req, res) => {

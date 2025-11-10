@@ -16,24 +16,53 @@ router.use(authenticateToken);
 router.get('/', async (req: AuthRequest, res, next) => {
   try {
     const farmId = req.user?.farm_id;
-    let query = db('time_entries')
-      .where({ 'time_entries.farm_id': farmId })
-      .leftJoin('workers', 'time_entries.worker_id', 'workers.id')
-      .leftJoin('fields', 'time_entries.field_id', 'fields.id')
-      .select(
-        'time_entries.*',
-        'workers.first_name as worker_first_name',
-        'workers.last_name as worker_last_name',
-        'fields.name as field_name'
-      );
 
-    // Apply date range filter if provided
+    // Build filters
+    const filters: any = {};
     if (req.query.start_date && req.query.end_date) {
       const { start_date, end_date } = dateRangeSchema.parse(req.query);
-      query = query.whereBetween('time_entries.clock_in', [start_date, end_date]);
+      filters.start_date = start_date;
+      filters.end_date = end_date;
+    }
+    if (req.query.verified !== undefined) {
+      filters.verified = req.query.verified === 'true';
     }
 
-    const entries = await query.orderBy('time_entries.clock_in', 'desc');
+    // Use optimized query with database view
+    const entries = await getTimeEntriesDetailed(farmId!, filters);
+
+    res.json({
+      success: true,
+      data: entries,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get unverified time entries
+router.get('/unverified', async (req: AuthRequest, res, next) => {
+  try {
+    const farmId = req.user?.farm_id;
+    const limit = parseInt(req.query.limit as string) || 50;
+
+    const entries = await getUnverifiedTimeEntries(farmId!, limit);
+
+    res.json({
+      success: true,
+      data: entries,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get active time entries (clocked in but not out)
+router.get('/active', async (req: AuthRequest, res, next) => {
+  try {
+    const farmId = req.user?.farm_id;
+
+    const entries = await getActiveTimeEntries(farmId!);
 
     res.json({
       success: true,
