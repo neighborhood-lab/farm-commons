@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Phone, Mail, Calendar, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Phone, Mail, Calendar, Users, TrendingUp } from 'lucide-react';
 import { api } from '../lib/api';
 import { formatDate, getInitials } from '@farm-commons/shared';
 import type { Worker, PaginatedResponse } from '@farm-commons/shared';
 
 export default function WorkersPage() {
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery({
     queryKey: ['workers'],
     queryFn: () => api.get<PaginatedResponse<Worker>>('/workers'),
@@ -98,6 +100,17 @@ export default function WorkersPage() {
                 </div>
               </div>
             )}
+
+            {/* View Performance Button */}
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <button
+                onClick={() => navigate(`/workers/${worker.id}/performance`)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-earth-700 text-white rounded-lg hover:bg-earth-800 transition-colors text-sm font-medium"
+              >
+                <TrendingUp size={16} />
+                View Performance
+              </button>
+            </div>
           </div>
         ))}
       </div>
