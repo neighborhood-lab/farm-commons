@@ -4,10 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -32,6 +29,15 @@ export default defineConfig({
           'query-vendor': ['@tanstack/react-query'],
         },
       },
+    },
+  },
+  test: {
+    globals: true,
+    environment: 'happy-dom',
+    passWithNoTests: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
     },
   },
 });
