@@ -14,6 +14,19 @@ import { api } from '../lib/api';
 import { getInitials } from '@farm-commons/shared';
 import type { Worker } from '@farm-commons/shared';
 
+const getReliabilityColor = (score: number) => {
+  if (score >= 95) return 'text-green-600';
+  if (score >= 85) return 'text-yellow-600';
+  return 'text-red-600';
+};
+
+const getProficiencyColor = (proficiency: number) => {
+  if (proficiency >= 90) return 'bg-green-500';
+  if (proficiency >= 75) return 'bg-blue-500';
+  if (proficiency >= 60) return 'bg-yellow-500';
+  return 'bg-gray-400';
+};
+
 interface WorkerPerformance {
   worker: Worker;
   hours_worked: {
@@ -147,26 +160,16 @@ export default function WorkerPerformancePage() {
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'up':
+      case 'up': {
         return <TrendingUp className="text-green-600" size={20} />;
-      case 'down':
+      }
+      case 'down': {
         return <TrendingDown className="text-red-600" size={20} />;
-      default:
+      }
+      default: {
         return <Minus className="text-gray-600" size={20} />;
+      }
     }
-  };
-
-  const getReliabilityColor = (score: number) => {
-    if (score >= 95) return 'text-green-600';
-    if (score >= 85) return 'text-yellow-600';
-    return 'text-red-600';
-  };
-
-  const getProficiencyColor = (proficiency: number) => {
-    if (proficiency >= 90) return 'bg-green-500';
-    if (proficiency >= 75) return 'bg-blue-500';
-    if (proficiency >= 60) return 'bg-yellow-500';
-    return 'bg-gray-400';
   };
 
   return (

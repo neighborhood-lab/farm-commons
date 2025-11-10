@@ -246,7 +246,7 @@ describe('WorkerPerformancePage', () => {
       ...mockWorkerPerformance,
       attendance: {
         ...mockWorkerPerformance.attendance,
-        reliability_score: 96.0,
+        reliability_score: 96,
       },
     };
 
@@ -258,7 +258,7 @@ describe('WorkerPerformancePage', () => {
       const scoreElements = screen.getAllByText('96.0%');
       expect(scoreElements.length).toBeGreaterThan(0);
       // High scores (>= 95) should have text-green-600 class
-      const scoreElement = scoreElements.find(el => el.className.includes('text-green-600'));
+      const scoreElement = scoreElements.find((el) => el.className.includes('text-green-600'));
       expect(scoreElement).toBeDefined();
     });
   });
@@ -268,7 +268,7 @@ describe('WorkerPerformancePage', () => {
       ...mockWorkerPerformance,
       attendance: {
         ...mockWorkerPerformance.attendance,
-        reliability_score: 90.0,
+        reliability_score: 90,
       },
     };
 
@@ -280,7 +280,7 @@ describe('WorkerPerformancePage', () => {
       const scoreElements = screen.getAllByText('90.0%');
       expect(scoreElements.length).toBeGreaterThan(0);
       // Medium scores (85-94) should have text-yellow-600 class
-      const scoreElement = scoreElements.find(el => el.className.includes('text-yellow-600'));
+      const scoreElement = scoreElements.find((el) => el.className.includes('text-yellow-600'));
       expect(scoreElement).toBeDefined();
     });
   });
