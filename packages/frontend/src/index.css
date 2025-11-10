@@ -1,4 +1,7 @@
 @import 'tailwindcss';
+@import '@fullcalendar/core/main.css';
+@import '@fullcalendar/daygrid/main.css';
+@import '@fullcalendar/timegrid/main.css';
 
 * {
   margin: 0;
@@ -17,4 +20,62 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* FullCalendar Custom Styles */
+.schedule-calendar {
+  --fc-border-color: #e5e7eb;
+  --fc-button-bg-color: #059669;
+  --fc-button-border-color: #047857;
+  --fc-button-hover-bg-color: #047857;
+  --fc-button-hover-border-color: #065f46;
+  --fc-button-active-bg-color: #065f46;
+  --fc-button-active-border-color: #064e3b;
+  --fc-today-bg-color: #f0fdf4;
+}
+
+.schedule-calendar .fc {
+  font-family: inherit;
+}
+
+.schedule-calendar .fc-event {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.schedule-calendar .fc-event:hover {
+  opacity: 0.9;
+}
+
+.schedule-calendar .fc-event-title {
+  font-weight: 500;
+  padding: 2px 4px;
+}
+
+.schedule-calendar .fc-daygrid-event {
+  white-space: normal;
+}
+
+.schedule-calendar .fc-col-header-cell {
+  background-color: #f9fafb;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.schedule-calendar .fc-timegrid-slot {
+  height: 3em;
+}
+
+.schedule-calendar .fc-button {
+  text-transform: capitalize;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+}
+
+.schedule-calendar .fc-toolbar-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
 }
