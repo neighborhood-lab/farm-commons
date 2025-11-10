@@ -7,6 +7,7 @@ import WorkersPage from './pages/WorkersPage';
 import WorkerPerformancePage from './pages/WorkerPerformancePage';
 import SchedulePage from './pages/SchedulePage';
 import TimeTrackingPage from './pages/TimeTrackingPage';
+import AnalyticsPage from './pages/AnalyticsPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
@@ -35,6 +36,7 @@ function App() {
         <Route path="workers/:workerId/performance" element={<WorkerPerformancePage />} />
         <Route path="schedule" element={<SchedulePage />} />
         <Route path="time-tracking" element={<TimeTrackingPage />} />
+        <Route path="analytics" element={<AnalyticsPage />} />
       </Route>
     </Routes>
   );
