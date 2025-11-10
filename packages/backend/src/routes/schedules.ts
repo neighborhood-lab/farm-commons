@@ -11,8 +11,8 @@ const router: Router = express.Router();
 
 router.use(authenticateToken);
 
-// Get schedules (with optional date range filter)
-router.get('/', async (req: AuthRequest, res, next) => {
+// Get schedules (with optional date range filter) - cached for 2 minutes
+router.get('/', cache({ ttl: 120 }), async (req: AuthRequest, res, next) => {
   try {
     const farmId = req.user?.farm_id;
 
@@ -57,8 +57,8 @@ router.get('/upcoming', async (req: AuthRequest, res, next) => {
   }
 });
 
-// Get worker's schedule
-router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
+// Get worker's schedule - cached for 2 minutes
+router.get('/worker/:workerId', cache({ ttl: 120 }), async (req: AuthRequest, res, next) => {
   try {
     const { workerId } = req.params;
     const farmId = req.user?.farm_id;
