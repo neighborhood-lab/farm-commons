@@ -17,6 +17,9 @@ import timeEntryRoutes from './routes/timeEntries.js';
 // Middleware
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 
+// Database and Services
+import { connectRedis, disconnectRedis } from './db/redis.js';
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -102,21 +105,37 @@ app.use(notFoundHandler);
 // Error handler
 app.use(errorHandler);
 
+// Initialize Redis connection
+async function initializeApp() {
+  try {
+    await connectRedis();
+    logger.info('✅ Redis connected successfully');
+  } catch (error) {
+    logger.error({ error }, '❌ Failed to connect to Redis');
+    logger.warn('⚠️  Application will start without Redis. Session management will not work.');
+  }
+}
+
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   logger.info(`🚜 Farm Commons API server running on port ${PORT}`);
   logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
   logger.info(`Health check: http://localhost:${PORT}/health`);
+
+  // Initialize services
+  await initializeApp();
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   logger.info('SIGTERM signal received: closing HTTP server');
+  await disconnectRedis();
   process.exit(0);
 });
 
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
   logger.info('SIGINT signal received: closing HTTP server');
+  await disconnectRedis();
   process.exit(0);
 });
 

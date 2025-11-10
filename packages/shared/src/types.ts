@@ -160,3 +160,33 @@ export interface FarmStats {
   total_hours_this_week: number;
   scheduled_shifts_today: number;
 }
+
+// Session Types
+export interface UserSession {
+  session_id: string;
+  user_id: string;
+  email: string;
+  role: UserRole;
+  farm_id: string;
+  device_info?: {
+    user_agent?: string;
+    ip_address?: string;
+    device_name?: string;
+  };
+  created_at: Date;
+  last_accessed_at: Date;
+  expires_at: Date;
+}
+
+export interface SessionCreateData {
+  user_id: string;
+  email: string;
+  role: UserRole;
+  farm_id: string;
+  device_info?: {
+    user_agent?: string;
+    ip_address?: string;
+    device_name?: string;
+  };
+  ttl?: number; // Time to live in seconds
+}
