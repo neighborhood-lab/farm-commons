@@ -14,6 +14,7 @@ import workerRoutes from './routes/workers.js';
 import scheduleRoutes from './routes/schedules.js';
 import timeEntryRoutes from './routes/timeEntries.js';
 import statsRoutes from './routes/stats.js';
+import soilDataRoutes from './routes/soil-data.js';
 import invoiceRoutes from './routes/invoices.js';
 
 // Middleware
@@ -95,6 +96,7 @@ app.use('/api/workers', workerRoutes);
 app.use('/api/schedules', scheduleRoutes);
 app.use('/api/time-entries', timeEntryRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api', soilDataRoutes);
 app.use('/api/invoices', invoiceRoutes);
 
 // Welcome message
