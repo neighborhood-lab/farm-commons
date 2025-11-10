@@ -2,8 +2,8 @@
 
 import express, { type Router } from 'express';
 import bcrypt from 'bcrypt';
-import crypto from 'crypto';
-import { loginSchema, registerSchema, forgotPasswordSchema, refreshTokenSchema } from '@farm-commons/shared';
+import crypto from 'node:crypto';
+import { loginSchema, registerSchema, forgotPasswordSchema } from '@farm-commons/shared';
 import db from '../db/connection.js';
 import { generateToken, authenticateToken, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
@@ -124,15 +124,15 @@ router.post('/refresh', authenticateToken, async (req: AuthRequest, res, next) =
     }
 
     // Check if the current token is blacklisted
-    const tokenBlacklisted = await redis.get(`blacklist:${req.headers.authorization?.split(' ')[1]}`);
+    const tokenBlacklisted = await redis.get(
+      `blacklist:${req.headers.authorization?.split(' ')[1]}`
+    );
     if (tokenBlacklisted) {
       throw new AppError('Token has been revoked', 401);
     }
 
     // Fetch fresh user data from database
-    const user = await db('users')
-      .where({ id: req.user.id })
-      .first();
+    const user = await db('users').where({ id: req.user.id }).first();
 
     if (!user) {
       throw new AppError('User not found', 404);
@@ -150,7 +150,7 @@ router.post('/refresh', authenticateToken, async (req: AuthRequest, res, next) =
       success: true,
       data: {
         access_token: newToken,
-        expires_in: 604800, // 7 days in seconds
+        expires_in: 604_800, // 7 days in seconds
       },
     });
   } catch (error) {
@@ -168,7 +168,7 @@ router.post('/logout', authenticateToken, async (req: AuthRequest, res, next) =>
     }
 
     // Add token to blacklist in Redis with expiration (7 days)
-    await redis.setEx(`blacklist:${token}`, 604800, 'true');
+    await redis.setEx(`blacklist:${token}`, 604_800, 'true');
 
     res.json({
       success: true,
@@ -185,9 +185,7 @@ router.post('/forgot-password', async (req, res, next) => {
     const { email } = forgotPasswordSchema.parse(req.body);
 
     // Find user by email
-    const user = await db('users')
-      .where({ email })
-      .first();
+    const user = await db('users').where({ email }).first();
 
     // Always return success to prevent email enumeration
     if (!user) {
@@ -200,7 +198,7 @@ router.post('/forgot-password', async (req, res, next) => {
 
     // Generate secure random token
     const resetToken = crypto.randomBytes(32).toString('hex');
-    const expiresAt = new Date(Date.now() + 3600000); // 1 hour from now
+    const expiresAt = new Date(Date.now() + 3_600_000); // 1 hour from now
 
     // Store reset token in database
     await db('password_reset_tokens').insert({
@@ -210,8 +208,8 @@ router.post('/forgot-password', async (req, res, next) => {
       used: false,
     });
 
-    // TODO: Send email with reset link
-    // In production, you would send an email here with:
+    // NOTE: Email functionality not yet implemented
+    // In production, send an email here with:
     // const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
     // await emailService.sendPasswordResetEmail(user.email, resetLink);
 
@@ -253,14 +251,10 @@ router.post('/reset-password', async (req, res, next) => {
     const passwordHash = await bcrypt.hash(new_password, 10);
 
     // Update user password
-    await db('users')
-      .where({ id: resetToken.user_id })
-      .update({ password_hash: passwordHash });
+    await db('users').where({ id: resetToken.user_id }).update({ password_hash: passwordHash });
 
     // Mark token as used
-    await db('password_reset_tokens')
-      .where({ id: resetToken.id })
-      .update({ used: true });
+    await db('password_reset_tokens').where({ id: resetToken.id }).update({ used: true });
 
     res.json({
       success: true,

@@ -1,4 +1,5 @@
 // Integration tests for authentication routes
+/* eslint-disable sonarjs/no-hardcoded-passwords */
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import request from 'supertest';
@@ -52,10 +53,7 @@ describe('Authentication Routes', () => {
         farm_id: testFarmId,
       };
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(201);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(201);
 
       expect(response.body.success).toBe(true);
       expect(response.body.data).toHaveProperty('user');
@@ -74,16 +72,10 @@ describe('Authentication Routes', () => {
       };
 
       // First registration
-      await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(201);
+      await request(app).post('/api/auth/register').send(userData).expect(201);
 
       // Duplicate registration
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(400);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(400);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error).toContain('already registered');
@@ -97,10 +89,7 @@ describe('Authentication Routes', () => {
         farm_id: 'not-a-uuid',
       };
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(invalidData)
-        .expect(400);
+      const response = await request(app).post('/api/auth/register').send(invalidData).expect(400);
 
       expect(response.body.success).toBe(false);
     });
@@ -183,12 +172,10 @@ describe('Authentication Routes', () => {
         })
         .returning('*');
 
-      const loginResponse = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: testUserEmail,
-          password: testUserPassword,
-        });
+      const loginResponse = await request(app).post('/api/auth/login').send({
+        email: testUserEmail,
+        password: testUserPassword,
+      });
 
       authToken = loginResponse.body.data.access_token;
     });
@@ -205,9 +192,7 @@ describe('Authentication Routes', () => {
     });
 
     it('should reject refresh without auth token', async () => {
-      const response = await request(app)
-        .post('/api/auth/refresh')
-        .expect(401);
+      const response = await request(app).post('/api/auth/refresh').expect(401);
 
       expect(response.body.success).toBe(false);
     });
@@ -248,12 +233,10 @@ describe('Authentication Routes', () => {
         })
         .returning('*');
 
-      const loginResponse = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: testUserEmail,
-          password: testUserPassword,
-        });
+      const loginResponse = await request(app).post('/api/auth/login').send({
+        email: testUserEmail,
+        password: testUserPassword,
+      });
 
       authToken = loginResponse.body.data.access_token;
     });
@@ -269,9 +252,7 @@ describe('Authentication Routes', () => {
     });
 
     it('should reject logout without auth token', async () => {
-      const response = await request(app)
-        .post('/api/auth/logout')
-        .expect(401);
+      const response = await request(app).post('/api/auth/logout').expect(401);
 
       expect(response.body.success).toBe(false);
     });
