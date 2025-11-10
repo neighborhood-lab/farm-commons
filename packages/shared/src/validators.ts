@@ -104,3 +104,17 @@ export const dateRangeSchema = z.object({
   start_date: z.string().or(z.date()).transform((val) => new Date(val)),
   end_date: z.string().or(z.date()).transform((val) => new Date(val)),
 });
+
+// Emergency Contact Schemas
+export const createEmergencyContactSchema = z.object({
+  name: z.string().min(1).max(200),
+  relationship: z.string().min(1).max(100),
+  phone: z.string().min(10).max(20),
+  phone_secondary: z.string().min(10).max(20).optional().nullable(),
+  email: z.string().email().optional().nullable(),
+  address: z.string().optional().nullable(),
+  is_primary: z.boolean().default(false),
+  notes: z.string().optional().nullable(),
+});
+
+export const updateEmergencyContactSchema = createEmergencyContactSchema.partial();
