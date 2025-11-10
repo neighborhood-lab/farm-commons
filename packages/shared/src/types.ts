@@ -78,6 +78,8 @@ export interface Schedule {
 
 export type ScheduleStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
 
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
+
 export interface TimeEntry {
   id: string;
   farm_id: string;
@@ -92,6 +94,10 @@ export interface TimeEntry {
   notes: string | null;
   verified_by: string | null;
   verified_at: Date | null;
+  approval_status: ApprovalStatus;
+  approved_by: string | null;
+  approved_at: Date | null;
+  rejection_reason: string | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -201,4 +207,38 @@ export interface InvoiceItem {
 
 export interface InvoiceWithItems extends Invoice {
   items: InvoiceItem[];
+}
+
+// Equipment Types
+export type EquipmentStatus = 'available' | 'in_use' | 'maintenance' | 'retired';
+export type EquipmentCondition = 'excellent' | 'good' | 'fair' | 'poor' | 'damaged';
+
+export interface Equipment {
+  id: string;
+  farm_id: string;
+  name: string;
+  type: string;
+  model: string | null;
+  serial_number: string | null;
+  purchase_date: Date | null;
+  status: EquipmentStatus;
+  notes: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface EquipmentAssignment {
+  id: string;
+  farm_id: string;
+  equipment_id: string;
+  worker_id: string;
+  assigned_at: Date;
+  returned_at: Date | null;
+  assigned_by: string | null;
+  returned_by: string | null;
+  assignment_notes: string | null;
+  return_notes: string | null;
+  condition_on_return: EquipmentCondition | null;
+  created_at: Date;
+  updated_at: Date;
 }
