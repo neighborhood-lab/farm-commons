@@ -15,6 +15,7 @@ import scheduleRoutes from './routes/schedules.js';
 import timeEntryRoutes from './routes/timeEntries.js';
 import timeApprovalRoutes from './routes/time-approvals.js';
 import statsRoutes from './routes/stats.js';
+import taskChecklistRoutes from './routes/task-checklists.js';
 import soilDataRoutes from './routes/soil-data.js';
 import invoiceRoutes from './routes/invoices.js';
 
@@ -98,6 +99,7 @@ app.use('/api/schedules', scheduleRoutes);
 app.use('/api/time-entries', timeEntryRoutes);
 app.use('/api/time-approvals', timeApprovalRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/task-checklists', taskChecklistRoutes);
 app.use('/api', soilDataRoutes);
 app.use('/api/invoices', invoiceRoutes);
 
