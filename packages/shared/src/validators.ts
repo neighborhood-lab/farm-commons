@@ -149,7 +149,6 @@ export const dateRangeSchema = z.object({
     .transform((val) => new Date(val)),
 });
 
-<<<<<<< HEAD
 // Task Checklist Schemas
 export const createChecklistTemplateSchema = z.object({
   name: z.string().min(1).max(200),
