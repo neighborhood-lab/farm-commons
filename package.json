@@ -4,6 +4,7 @@
   "private": true,
   "description": "Shared farm management software, community owned. For the humans who feed us.",
   "type": "module",
+  "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=22.0.0",
     "npm": ">=10.9.0"
