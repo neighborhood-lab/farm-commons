@@ -1,0 +1,111 @@
+import { useQuery } from '@tanstack/react-query';
+import { Users, Calendar, Clock, TrendingUp } from 'lucide-react';
+import { api } from '../lib/api';
+import type { FarmStats } from '@farm-commons/shared';
+
+export default function DashboardPage() {
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ['farm-stats'],
+    queryFn: () => api.get<FarmStats>('/stats/farm'),
+    // Mock data for MVP
+    placeholderData: {
+      total_workers: 12,
+      active_workers: 8,
+      total_fields: 5,
+      total_hours_this_week: 256,
+      scheduled_shifts_today: 4,
+    },
+  });
+
+  const statCards = [
+    {
+      name: 'Active Workers',
+      value: stats?.active_workers || 0,
+      total: stats?.total_workers || 0,
+      icon: Users,
+      color: 'bg-blue-500',
+    },
+    {
+      name: 'Shifts Today',
+      value: stats?.scheduled_shifts_today || 0,
+      icon: Calendar,
+      color: 'bg-green-500',
+    },
+    {
+      name: 'Hours This Week',
+      value: stats?.total_hours_this_week || 0,
+      icon: Clock,
+      color: 'bg-purple-500',
+    },
+    {
+      name: 'Fields',
+      value: stats?.total_fields || 0,
+      icon: TrendingUp,
+      color: 'bg-orange-500',
+    },
+  ];
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <p className="text-gray-600 mt-2">
+          Welcome to Farm Commons - Overview of your farm operations
+        </p>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {statCards.map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <div
+              key={stat.name}
+              className="bg-white rounded-lg shadow p-6 border border-gray-200"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">{stat.name}</p>
+                  <p className="text-3xl font-bold text-gray-900 mt-2">
+                    {stat.value}
+                    {stat.total && (
+                      <span className="text-lg text-gray-500">/{stat.total}</span>
+                    )}
+                  </p>
+                </div>
+                <div className={`${stat.color} p-3 rounded-lg`}>
+                  <Icon className="text-white" size={24} />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Welcome Message */}
+      <div className="bg-earth-50 border border-earth-200 rounded-lg p-8">
+        <h2 className="text-2xl font-bold text-earth-900 mb-4">
+          Welcome to Farm Commons MVP
+        </h2>
+        <div className="prose text-earth-700">
+          <p className="mb-4">
+            This is the initial MVP (Minimum Viable Product) showcasing Phase 1 features:
+          </p>
+          <ul className="list-disc list-inside space-y-2 mb-4">
+            <li><strong>Worker Management:</strong> Directory, certifications, contact information</li>
+            <li><strong>Scheduling:</strong> Daily work schedules and field assignments</li>
+            <li><strong>Time Tracking:</strong> Clock in/out, hours worked, compliance tracking</li>
+          </ul>
+          <p className="text-sm mt-6 pt-6 border-t border-earth-300">
+            Built for farmworkers and small-scale farmers, not corporations. <br />
+            Community owned · AGPL-3.0 Licensed · Open Source
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

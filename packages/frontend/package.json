@@ -1,0 +1,49 @@
+{
+  "name": "@farm-commons/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Farm Commons web frontend",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src --ext .ts,.tsx",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@farm-commons/shared": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^6.29.0",
+    "@tanstack/react-query": "^5.90.0",
+    "zustand": "^5.0.3",
+    "react-hook-form": "^7.54.2",
+    "zod": "^4.1.0",
+    "@hookform/resolvers": "^3.9.1",
+    "date-fns": "^4.1.0",
+    "framer-motion": "^12.0.0",
+    "recharts": "^2.14.1",
+    "lucide-react": "^0.469.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^7.2.0",
+    "typescript": "^5.9.0",
+    "tailwindcss": "^4.1.7",
+    "@tailwindcss/vite": "^4.1.7",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "vitest": "^4.0.5",
+    "@vitest/coverage-v8": "^4.0.5",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "happy-dom": "^16.11.11"
+  }
+}
