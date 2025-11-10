@@ -148,3 +148,17 @@ export const dateRangeSchema = z.object({
     .or(z.date())
     .transform((val) => new Date(val)),
 });
+
+// Field Notes Schemas
+export const createFieldNoteSchema = z.object({
+  field_id: z.string().uuid(),
+  content: z.string().min(1),
+  tags: z.array(z.string()).default([]),
+  photo_urls: z.array(z.string().url()).default([]),
+});
+
+export const updateFieldNoteSchema = z.object({
+  content: z.string().min(1).optional(),
+  tags: z.array(z.string()).optional(),
+  photo_urls: z.array(z.string().url()).optional(),
+});

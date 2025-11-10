@@ -14,6 +14,7 @@ import workerRoutes from './routes/workers.js';
 import scheduleRoutes from './routes/schedules.js';
 import timeEntryRoutes from './routes/timeEntries.js';
 import statsRoutes from './routes/stats.js';
+import fieldNotesRoutes from './routes/field-notes.js';
 
 // Middleware
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
@@ -94,6 +95,7 @@ app.use('/api/workers', workerRoutes);
 app.use('/api/schedules', scheduleRoutes);
 app.use('/api/time-entries', timeEntryRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api', fieldNotesRoutes);
 
 // Welcome message
 app.get('/', (_req, res) => {
