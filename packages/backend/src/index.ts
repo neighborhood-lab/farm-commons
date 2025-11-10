@@ -13,6 +13,7 @@ import authRoutes from './routes/auth.js';
 import workerRoutes from './routes/workers.js';
 import scheduleRoutes from './routes/schedules.js';
 import timeEntryRoutes from './routes/timeEntries.js';
+import certificationRoutes from './routes/certifications.js';
 
 // Middleware
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
@@ -85,6 +86,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/workers', workerRoutes);
 app.use('/api/schedules', scheduleRoutes);
 app.use('/api/time-entries', timeEntryRoutes);
+app.use('/api/certifications', certificationRoutes);
 
 // Welcome message
 app.get('/', (req, res) => {
