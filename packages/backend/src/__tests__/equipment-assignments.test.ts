@@ -24,45 +24,54 @@ describe('Equipment Assignments API', () => {
     await db('farms').del();
 
     // Create test farm
-    const [farm] = await db('farms').insert({
-      name: 'Test Farm',
-      location: 'Test Location',
-      size_acres: 100,
-      organic_certified: false,
-    }).returning('*');
+    const [farm] = await db('farms')
+      .insert({
+        name: 'Test Farm',
+        location: 'Test Location',
+        size_acres: 100,
+        organic_certified: false,
+      })
+      .returning('*');
     farmId = farm.id;
 
     // Create test user
-    const [user] = await db('users').insert({
-      email: 'manager@test.com',
-      password_hash: '$2b$10$abcdefghijklmnopqrstuv', // dummy hash
-      role: 'manager',
-      farm_id: farmId,
-    }).returning('*');
+    const [user] = await db('users')
+      .insert({
+        email: 'manager@test.com',
+        // eslint-disable-next-line sonarjs/no-hardcoded-passwords
+        password_hash: '$2b$10$abcdefghijklmnopqrstuv', // Test hash
+        role: 'manager',
+        farm_id: farmId,
+      })
+      .returning('*');
     userId = user.id;
 
     // Create test worker
-    const [worker] = await db('workers').insert({
-      farm_id: farmId,
-      first_name: 'John',
-      last_name: 'Doe',
-      phone: '555-0100',
-      email: 'john@test.com',
-      hire_date: new Date('2024-01-01'),
-      status: 'active',
-      hourly_rate: 15.00,
-    }).returning('*');
+    const [worker] = await db('workers')
+      .insert({
+        farm_id: farmId,
+        first_name: 'John',
+        last_name: 'Doe',
+        phone: '555-0100',
+        email: 'john@test.com',
+        hire_date: new Date('2024-01-01'),
+        status: 'active',
+        hourly_rate: 15,
+      })
+      .returning('*');
     workerId = worker.id;
 
     // Create test equipment
-    const [equipment] = await db('equipment').insert({
-      farm_id: farmId,
-      name: 'Tractor Model X',
-      type: 'tractor',
-      model: 'X-2000',
-      serial_number: 'SN123456',
-      status: 'available',
-    }).returning('*');
+    const [equipment] = await db('equipment')
+      .insert({
+        farm_id: farmId,
+        name: 'Tractor Model X',
+        type: 'tractor',
+        model: 'X-2000',
+        serial_number: 'SN123456',
+        status: 'available',
+      })
+      .returning('*');
     equipmentId = equipment.id;
 
     // Mock authentication token
@@ -153,12 +162,10 @@ describe('Equipment Assignments API', () => {
     });
 
     it('should fail without authentication', async () => {
-      const response = await request(app)
-        .post(`/api/equipment/${equipmentId}/assign`)
-        .send({
-          worker_id: workerId,
-          assignment_notes: 'Test',
-        });
+      const response = await request(app).post(`/api/equipment/${equipmentId}/assign`).send({
+        worker_id: workerId,
+        assignment_notes: 'Test',
+      });
 
       expect(response.status).toBe(401);
     });
@@ -180,12 +187,14 @@ describe('Equipment Assignments API', () => {
 
     beforeEach(async () => {
       // Create an active assignment
-      const [assignment] = await db('equipment_assignments').insert({
-        farm_id: farmId,
-        equipment_id: equipmentId,
-        worker_id: workerId,
-        assigned_by: userId,
-      }).returning('*');
+      const [assignment] = await db('equipment_assignments')
+        .insert({
+          farm_id: farmId,
+          equipment_id: equipmentId,
+          worker_id: workerId,
+          assigned_by: userId,
+        })
+        .returning('*');
       assignmentId = assignment.id;
 
       await db('equipment').where({ id: equipmentId }).update({ status: 'in_use' });
@@ -264,24 +273,28 @@ describe('Equipment Assignments API', () => {
   describe('GET /api/equipment/:id/history', () => {
     beforeEach(async () => {
       // Create multiple assignments for history
-      const [assignment1] = await db('equipment_assignments').insert({
-        farm_id: farmId,
-        equipment_id: equipmentId,
-        worker_id: workerId,
-        assigned_by: userId,
-        assigned_at: new Date('2024-01-01T08:00:00Z'),
-        returned_at: new Date('2024-01-01T17:00:00Z'),
-        condition_on_return: 'good',
-      }).returning('*');
+      await db('equipment_assignments')
+        .insert({
+          farm_id: farmId,
+          equipment_id: equipmentId,
+          worker_id: workerId,
+          assigned_by: userId,
+          assigned_at: new Date('2024-01-01T08:00:00Z'),
+          returned_at: new Date('2024-01-01T17:00:00Z'),
+          condition_on_return: 'good',
+        })
+        .returning('*');
 
-      const [assignment2] = await db('equipment_assignments').insert({
-        farm_id: farmId,
-        equipment_id: equipmentId,
-        worker_id: workerId,
-        assigned_by: userId,
-        assigned_at: new Date('2024-01-02T08:00:00Z'),
-        returned_at: null,
-      }).returning('*');
+      await db('equipment_assignments')
+        .insert({
+          farm_id: farmId,
+          equipment_id: equipmentId,
+          worker_id: workerId,
+          assigned_by: userId,
+          assigned_at: new Date('2024-01-02T08:00:00Z'),
+          returned_at: null,
+        })
+        .returning('*');
     });
 
     it('should return assignment history for equipment', async () => {
@@ -296,8 +309,9 @@ describe('Equipment Assignments API', () => {
       expect(response.body.data.history).toHaveLength(2);
 
       // Should be ordered by assigned_at desc (most recent first)
-      expect(new Date(response.body.data.history[0].assigned_at).getTime())
-        .toBeGreaterThan(new Date(response.body.data.history[1].assigned_at).getTime());
+      expect(new Date(response.body.data.history[0].assigned_at).getTime()).toBeGreaterThan(
+        new Date(response.body.data.history[1].assigned_at).getTime()
+      );
     });
 
     it('should include worker details in history', async () => {
@@ -323,12 +337,14 @@ describe('Equipment Assignments API', () => {
   describe('GET /api/equipment/workers/:id/equipment', () => {
     beforeEach(async () => {
       // Create multiple equipment items
-      const [equipment2] = await db('equipment').insert({
-        farm_id: farmId,
-        name: 'Harvester',
-        type: 'harvester',
-        status: 'available',
-      }).returning('*');
+      const [equipment2] = await db('equipment')
+        .insert({
+          farm_id: farmId,
+          name: 'Harvester',
+          type: 'harvester',
+          status: 'available',
+        })
+        .returning('*');
 
       // Assign both equipment items to the worker
       await db('equipment_assignments').insert([
@@ -346,7 +362,9 @@ describe('Equipment Assignments API', () => {
         },
       ]);
 
-      await db('equipment').whereIn('id', [equipmentId, equipment2.id]).update({ status: 'in_use' });
+      await db('equipment')
+        .whereIn('id', [equipmentId, equipment2.id])
+        .update({ status: 'in_use' });
     });
 
     it('should return all equipment currently assigned to worker', async () => {
@@ -409,7 +427,6 @@ describe('Equipment Assignments API', () => {
         });
 
       expect(assignResponse.status).toBe(201);
-      const assignmentId = assignResponse.body.data.id;
 
       // 2. Check worker's equipment
       const workerEquipmentResponse = await request(app)
