@@ -1,0 +1,12 @@
+# Playwright test artifacts
+test-results/
+playwright-report/
+screenshots/
+*.png
+*.mp4
+
+# Playwright state
+.auth/
+
+# Test output
+junit.xml
