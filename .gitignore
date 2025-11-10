@@ -47,6 +47,10 @@ web_modules/
 # TypeScript cache
 *.tsbuildinfo
 
+# Generated TypeScript declaration files for JS config files
+knexfile.d.ts
+knexfile.d.ts.map
+
 # Optional npm cache directory
 .npm
 
