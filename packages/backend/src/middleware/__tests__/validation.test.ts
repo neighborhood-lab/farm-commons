@@ -11,17 +11,12 @@ import {
   validateMultiple,
   formatZodErrors,
   sanitizeObject,
-  uuidParamSchema,
   commonSchemas,
-  type ValidationTarget
+  uuidParamSchema,
 } from '../validation';
 
 // Mock Express Request, Response, and NextFunction
-function createMockRequest(data: {
-  body?: unknown;
-  query?: unknown;
-  params?: unknown;
-}): Request {
+function createMockRequest(data: { body?: unknown; query?: unknown; params?: unknown }): Request {
   return {
     body: data.body || {},
     query: data.query || {},
@@ -435,9 +430,7 @@ describe('validateMultiple', () => {
 
 describe('commonSchemas', () => {
   it('should validate UUID', () => {
-    expect(() =>
-      commonSchemas.uuid.parse('123e4567-e89b-12d3-a456-426614174000')
-    ).not.toThrow();
+    expect(() => commonSchemas.uuid.parse('123e4567-e89b-12d3-a456-426614174000')).not.toThrow();
     expect(() => commonSchemas.uuid.parse('not-a-uuid')).toThrow();
   });
 
@@ -578,10 +571,6 @@ describe('edge cases', () => {
   });
 
   it('should pass through unexpected errors', async () => {
-    const schema = z.object({
-      name: z.string(),
-    });
-
     // Create a schema that throws a non-Zod error
     const faultySchema = {
       parseAsync: vi.fn().mockRejectedValue(new Error('Unexpected error')),

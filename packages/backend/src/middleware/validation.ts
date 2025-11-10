@@ -29,13 +29,15 @@ export function formatZodErrors(error: ZodError): {
   message: string;
   errors: Array<{ field: string; message: string }>;
 } {
-  const formattedErrors = error.errors.map((err) => ({
+  const formattedErrors = error.issues.map((err) => ({
     field: err.path.join('.') || 'root',
     message: err.message,
   }));
 
   // Create a human-readable summary
-  const fieldNames = formattedErrors.map((e) => e.field).join(', ');
+  const fieldNames = formattedErrors
+    .map((e: { field: string; message: string }) => e.field)
+    .join(', ');
   const message = `Validation failed for: ${fieldNames}`;
 
   return {
@@ -58,7 +60,7 @@ export function sanitizeObject<T>(obj: T): T {
     return DOMPurify.sanitize(obj, {
       ALLOWED_TAGS: [],
       ALLOWED_ATTR: [],
-      KEEP_CONTENT: true
+      KEEP_CONTENT: true,
     }) as T;
   }
 
@@ -97,11 +99,7 @@ export function validate<T extends ZodSchema>(
   target: ValidationTarget = 'body',
   options: ValidationOptions = {}
 ) {
-  const {
-    stripUnknown = true,
-    sanitize = true,
-    errorPrefix = 'Validation error',
-  } = options;
+  const { sanitize = true, errorPrefix = 'Validation error' } = options;
 
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -114,11 +112,10 @@ export function validate<T extends ZodSchema>(
       }
 
       // Parse and validate with Zod
-      const parseOptions = stripUnknown ? { stripUnknown: true } : undefined;
-      const validated = await schema.parseAsync(data, parseOptions);
+      const validated = await schema.parseAsync(data);
 
       // Replace the request data with validated and potentially sanitized data
-      (req as Record<string, unknown>)[target] = validated;
+      (req as unknown as Record<string, unknown>)[target] = validated;
 
       next();
     } catch (error) {
@@ -147,10 +144,7 @@ export function validate<T extends ZodSchema>(
  * app.post('/api/workers', validateBody(createWorkerSchema), handler);
  * ```
  */
-export function validateBody<T extends ZodSchema>(
-  schema: T,
-  options?: ValidationOptions
-) {
+export function validateBody<T extends ZodSchema>(schema: T, options?: ValidationOptions) {
   return validate(schema, 'body', options);
 }
 
@@ -162,10 +156,7 @@ export function validateBody<T extends ZodSchema>(
  * app.get('/api/workers', validateQuery(paginationSchema), handler);
  * ```
  */
-export function validateQuery<T extends ZodSchema>(
-  schema: T,
-  options?: ValidationOptions
-) {
+export function validateQuery<T extends ZodSchema>(schema: T, options?: ValidationOptions) {
   return validate(schema, 'query', options);
 }
 
@@ -177,10 +168,7 @@ export function validateQuery<T extends ZodSchema>(
  * app.get('/api/workers/:id', validateParams(z.object({ id: z.string().uuid() })), handler);
  * ```
  */
-export function validateParams<T extends ZodSchema>(
-  schema: T,
-  options?: ValidationOptions
-) {
+export function validateParams<T extends ZodSchema>(schema: T, options?: ValidationOptions) {
   return validate(schema, 'params', options);
 }
 
@@ -198,14 +186,17 @@ export function validateParams<T extends ZodSchema>(
  * );
  * ```
  */
-export function validateMultiple(schemas: {
-  body?: ZodSchema;
-  query?: ZodSchema;
-  params?: ZodSchema;
-}, options?: ValidationOptions) {
+export function validateMultiple(
+  schemas: {
+    body?: ZodSchema;
+    query?: ZodSchema;
+    params?: ZodSchema;
+  },
+  options?: ValidationOptions
+) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { sanitize = true, stripUnknown = true } = options || {};
+      const { sanitize = true } = options || {};
 
       // Validate each target that has a schema
       for (const [target, schema] of Object.entries(schemas)) {
@@ -219,11 +210,10 @@ export function validateMultiple(schemas: {
         }
 
         // Validate with Zod
-        const parseOptions = stripUnknown ? { stripUnknown: true } : undefined;
-        const validated = await schema.parseAsync(data, parseOptions);
+        const validated = await schema.parseAsync(data);
 
         // Update request with validated data
-        (req as Record<string, unknown>)[target] = validated;
+        (req as unknown as Record<string, unknown>)[target] = validated;
       }
 
       next();
@@ -260,6 +250,9 @@ export const commonSchemas = {
   phone: z.string().min(10).max(20),
   positiveInt: z.number().int().positive(),
   positiveNumber: z.number().positive(),
-  dateString: z.string().or(z.date()).transform((val) => new Date(val)),
+  dateString: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val)),
   boolean: z.boolean().or(z.string().transform((val) => val === 'true')),
 };
