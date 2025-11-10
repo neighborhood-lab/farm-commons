@@ -1,3 +1,5 @@
+/* eslint-env browser, node */
+/* global navigator */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -84,6 +86,7 @@ describe('AnalyticsPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Setup default mock responses
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (api.api.get as any).mockImplementation((endpoint: string) => {
       if (endpoint.includes('/stats/labor-hours')) {
         return Promise.resolve(mockLaborHoursData);
@@ -214,7 +217,7 @@ describe('AnalyticsPage', () => {
     });
 
     // Mock alert
-    global.alert = vi.fn();
+    globalThis.alert = vi.fn();
 
     render(<AnalyticsPage />, { wrapper: createWrapper() });
 
@@ -226,13 +229,13 @@ describe('AnalyticsPage', () => {
     fireEvent.click(shareButton);
 
     await waitFor(() => {
-      expect(global.alert).toHaveBeenCalledWith('Shareable link copied to clipboard!');
+      expect(globalThis.alert).toHaveBeenCalledWith('Shareable link copied to clipboard!');
     });
   });
 
   it('handles export to PDF click', async () => {
     // Mock alert
-    global.alert = vi.fn();
+    globalThis.alert = vi.fn();
 
     render(<AnalyticsPage />, { wrapper: createWrapper() });
 
@@ -244,7 +247,7 @@ describe('AnalyticsPage', () => {
     fireEvent.click(exportButton);
 
     await waitFor(() => {
-      expect(global.alert).toHaveBeenCalledWith(
+      expect(globalThis.alert).toHaveBeenCalledWith(
         expect.stringContaining('Analytics exported successfully')
       );
     });
