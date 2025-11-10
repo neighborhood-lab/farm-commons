@@ -8,6 +8,17 @@ import rateLimit from 'express-rate-limit';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
 
+// Monitoring
+import {
+  initSentry,
+  sentryRequestHandler,
+  sentryTracingHandler,
+  sentryErrorHandler,
+  metricsMiddleware,
+  getMetrics,
+  getMetricsContentType,
+} from './monitoring/index.js';
+
 // Routes
 import authRoutes from './routes/auth.js';
 import workerRoutes from './routes/workers.js';
@@ -19,6 +30,9 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Initialize Sentry error tracking (must be first)
+initSentry(app);
 
 // Logger
 const logger = pino({
@@ -32,6 +46,15 @@ const logger = pino({
 });
 
 const httpLogger = pinoHttp({ logger });
+
+// Sentry request handler (must be first middleware)
+app.use(sentryRequestHandler());
+
+// Sentry tracing handler (must be after request handler)
+app.use(sentryTracingHandler());
+
+// Prometheus metrics collection
+app.use(metricsMiddleware());
 
 // Security middleware
 app.use(helmet({
@@ -71,13 +94,24 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(httpLogger);
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     environment: process.env.NODE_ENV || 'development',
   });
+});
+
+// Prometheus metrics endpoint
+app.get('/metrics', async (_req, res) => {
+  try {
+    res.set('Content-Type', getMetricsContentType());
+    const metrics = await getMetrics();
+    res.end(metrics);
+  } catch (error) {
+    res.status(500).end(error);
+  }
 });
 
 // API routes
@@ -87,7 +121,7 @@ app.use('/api/schedules', scheduleRoutes);
 app.use('/api/time-entries', timeEntryRoutes);
 
 // Welcome message
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.json({
     name: 'Farm Commons API',
     version: '0.1.0',
@@ -98,6 +132,9 @@ app.get('/', (req, res) => {
 
 // 404 handler
 app.use(notFoundHandler);
+
+// Sentry error handler (must be before other error handlers)
+app.use(sentryErrorHandler());
 
 // Error handler
 app.use(errorHandler);
