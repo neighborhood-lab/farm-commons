@@ -94,6 +94,24 @@ export const createCertificationSchema = z.object({
 
 export const updateCertificationSchema = createCertificationSchema.partial().omit({ worker_id: true });
 
+// Skill Schemas
+export const createSkillSchema = z.object({
+  name: z.string().min(1).max(200),
+  description: z.string().optional().nullable(),
+  category: z.string().max(100).optional().nullable(),
+});
+
+export const updateSkillSchema = createSkillSchema.partial();
+
+export const addWorkerSkillSchema = z.object({
+  skill_id: z.string().uuid(),
+  proficiency_level: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional().nullable(),
+  years_experience: z.number().int().min(0).max(100).optional().nullable(),
+  notes: z.string().optional().nullable(),
+});
+
+export const updateWorkerSkillSchema = addWorkerSkillSchema.partial().omit({ skill_id: true });
+
 // Query Schemas
 export const paginationSchema = z.object({
   page: z.string().transform((val) => parseInt(val, 10)).default('1'),
