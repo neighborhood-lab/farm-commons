@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { Users, Calendar, Clock, Home, LogOut, BarChart3 } from 'lucide-react';
 import { useAuthStore } from '../lib/store';
@@ -23,6 +24,8 @@ export default function Layout() {
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
   ];
 
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Navigation Sidebar */}
@@ -37,7 +40,7 @@ export default function Layout() {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
             {navigation.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.href;
@@ -46,7 +49,8 @@ export default function Layout() {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                  onClick={closeMobileMenu}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors touch-manipulation min-h-[44px] ${
                     isActive
                       ? 'bg-earth-700 dark:bg-earth-800 text-white'
                       : 'text-earth-300 dark:text-earth-400 hover:bg-earth-700/50 dark:hover:bg-earth-800/50 hover:text-white'
@@ -82,8 +86,8 @@ export default function Layout() {
       </div>
 
       {/* Main Content */}
-      <div className="ml-64">
-        <main className="p-8">
+      <div className="lg:ml-64 pt-[73px] lg:pt-0">
+        <main className="p-4 sm:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>

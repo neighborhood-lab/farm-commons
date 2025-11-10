@@ -71,11 +71,12 @@ export default function SchedulePage() {
         </div>
       </div>
 
-      {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-4">
-        {weekDays.map((day) => {
-          const daySchedules = getSchedulesForDay(day);
-          const isToday = format(day, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
+      {/* Calendar Grid - Horizontal scroll on mobile */}
+      <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 pb-4">
+        <div className="min-w-[700px] lg:min-w-0 grid grid-cols-7 gap-2 sm:gap-4">
+          {weekDays.map((day) => {
+            const daySchedules = getSchedulesForDay(day);
+            const isToday = format(day, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
 
           return (
             <div
@@ -112,9 +113,9 @@ export default function SchedulePage() {
                   </div>
                 ))}
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
       {/* Empty State */}
