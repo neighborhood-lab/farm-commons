@@ -116,6 +116,29 @@ export interface Certification {
   updated_at: Date;
 }
 
+export interface Skill {
+  id: string;
+  farm_id: string;
+  name: string;
+  description: string | null;
+  category: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export type ProficiencyLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
+
+export interface WorkerSkill {
+  id: string;
+  worker_id: string;
+  skill_id: string;
+  proficiency_level: ProficiencyLevel | null;
+  years_experience: number | null;
+  notes: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
 // API Response Types
 export interface ApiResponse<T> {
   success: boolean;
