@@ -148,3 +148,16 @@ export const dateRangeSchema = z.object({
     .or(z.date())
     .transform((val) => new Date(val)),
 });
+
+// Time Entry Approval Schemas
+export const approveTimeEntrySchema = z.object({
+  notes: z.string().optional().nullable(),
+});
+
+export const rejectTimeEntrySchema = z.object({
+  rejection_reason: z.string().min(1, 'Rejection reason is required'),
+});
+
+export const batchApprovalSchema = z.object({
+  time_entry_ids: z.array(z.string().uuid()).min(1, 'At least one time entry ID is required'),
+});

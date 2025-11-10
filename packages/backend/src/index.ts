@@ -13,6 +13,7 @@ import authRoutes from './routes/auth.js';
 import workerRoutes from './routes/workers.js';
 import scheduleRoutes from './routes/schedules.js';
 import timeEntryRoutes from './routes/timeEntries.js';
+import timeApprovalRoutes from './routes/time-approvals.js';
 import statsRoutes from './routes/stats.js';
 
 // Middleware
@@ -93,6 +94,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/workers', workerRoutes);
 app.use('/api/schedules', scheduleRoutes);
 app.use('/api/time-entries', timeEntryRoutes);
+app.use('/api/time-approvals', timeApprovalRoutes);
 app.use('/api/stats', statsRoutes);
 
 // Welcome message
