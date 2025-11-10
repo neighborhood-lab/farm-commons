@@ -1,22 +1,20 @@
 // Authentication routes
 
-import express from 'express';
+import express, { type Router } from 'express';
 import bcrypt from 'bcrypt';
 import { loginSchema, registerSchema } from '@farm-commons/shared';
 import db from '../db/connection.js';
 import { generateToken } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Login
 router.post('/login', async (req, res, next) => {
   try {
     const { email, password } = loginSchema.parse(req.body);
 
-    const user = await db('users')
-      .where({ email })
-      .first();
+    const user = await db('users').where({ email }).first();
 
     if (!user) {
       throw new AppError('Invalid credentials', 401);
@@ -45,7 +43,7 @@ router.post('/login', async (req, res, next) => {
           farm_id: user.farm_id,
         },
         access_token: token,
-        expires_in: 604800, // 7 days in seconds
+        expires_in: 604_800, // 7 days in seconds
       },
     });
   } catch (error) {
@@ -59,9 +57,7 @@ router.post('/register', async (req, res, next) => {
     const data = registerSchema.parse(req.body);
 
     // Check if user already exists
-    const existingUser = await db('users')
-      .where({ email: data.email })
-      .first();
+    const existingUser = await db('users').where({ email: data.email }).first();
 
     if (existingUser) {
       throw new AppError('Email already registered', 400);
@@ -97,7 +93,7 @@ router.post('/register', async (req, res, next) => {
           farm_id: user.farm_id,
         },
         access_token: token,
-        expires_in: 604800,
+        expires_in: 604_800,
       },
     });
   } catch (error) {
@@ -106,7 +102,7 @@ router.post('/register', async (req, res, next) => {
 });
 
 // Get current user
-router.get('/me', async (req, res, next) => {
+router.get('/me', async (_req, res, next) => {
   try {
     // This would use authenticateToken middleware
     res.json({

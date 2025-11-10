@@ -9,7 +9,7 @@ const testDb: Knex = knex({
   client: 'pg',
   connection: {
     host: process.env.TEST_DB_HOST || 'localhost',
-    port: parseInt(process.env.TEST_DB_PORT || '5432'),
+    port: Number.parseInt(process.env.TEST_DB_PORT || '5432'),
     database: process.env.TEST_DB_NAME || 'farm_commons_test',
     user: process.env.TEST_DB_USER || 'postgres',
     password: process.env.TEST_DB_PASSWORD || 'postgres',
@@ -47,48 +47,58 @@ describe('Statistics Calculations', () => {
     await testDb('farms').del();
 
     // Create test farm
-    [{ id: farmId }] = await testDb('farms').insert({
-      name: 'Test Farm',
-      location: 'Test Location',
-      size_acres: 100,
-      organic_certified: true,
-    }).returning('id');
+    [{ id: farmId }] = await testDb('farms')
+      .insert({
+        name: 'Test Farm',
+        location: 'Test Location',
+        size_acres: 100,
+        organic_certified: true,
+      })
+      .returning('id');
 
     // Create test workers
-    [{ id: worker1Id }] = await testDb('workers').insert({
-      farm_id: farmId,
-      first_name: 'John',
-      last_name: 'Doe',
-      phone: '555-0001',
-      hire_date: new Date('2024-01-01'),
-      status: 'active',
-      hourly_rate: 20,
-    }).returning('id');
+    [{ id: worker1Id }] = await testDb('workers')
+      .insert({
+        farm_id: farmId,
+        first_name: 'John',
+        last_name: 'Doe',
+        phone: '555-0001',
+        hire_date: new Date('2024-01-01'),
+        status: 'active',
+        hourly_rate: 20,
+      })
+      .returning('id');
 
-    [{ id: worker2Id }] = await testDb('workers').insert({
-      farm_id: farmId,
-      first_name: 'Jane',
-      last_name: 'Smith',
-      phone: '555-0002',
-      hire_date: new Date('2024-01-15'),
-      status: 'active',
-      hourly_rate: 22,
-    }).returning('id');
+    [{ id: worker2Id }] = await testDb('workers')
+      .insert({
+        farm_id: farmId,
+        first_name: 'Jane',
+        last_name: 'Smith',
+        phone: '555-0002',
+        hire_date: new Date('2024-01-15'),
+        status: 'active',
+        hourly_rate: 22,
+      })
+      .returning('id');
 
     // Create test fields
-    [{ id: field1Id }] = await testDb('fields').insert({
-      farm_id: farmId,
-      name: 'North Field',
-      size_acres: 25,
-      current_crop: 'Tomatoes',
-    }).returning('id');
+    [{ id: field1Id }] = await testDb('fields')
+      .insert({
+        farm_id: farmId,
+        name: 'North Field',
+        size_acres: 25,
+        current_crop: 'Tomatoes',
+      })
+      .returning('id');
 
-    [{ id: field2Id }] = await testDb('fields').insert({
-      farm_id: farmId,
-      name: 'South Field',
-      size_acres: 30,
-      current_crop: 'Lettuce',
-    }).returning('id');
+    [{ id: field2Id }] = await testDb('fields')
+      .insert({
+        farm_id: farmId,
+        name: 'South Field',
+        size_acres: 30,
+        current_crop: 'Lettuce',
+      })
+      .returning('id');
   });
 
   afterAll(async () => {
@@ -105,11 +115,9 @@ describe('Statistics Calculations', () => {
 
   describe('Farm Statistics', () => {
     it('should calculate total workers count', async () => {
-      const [{ count }] = await testDb('workers')
-        .where({ farm_id: farmId })
-        .count('* as count');
+      const [{ count }] = await testDb('workers').where({ farm_id: farmId }).count('* as count');
 
-      expect(parseInt(count as string)).toBe(2);
+      expect(Number.parseInt(count as string)).toBe(2);
     });
 
     it('should calculate active workers count', async () => {
@@ -128,7 +136,7 @@ describe('Statistics Calculations', () => {
         .where({ farm_id: farmId, status: 'active' })
         .count('* as count');
 
-      expect(parseInt(count as string)).toBe(2);
+      expect(Number.parseInt(count as string)).toBe(2);
     });
 
     it('should calculate total labor hours', async () => {
@@ -159,7 +167,7 @@ describe('Statistics Calculations', () => {
         .whereNotNull('clock_out')
         .sum('total_hours as total');
 
-      expect(parseFloat(total as string)).toBe(16);
+      expect(Number.parseFloat(total as string)).toBe(16);
     });
   });
 
@@ -191,7 +199,7 @@ describe('Statistics Calculations', () => {
         .whereNotNull('clock_out')
         .sum('total_hours as total');
 
-      expect(parseFloat(total as string)).toBe(17);
+      expect(Number.parseFloat(total as string)).toBe(17);
     });
 
     it('should calculate days worked for a worker', async () => {
@@ -226,12 +234,13 @@ describe('Statistics Calculations', () => {
         },
       ]);
 
-      const [{ days }] = await testDb('time_entries')
+      const daysResult = await testDb('time_entries')
         .where({ worker_id: worker1Id })
         .whereNotNull('clock_out')
         .countDistinct(testDb.raw('DATE(clock_in) as days'));
 
-      expect(parseInt(days as string)).toBe(2);
+      const daysValue = (daysResult[0] as any)?.days || 0;
+      expect(Number.parseInt(String(daysValue))).toBe(2);
     });
 
     it('should identify most common task type', async () => {
@@ -274,7 +283,7 @@ describe('Statistics Calculations', () => {
         .first();
 
       expect(topTask?.task_type).toBe('Harvesting');
-      expect(parseInt(topTask?.count as string)).toBe(2);
+      expect(Number.parseInt(topTask?.count as string)).toBe(2);
     });
   });
 
@@ -313,8 +322,8 @@ describe('Statistics Calculations', () => {
         .orderBy('week');
 
       expect(weeklyHours.length).toBe(2);
-      expect(parseFloat(weeklyHours[0].total)).toBe(8.5);
-      expect(parseFloat(weeklyHours[1].total)).toBe(8.5);
+      expect(Number.parseFloat(weeklyHours[0].total)).toBe(8.5);
+      expect(Number.parseFloat(weeklyHours[1].total)).toBe(8.5);
     });
 
     it('should group labor hours by month', async () => {
@@ -392,9 +401,12 @@ describe('Statistics Calculations', () => {
 
       const fieldStats = await testDb('fields')
         .where({ 'fields.farm_id': farmId })
-        .leftJoin('time_entries', function() {
-          this.on('time_entries.field_id', '=', 'fields.id')
-            .andOn('time_entries.farm_id', '=', 'fields.farm_id');
+        .leftJoin('time_entries', function () {
+          this.on('time_entries.field_id', '=', 'fields.id').andOn(
+            'time_entries.farm_id',
+            '=',
+            'fields.farm_id'
+          );
         })
         .select(
           'fields.id',
@@ -407,11 +419,11 @@ describe('Statistics Calculations', () => {
 
       expect(fieldStats.length).toBe(2);
 
-      const northField = fieldStats.find(f => f.name === 'North Field');
-      const southField = fieldStats.find(f => f.name === 'South Field');
+      const northField = fieldStats.find((f) => f.name === 'North Field');
+      const southField = fieldStats.find((f) => f.name === 'South Field');
 
-      expect(parseFloat(northField?.total_hours as string)).toBe(17);
-      expect(parseFloat(southField?.total_hours as string)).toBe(4);
+      expect(Number.parseFloat(northField?.total_hours as string)).toBe(17);
+      expect(Number.parseFloat(southField?.total_hours as string)).toBe(4);
     });
 
     it('should calculate hours per acre', async () => {
@@ -435,8 +447,8 @@ describe('Statistics Calculations', () => {
         )
         .groupBy('fields.size_acres');
 
-      const totalHours = parseFloat(field.total_hours);
-      const sizeAcres = parseFloat(field.size_acres);
+      const totalHours = Number.parseFloat(field.total_hours);
+      const sizeAcres = Number.parseFloat(field.size_acres);
       const hoursPerAcre = totalHours / sizeAcres;
 
       expect(hoursPerAcre).toBeCloseTo(0.34, 2); // 8.5 hours / 25 acres = 0.34
@@ -457,9 +469,12 @@ describe('Statistics Calculations', () => {
 
       const fieldStats = await testDb('fields')
         .where({ 'fields.farm_id': farmId })
-        .leftJoin('time_entries', function() {
-          this.on('time_entries.field_id', '=', 'fields.id')
-            .andOn('time_entries.farm_id', '=', 'fields.farm_id');
+        .leftJoin('time_entries', function () {
+          this.on('time_entries.field_id', '=', 'fields.id').andOn(
+            'time_entries.farm_id',
+            '=',
+            'fields.farm_id'
+          );
         })
         .select(
           'fields.id',
@@ -469,8 +484,8 @@ describe('Statistics Calculations', () => {
         .groupBy('fields.id', 'fields.name')
         .orderBy('fields.name');
 
-      const southField = fieldStats.find(f => f.name === 'South Field');
-      expect(parseFloat(southField?.total_hours as string)).toBe(0);
+      const southField = fieldStats.find((f) => f.name === 'South Field');
+      expect(Number.parseFloat(southField?.total_hours as string)).toBe(0);
     });
   });
 });

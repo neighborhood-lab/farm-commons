@@ -1,12 +1,12 @@
 // Farm statistics and analytics routes
 
-import express from 'express';
+import express, { type Router } from 'express';
 import { z } from 'zod';
 import db from '../db/connection.js';
-import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
+import { authenticateToken, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // All stats routes require authentication
 router.use(authenticateToken);
@@ -14,8 +14,16 @@ router.use(authenticateToken);
 // Query schema for labor hours filtering
 const laborHoursQuerySchema = z.object({
   period: z.enum(['week', 'month']).default('week'),
-  start_date: z.string().or(z.date()).transform((val) => new Date(val)).optional(),
-  end_date: z.string().or(z.date()).transform((val) => new Date(val)).optional(),
+  start_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional(),
+  end_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional(),
 });
 
 // GET /api/stats/farm - Overall farm statistics
@@ -71,13 +79,13 @@ router.get('/farm', async (req: AuthRequest, res, next) => {
     res.json({
       success: true,
       data: {
-        total_workers: parseInt(total_workers as string),
-        active_workers: parseInt(active_workers as string),
-        total_fields: parseInt(total_fields as string),
-        active_schedules: parseInt(active_schedules as string),
-        total_labor_hours: parseFloat(total_labor_hours as string) || 0,
-        month_labor_hours: parseFloat(month_labor_hours as string) || 0,
-        unverified_entries: parseInt(unverified_entries as string),
+        total_workers: Number.parseInt(total_workers as string),
+        active_workers: Number.parseInt(active_workers as string),
+        total_fields: Number.parseInt(total_fields as string),
+        active_schedules: Number.parseInt(active_schedules as string),
+        total_labor_hours: Number.parseFloat(total_labor_hours as string) || 0,
+        month_labor_hours: Number.parseFloat(month_labor_hours as string) || 0,
+        unverified_entries: Number.parseInt(unverified_entries as string),
       },
     });
   } catch (error) {
@@ -92,9 +100,7 @@ router.get('/workers/:workerId', async (req: AuthRequest, res, next) => {
     const farmId = req.user?.farm_id;
 
     // Verify worker exists and belongs to farm
-    const worker = await db('workers')
-      .where({ id: workerId, farm_id: farmId })
-      .first();
+    const worker = await db('workers').where({ id: workerId, farm_id: farmId }).first();
 
     if (!worker) {
       throw new AppError('Worker not found', 404);
@@ -107,10 +113,11 @@ router.get('/workers/:workerId', async (req: AuthRequest, res, next) => {
       .sum('total_hours as total_hours');
 
     // Get total days worked (distinct dates)
-    const [{ days_worked }] = await db('time_entries')
+    const daysResult = await db('time_entries')
       .where({ worker_id: workerId, farm_id: farmId })
       .whereNotNull('clock_out')
       .countDistinct(db.raw('DATE(clock_in) as days_worked'));
+    const days_worked = Number((daysResult[0] as any)?.days_worked || 0);
 
     // Get current month hours
     const startOfMonth = new Date();
@@ -161,12 +168,12 @@ router.get('/workers/:workerId', async (req: AuthRequest, res, next) => {
       data: {
         worker_id: workerId,
         worker_name: `${worker.first_name} ${worker.last_name}`,
-        total_hours: parseFloat(total_hours as string) || 0,
-        days_worked: parseInt(days_worked as string) || 0,
-        month_hours: parseFloat(month_hours as string) || 0,
-        week_hours: parseFloat(week_hours as string) || 0,
-        completed_schedules: parseInt(completed_schedules as string),
-        upcoming_schedules: parseInt(upcoming_schedules as string),
+        total_hours: Number.parseFloat(total_hours as string) || 0,
+        days_worked: days_worked || 0,
+        month_hours: Number.parseFloat(month_hours as string) || 0,
+        week_hours: Number.parseFloat(week_hours as string) || 0,
+        completed_schedules: Number.parseInt(completed_schedules as string),
+        upcoming_schedules: Number.parseInt(upcoming_schedules as string),
         most_common_task: topTask?.task_type || null,
       },
     });
@@ -183,15 +190,17 @@ router.get('/labor-hours', async (req: AuthRequest, res, next) => {
 
     // Default to last 12 weeks or 12 months if no date range specified
     const endDate = end_date || new Date();
-    const startDate = start_date || (() => {
-      const date = new Date(endDate);
-      if (period === 'week') {
-        date.setDate(date.getDate() - (12 * 7)); // 12 weeks
-      } else {
-        date.setMonth(date.getMonth() - 12); // 12 months
-      }
-      return date;
-    })();
+    const startDate =
+      start_date ||
+      (() => {
+        const date = new Date(endDate);
+        if (period === 'week') {
+          date.setDate(date.getDate() - 12 * 7); // 12 weeks
+        } else {
+          date.setMonth(date.getMonth() - 12); // 12 months
+        }
+        return date;
+      })();
 
     let dateFormat: string;
     let dateTrunc: string;
@@ -225,11 +234,11 @@ router.get('/labor-hours', async (req: AuthRequest, res, next) => {
         period,
         start_date: startDate,
         end_date: endDate,
-        labor_hours: laborHours.map(item => ({
+        labor_hours: laborHours.map((item: any) => ({
           period: item.period,
-          total_hours: parseFloat(item.total_hours),
-          worker_count: parseInt(item.worker_count),
-          entry_count: parseInt(item.entry_count),
+          total_hours: Number.parseFloat(item.total_hours),
+          worker_count: Number.parseInt(item.worker_count),
+          entry_count: Number.parseInt(item.entry_count),
         })),
       },
     });
@@ -246,13 +255,19 @@ router.get('/field-utilization', async (req: AuthRequest, res, next) => {
     // Get all fields with their usage statistics
     const fieldStats = await db('fields')
       .where({ 'fields.farm_id': farmId })
-      .leftJoin('time_entries', function() {
-        this.on('time_entries.field_id', '=', 'fields.id')
-          .andOn('time_entries.farm_id', '=', 'fields.farm_id');
+      .leftJoin('time_entries', function () {
+        this.on('time_entries.field_id', '=', 'fields.id').andOn(
+          'time_entries.farm_id',
+          '=',
+          'fields.farm_id'
+        );
       })
-      .leftJoin('schedules', function() {
-        this.on('schedules.field_id', '=', 'fields.id')
-          .andOn('schedules.farm_id', '=', 'fields.farm_id');
+      .leftJoin('schedules', function () {
+        this.on('schedules.field_id', '=', 'fields.id').andOn(
+          'schedules.farm_id',
+          '=',
+          'fields.farm_id'
+        );
       })
       .select(
         'fields.id',
@@ -266,9 +281,9 @@ router.get('/field-utilization', async (req: AuthRequest, res, next) => {
       .groupBy('fields.id', 'fields.name', 'fields.size_acres', 'fields.current_crop');
 
     // Calculate utilization metrics
-    const utilization = fieldStats.map(field => {
-      const totalHours = parseFloat(field.total_hours as string);
-      const sizeAcres = parseFloat(field.size_acres as string);
+    const utilization = fieldStats.map((field) => {
+      const totalHours = Number.parseFloat(field.total_hours as string);
+      const sizeAcres = Number.parseFloat(field.size_acres as string);
       const hoursPerAcre = sizeAcres > 0 ? totalHours / sizeAcres : 0;
 
       return {
@@ -277,9 +292,9 @@ router.get('/field-utilization', async (req: AuthRequest, res, next) => {
         size_acres: sizeAcres,
         current_crop: field.current_crop,
         total_hours: totalHours,
-        hours_per_acre: parseFloat(hoursPerAcre.toFixed(2)),
-        time_entry_count: parseInt(field.time_entry_count),
-        schedule_count: parseInt(field.schedule_count),
+        hours_per_acre: Number.parseFloat(hoursPerAcre.toFixed(2)),
+        time_entry_count: Number.parseInt(field.time_entry_count),
+        schedule_count: Number.parseInt(field.schedule_count),
       };
     });
 
@@ -297,9 +312,9 @@ router.get('/field-utilization', async (req: AuthRequest, res, next) => {
         fields: utilization,
         summary: {
           total_fields: utilization.length,
-          total_hours: parseFloat(totalHours.toFixed(2)),
-          total_acres: parseFloat(totalAcres.toFixed(2)),
-          average_hours_per_acre: parseFloat(averageHoursPerAcre.toFixed(2)),
+          total_hours: Number.parseFloat(totalHours.toFixed(2)),
+          total_acres: Number.parseFloat(totalAcres.toFixed(2)),
+          average_hours_per_acre: Number.parseFloat(averageHoursPerAcre.toFixed(2)),
         },
       },
     });
