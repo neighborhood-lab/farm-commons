@@ -137,3 +137,10 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Database backups and backup configuration
+backups/
+scripts/backup-cron
+scripts/backup.env
+*.sql
+*.sql.gz
