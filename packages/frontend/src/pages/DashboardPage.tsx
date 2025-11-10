@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Users, Calendar, Clock, TrendingUp } from 'lucide-react';
 import { api } from '../lib/api';
 import type { FarmStats } from '@farm-commons/shared';
+import WeatherWidget from '../components/WeatherWidget';
 
 export default function DashboardPage() {
   const { data: stats, isLoading } = useQuery({
@@ -84,6 +85,11 @@ export default function DashboardPage() {
             </div>
           );
         })}
+      </div>
+
+      {/* Weather Widget */}
+      <div className="mb-8">
+        <WeatherWidget />
       </div>
 
       {/* Welcome Message */}
