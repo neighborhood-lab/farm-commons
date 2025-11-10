@@ -62,6 +62,7 @@ describe('Time Entry Approval Workflow', () => {
     [{ id: managerId }] = await testDb('users')
       .insert({
         email: 'manager@test.com',
+        // eslint-disable-next-line sonarjs/no-hardcoded-passwords
         password_hash: 'hashed_password',
         role: 'manager',
         farm_id: farmId,
@@ -210,13 +211,11 @@ describe('Time Entry Approval Workflow', () => {
 
   describe('Approve Time Entry', () => {
     it('should approve a pending time entry', async () => {
-      await testDb('time_entries')
-        .where({ id: timeEntry1Id })
-        .update({
-          approval_status: 'approved',
-          approved_by: managerId,
-          approved_at: new Date(),
-        });
+      await testDb('time_entries').where({ id: timeEntry1Id }).update({
+        approval_status: 'approved',
+        approved_by: managerId,
+        approved_at: new Date(),
+      });
 
       const entry = await testDb('time_entries').where({ id: timeEntry1Id }).first();
 
@@ -234,13 +233,11 @@ describe('Time Entry Approval Workflow', () => {
     });
 
     it('should track who approved the entry', async () => {
-      await testDb('time_entries')
-        .where({ id: timeEntry1Id })
-        .update({
-          approval_status: 'approved',
-          approved_by: managerId,
-          approved_at: new Date(),
-        });
+      await testDb('time_entries').where({ id: timeEntry1Id }).update({
+        approval_status: 'approved',
+        approved_by: managerId,
+        approved_at: new Date(),
+      });
 
       const entry = await testDb('time_entries').where({ id: timeEntry1Id }).first();
 
@@ -250,19 +247,19 @@ describe('Time Entry Approval Workflow', () => {
     it('should record approval timestamp', async () => {
       const beforeApproval = new Date();
 
-      await testDb('time_entries')
-        .where({ id: timeEntry1Id })
-        .update({
-          approval_status: 'approved',
-          approved_by: managerId,
-          approved_at: new Date(),
-        });
+      await testDb('time_entries').where({ id: timeEntry1Id }).update({
+        approval_status: 'approved',
+        approved_by: managerId,
+        approved_at: new Date(),
+      });
 
       const entry = await testDb('time_entries').where({ id: timeEntry1Id }).first();
       const afterApproval = new Date();
 
       expect(entry.approved_at).not.toBeNull();
-      expect(new Date(entry.approved_at).getTime()).toBeGreaterThanOrEqual(beforeApproval.getTime());
+      expect(new Date(entry.approved_at).getTime()).toBeGreaterThanOrEqual(
+        beforeApproval.getTime()
+      );
       expect(new Date(entry.approved_at).getTime()).toBeLessThanOrEqual(afterApproval.getTime());
     });
   });
@@ -271,14 +268,12 @@ describe('Time Entry Approval Workflow', () => {
     it('should reject a time entry with a reason', async () => {
       const rejectionReason = 'Hours do not match schedule';
 
-      await testDb('time_entries')
-        .where({ id: timeEntry1Id })
-        .update({
-          approval_status: 'rejected',
-          approved_by: managerId,
-          approved_at: new Date(),
-          rejection_reason: rejectionReason,
-        });
+      await testDb('time_entries').where({ id: timeEntry1Id }).update({
+        approval_status: 'rejected',
+        approved_by: managerId,
+        approved_at: new Date(),
+        rejection_reason: rejectionReason,
+      });
 
       const entry = await testDb('time_entries').where({ id: timeEntry1Id }).first();
 
@@ -312,13 +307,11 @@ describe('Time Entry Approval Workflow', () => {
     it('should approve multiple time entries at once', async () => {
       const timeEntryIds = [timeEntry1Id, timeEntry2Id];
 
-      await testDb('time_entries')
-        .whereIn('id', timeEntryIds)
-        .update({
-          approval_status: 'approved',
-          approved_by: managerId,
-          approved_at: new Date(),
-        });
+      await testDb('time_entries').whereIn('id', timeEntryIds).update({
+        approval_status: 'approved',
+        approved_by: managerId,
+        approved_at: new Date(),
+      });
 
       const entries = await testDb('time_entries').whereIn('id', timeEntryIds);
 
@@ -329,13 +322,11 @@ describe('Time Entry Approval Workflow', () => {
 
     it('should only approve entries that are pending', async () => {
       // First approve one entry
-      await testDb('time_entries')
-        .where({ id: timeEntry1Id })
-        .update({
-          approval_status: 'approved',
-          approved_by: managerId,
-          approved_at: new Date(),
-        });
+      await testDb('time_entries').where({ id: timeEntry1Id }).update({
+        approval_status: 'approved',
+        approved_by: managerId,
+        approved_at: new Date(),
+      });
 
       // Check status
       const entry1 = await testDb('time_entries').where({ id: timeEntry1Id }).first();
@@ -362,13 +353,11 @@ describe('Time Entry Approval Workflow', () => {
   describe('Approval Status Validation', () => {
     it('should prevent re-approval of already approved entries', async () => {
       // First approval
-      await testDb('time_entries')
-        .where({ id: timeEntry1Id })
-        .update({
-          approval_status: 'approved',
-          approved_by: managerId,
-          approved_at: new Date(),
-        });
+      await testDb('time_entries').where({ id: timeEntry1Id }).update({
+        approval_status: 'approved',
+        approved_by: managerId,
+        approved_at: new Date(),
+      });
 
       const entry = await testDb('time_entries').where({ id: timeEntry1Id }).first();
 
@@ -378,14 +367,12 @@ describe('Time Entry Approval Workflow', () => {
 
     it('should prevent approval changes after rejection', async () => {
       // First reject
-      await testDb('time_entries')
-        .where({ id: timeEntry1Id })
-        .update({
-          approval_status: 'rejected',
-          approved_by: managerId,
-          approved_at: new Date(),
-          rejection_reason: 'Invalid hours',
-        });
+      await testDb('time_entries').where({ id: timeEntry1Id }).update({
+        approval_status: 'rejected',
+        approved_by: managerId,
+        approved_at: new Date(),
+        rejection_reason: 'Invalid hours',
+      });
 
       const entry = await testDb('time_entries').where({ id: timeEntry1Id }).first();
 
@@ -397,13 +384,11 @@ describe('Time Entry Approval Workflow', () => {
   describe('Query Filters', () => {
     it('should filter pending entries efficiently', async () => {
       // Approve one entry
-      await testDb('time_entries')
-        .where({ id: timeEntry1Id })
-        .update({
-          approval_status: 'approved',
-          approved_by: managerId,
-          approved_at: new Date(),
-        });
+      await testDb('time_entries').where({ id: timeEntry1Id }).update({
+        approval_status: 'approved',
+        approved_by: managerId,
+        approved_at: new Date(),
+      });
 
       const pendingEntries = await testDb('time_entries')
         .where({
