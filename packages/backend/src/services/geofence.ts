@@ -154,10 +154,7 @@ export function isPointInPolygon(point: Coordinate, polygon: Coordinate[]): bool
  * @param polygon Array of coordinates forming the polygon
  * @returns Minimum distance in meters
  */
-export function distanceToPolygonBoundary(
-  point: Coordinate,
-  polygon: Coordinate[]
-): number {
+export function distanceToPolygonBoundary(point: Coordinate, polygon: Coordinate[]): number {
   if (polygon.length === 0) {
     return Infinity;
   }
@@ -188,7 +185,6 @@ function distanceToLineSegment(
 ): number {
   // Calculate distances to endpoints
   const distToStart = calculateDistance(point, lineStart);
-  const distToEnd = calculateDistance(point, lineEnd);
   const lineLength = calculateDistance(lineStart, lineEnd);
 
   // If line segment is actually a point
@@ -275,9 +271,7 @@ export function validateGeofence(
     }
 
     const isInside = isPointInPolygon(coordinate, boundary.points);
-    const distance = isInside
-      ? distanceToPolygonBoundary(coordinate, boundary.points)
-      : distanceToPolygonBoundary(coordinate, boundary.points);
+    const distance = distanceToPolygonBoundary(coordinate, boundary.points);
 
     return {
       isValid: isInside,
@@ -300,10 +294,7 @@ export function validateGeofence(
  * @param radiusMeters Radius in meters
  * @returns Farm boundary definition
  */
-export function createCircularBoundary(
-  center: Coordinate,
-  radiusMeters: number
-): FarmBoundary {
+export function createCircularBoundary(center: Coordinate, radiusMeters: number): FarmBoundary {
   return {
     type: 'circle',
     center,

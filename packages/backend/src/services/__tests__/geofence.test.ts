@@ -89,8 +89,8 @@ describe('Geofence Validation Service', () => {
     });
 
     it('should reject NaN values', () => {
-      expect(isValidCoordinate({ lat: NaN, lng: 0 })).toBe(false);
-      expect(isValidCoordinate({ lat: 0, lng: NaN })).toBe(false);
+      expect(isValidCoordinate({ lat: Number.NaN, lng: 0 })).toBe(false);
+      expect(isValidCoordinate({ lat: 0, lng: Number.NaN })).toBe(false);
     });
 
     it('should reject Infinity values', () => {
@@ -99,7 +99,9 @@ describe('Geofence Validation Service', () => {
     });
 
     it('should reject non-number values', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(isValidCoordinate({ lat: '40.7128' as any, lng: -74.006 })).toBe(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(isValidCoordinate({ lat: 40.7128, lng: '-74.006' as any })).toBe(false);
     });
   });
@@ -300,8 +302,8 @@ describe('Geofence Validation Service', () => {
   describe('validateGeofence - Polygon Boundary', () => {
     const boundary: FarmBoundary = createPolygonBoundary([
       { lat: 40.71, lng: -74.01 },
-      { lat: 40.71, lng: -74.0 },
-      { lat: 40.72, lng: -74.0 },
+      { lat: 40.71, lng: -74 },
+      { lat: 40.72, lng: -74 },
       { lat: 40.72, lng: -74.01 },
     ]);
 
@@ -328,7 +330,7 @@ describe('Geofence Validation Service', () => {
         type: 'polygon',
         points: [
           { lat: 40.71, lng: -74.01 },
-          { lat: 40.71, lng: -74.0 },
+          { lat: 40.71, lng: -74 },
         ],
       };
 
@@ -340,10 +342,7 @@ describe('Geofence Validation Service', () => {
   });
 
   describe('validateGeofence - Override Mechanism', () => {
-    const boundary: FarmBoundary = createCircularBoundary(
-      { lat: 40.7128, lng: -74.006 },
-      1000
-    );
+    const boundary: FarmBoundary = createCircularBoundary({ lat: 40.7128, lng: -74.006 }, 1000);
 
     it('should allow override with proper authorization', () => {
       const outsidePoint: Coordinate = { lat: 40.7308, lng: -74.006 };
