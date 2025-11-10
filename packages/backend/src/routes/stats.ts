@@ -117,7 +117,7 @@ router.get('/workers/:workerId', async (req: AuthRequest, res, next) => {
       .where({ worker_id: workerId, farm_id: farmId })
       .whereNotNull('clock_out')
       .countDistinct(db.raw('DATE(clock_in) as days_worked'));
-    const days_worked = Number((daysResult[0] as any)?.days_worked || 0);
+    const days_worked = Number((daysResult[0] as Record<string, unknown>)?.days_worked || 0);
 
     // Get current month hours
     const startOfMonth = new Date();
@@ -234,11 +234,11 @@ router.get('/labor-hours', async (req: AuthRequest, res, next) => {
         period,
         start_date: startDate,
         end_date: endDate,
-        labor_hours: laborHours.map((item: any) => ({
+        labor_hours: laborHours.map((item: Record<string, unknown>) => ({
           period: item.period,
-          total_hours: Number.parseFloat(item.total_hours),
-          worker_count: Number.parseInt(item.worker_count),
-          entry_count: Number.parseInt(item.entry_count),
+          total_hours: Number.parseFloat(String(item.total_hours)),
+          worker_count: Number.parseInt(String(item.worker_count)),
+          entry_count: Number.parseInt(String(item.entry_count)),
         })),
       },
     });
