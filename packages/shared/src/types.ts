@@ -168,7 +168,6 @@ export interface FarmStats {
   scheduled_shifts_today: number;
 }
 
-<<<<<<< HEAD
 // Weather Types
 export interface WeatherCondition {
   id: number;
@@ -294,5 +293,4 @@ export interface EquipmentAssignment {
   condition_on_return: EquipmentCondition | null;
   created_at: Date;
   updated_at: Date;
->>>>>>> develop
 }

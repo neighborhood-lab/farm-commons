@@ -10,7 +10,7 @@ import {
   AlertTriangle,
   MapPin,
   TrendingUp,
-  TrendingDown
+  TrendingDown,
 } from 'lucide-react';
 import { api } from '../lib/api';
 import type { WeatherData } from '@farm-commons/shared';
@@ -19,8 +19,52 @@ interface WeatherWidgetProps {
   className?: string;
 }
 
+function getWeatherIcon(condition: string) {
+  switch (condition.toLowerCase()) {
+    case 'clear': {
+      return <Sun className="text-yellow-500" size={32} />;
+    }
+    case 'clouds': {
+      return <Cloud className="text-gray-400" size={32} />;
+    }
+    case 'rain': {
+      return <CloudRain className="text-blue-500" size={32} />;
+    }
+    case 'drizzle': {
+      return <CloudDrizzle className="text-blue-400" size={32} />;
+    }
+    case 'snow': {
+      return <CloudSnow className="text-blue-200" size={32} />;
+    }
+    default: {
+      return <Cloud className="text-gray-400" size={32} />;
+    }
+  }
+}
+
+function getAlertSeverityColor(severity: string) {
+  switch (severity) {
+    case 'extreme': {
+      return 'bg-red-100 border-red-400 text-red-800';
+    }
+    case 'severe': {
+      return 'bg-orange-100 border-orange-400 text-orange-800';
+    }
+    case 'moderate': {
+      return 'bg-yellow-100 border-yellow-400 text-yellow-800';
+    }
+    default: {
+      return 'bg-blue-100 border-blue-400 text-blue-800';
+    }
+  }
+}
+
 export default function WeatherWidget({ className = '' }: WeatherWidgetProps) {
-  const { data: weather, isLoading, error } = useQuery({
+  const {
+    data: weather,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['weather'],
     queryFn: () => api.get<WeatherData>('/weather'),
     // Refetch every 30 minutes
@@ -49,7 +93,7 @@ export default function WeatherWidget({ className = '' }: WeatherWidgetProps) {
       },
       forecast: [
         {
-          date: new Date(Date.now() + 86400000),
+          date: new Date(Date.now() + 86_400_000),
           temp_min: 64,
           temp_max: 76,
           conditions: [{ id: 801, main: 'Clouds', description: 'few clouds', icon: '02d' }],
@@ -57,7 +101,7 @@ export default function WeatherWidget({ className = '' }: WeatherWidgetProps) {
           humidity: 60,
         },
         {
-          date: new Date(Date.now() + 172800000),
+          date: new Date(Date.now() + 172_800_000),
           temp_min: 66,
           temp_max: 80,
           conditions: [{ id: 500, main: 'Rain', description: 'light rain', icon: '10d' }],
@@ -65,7 +109,7 @@ export default function WeatherWidget({ className = '' }: WeatherWidgetProps) {
           humidity: 70,
         },
         {
-          date: new Date(Date.now() + 259200000),
+          date: new Date(Date.now() + 259_200_000),
           temp_min: 62,
           temp_max: 74,
           conditions: [{ id: 802, main: 'Clouds', description: 'scattered clouds', icon: '03d' }],
@@ -77,41 +121,11 @@ export default function WeatherWidget({ className = '' }: WeatherWidgetProps) {
       location: {
         name: 'Farm Location',
         lat: 40.7128,
-        lon: -74.0060,
+        lon: -74.006,
       },
       last_updated: new Date(),
     },
   });
-
-  const getWeatherIcon = (condition: string) => {
-    switch (condition.toLowerCase()) {
-      case 'clear':
-        return <Sun className="text-yellow-500" size={32} />;
-      case 'clouds':
-        return <Cloud className="text-gray-400" size={32} />;
-      case 'rain':
-        return <CloudRain className="text-blue-500" size={32} />;
-      case 'drizzle':
-        return <CloudDrizzle className="text-blue-400" size={32} />;
-      case 'snow':
-        return <CloudSnow className="text-blue-200" size={32} />;
-      default:
-        return <Cloud className="text-gray-400" size={32} />;
-    }
-  };
-
-  const getAlertSeverityColor = (severity: string) => {
-    switch (severity) {
-      case 'extreme':
-        return 'bg-red-100 border-red-400 text-red-800';
-      case 'severe':
-        return 'bg-orange-100 border-orange-400 text-orange-800';
-      case 'moderate':
-        return 'bg-yellow-100 border-yellow-400 text-yellow-800';
-      default:
-        return 'bg-blue-100 border-blue-400 text-blue-800';
-    }
-  };
 
   if (isLoading) {
     return (
@@ -214,19 +228,13 @@ export default function WeatherWidget({ className = '' }: WeatherWidgetProps) {
               const dayCondition = day.conditions[0];
               const date = new Date(day.date);
               const dayName =
-                index === 0
-                  ? 'Tomorrow'
-                  : date.toLocaleDateString('en-US', { weekday: 'short' });
+                index === 0 ? 'Tomorrow' : date.toLocaleDateString('en-US', { weekday: 'short' });
 
               return (
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center gap-3 flex-1">
-                    <span className="text-sm font-medium text-gray-700 w-16">
-                      {dayName}
-                    </span>
-                    <div className="flex-shrink-0">
-                      {getWeatherIcon(dayCondition.main)}
-                    </div>
+                    <span className="text-sm font-medium text-gray-700 w-16">{dayName}</span>
+                    <div className="flex-shrink-0">{getWeatherIcon(dayCondition.main)}</div>
                     <span className="text-xs text-gray-600 capitalize flex-1 truncate">
                       {dayCondition.description}
                     </span>
@@ -242,9 +250,7 @@ export default function WeatherWidget({ className = '' }: WeatherWidgetProps) {
                     </span>
                   </div>
                   {day.pop > 0 && (
-                    <div className="ml-2 text-xs text-blue-600">
-                      {Math.round(day.pop * 100)}%
-                    </div>
+                    <div className="ml-2 text-xs text-blue-600">{Math.round(day.pop * 100)}%</div>
                   )}
                 </div>
               );
@@ -256,7 +262,8 @@ export default function WeatherWidget({ className = '' }: WeatherWidgetProps) {
       {/* Last Updated */}
       <div className="px-6 py-3 bg-gray-50 rounded-b-lg border-t border-gray-200">
         <p className="text-xs text-gray-500 text-center">
-          Updated {new Date(weather.last_updated).toLocaleTimeString('en-US', {
+          Updated{' '}
+          {new Date(weather.last_updated).toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: '2-digit',
           })}
