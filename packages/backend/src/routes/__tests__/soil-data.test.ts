@@ -32,6 +32,7 @@ describe('Soil Data Tracking', () => {
       });
     } catch (error) {
       // Migrations might already be run, continue
+      // eslint-disable-next-line no-console
       console.log('Migration setup:', error);
     }
   });
@@ -208,7 +209,8 @@ describe('Soil Data Tracking', () => {
       expect(Number.parseFloat(tests[1].nitrogen_ppm)).toBe(28);
 
       // Nitrogen decreased from 35 to 28
-      const change = Number.parseFloat(tests[1].nitrogen_ppm) - Number.parseFloat(tests[0].nitrogen_ppm);
+      const change =
+        Number.parseFloat(tests[1].nitrogen_ppm) - Number.parseFloat(tests[0].nitrogen_ppm);
       expect(change).toBeLessThan(0);
     });
 
@@ -275,7 +277,9 @@ describe('Soil Data Tracking', () => {
 
   describe('Test History and Trends', () => {
     it('should return test count for a field', async () => {
-      const [{ count }] = await testDb('soil_tests').where({ field_id: field1Id }).count('* as count');
+      const [{ count }] = await testDb('soil_tests')
+        .where({ field_id: field1Id })
+        .count('* as count');
 
       expect(Number.parseInt(count as string)).toBe(2);
     });
@@ -337,7 +341,7 @@ describe('Soil Data Tracking', () => {
           farm_id: farmId,
           test_date: new Date('2024-04-10'),
           test_type: 'Complete',
-          ph_level: 7.0,
+          ph_level: 7,
           cec_meq_100g: 18.5,
         })
         .returning('*');
@@ -409,13 +413,11 @@ describe('Soil Data Tracking', () => {
         potassium_ppm: 200,
       });
 
-      const [{ avg_n, avg_p, avg_k }] = await testDb('soil_tests')
-        .where({ farm_id: farmId })
-        .avg({
-          avg_n: 'nitrogen_ppm',
-          avg_p: 'phosphorus_ppm',
-          avg_k: 'potassium_ppm',
-        });
+      const [{ avg_n, avg_p, avg_k }] = await testDb('soil_tests').where({ farm_id: farmId }).avg({
+        avg_n: 'nitrogen_ppm',
+        avg_p: 'phosphorus_ppm',
+        avg_k: 'potassium_ppm',
+      });
 
       expect(Number.parseFloat(avg_n as string)).toBeGreaterThan(0);
       expect(Number.parseFloat(avg_p as string)).toBeGreaterThan(0);

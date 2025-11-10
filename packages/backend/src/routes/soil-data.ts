@@ -99,7 +99,10 @@ router.get('/fields/:fieldId/soil-tests', async (req: AuthRequest, res, next) =>
 
       trends = {
         ph_level: calculateTrend(latest.ph_level, previous.ph_level),
-        organic_matter: calculateTrend(latest.organic_matter_percent, previous.organic_matter_percent),
+        organic_matter: calculateTrend(
+          latest.organic_matter_percent,
+          previous.organic_matter_percent
+        ),
         nitrogen: calculateTrend(latest.nitrogen_ppm, previous.nitrogen_ppm),
         phosphorus: calculateTrend(latest.phosphorus_ppm, previous.phosphorus_ppm),
         potassium: calculateTrend(latest.potassium_ppm, previous.potassium_ppm),
@@ -244,14 +247,20 @@ router.delete('/fields/:fieldId/soil-tests/:testId', async (req: AuthRequest, re
   }
 });
 
+// Type for nullable numeric values
+type NullableNumericValue = string | number | null;
+
 // Helper function to calculate trend
-function calculateTrend(latest: any, previous: any): string | null {
+function calculateTrend(
+  latest: NullableNumericValue,
+  previous: NullableNumericValue
+): string | null {
   if (latest === null || previous === null) {
     return null;
   }
 
-  const latestValue = Number.parseFloat(latest);
-  const previousValue = Number.parseFloat(previous);
+  const latestValue = Number.parseFloat(String(latest));
+  const previousValue = Number.parseFloat(String(previous));
 
   if (Number.isNaN(latestValue) || Number.isNaN(previousValue)) {
     return null;
@@ -270,13 +279,14 @@ function calculateTrend(latest: any, previous: any): string | null {
 }
 
 // Helper function to generate automatic recommendations
-function generateRecommendations(soilTest: any): string[] {
+// eslint-disable-next-line sonarjs/cognitive-complexity
+function generateRecommendations(soilTest: Record<string, string | number | null>): string[] {
   const recommendations: string[] = [];
 
   // pH recommendations
   if (soilTest.ph_level !== null) {
-    const ph = Number.parseFloat(soilTest.ph_level);
-    if (ph < 6.0) {
+    const ph = Number.parseFloat(String(soilTest.ph_level));
+    if (ph < 6) {
       recommendations.push('Soil is acidic. Consider applying lime to raise pH.');
     } else if (ph > 7.5) {
       recommendations.push('Soil is alkaline. Consider applying sulfur to lower pH.');
@@ -287,21 +297,23 @@ function generateRecommendations(soilTest: any): string[] {
 
   // Organic matter recommendations
   if (soilTest.organic_matter_percent !== null) {
-    const om = Number.parseFloat(soilTest.organic_matter_percent);
-    if (om < 3.0) {
+    const om = Number.parseFloat(String(soilTest.organic_matter_percent));
+    if (om < 3) {
       recommendations.push(
         'Organic matter is low. Add compost or cover crops to improve soil health.'
       );
-    } else if (om >= 5.0) {
+    } else if (om >= 5) {
       recommendations.push('Excellent organic matter content.');
     }
   }
 
   // Nitrogen recommendations
   if (soilTest.nitrogen_ppm !== null) {
-    const n = Number.parseFloat(soilTest.nitrogen_ppm);
+    const n = Number.parseFloat(String(soilTest.nitrogen_ppm));
     if (n < 20) {
-      recommendations.push('Nitrogen is low. Consider nitrogen-rich fertilizers or legume cover crops.');
+      recommendations.push(
+        'Nitrogen is low. Consider nitrogen-rich fertilizers or legume cover crops.'
+      );
     } else if (n > 50) {
       recommendations.push('Nitrogen is high. Reduce nitrogen inputs to prevent runoff.');
     }
@@ -329,7 +341,9 @@ function generateRecommendations(soilTest: any): string[] {
 
   // If no specific recommendations, add general advice
   if (recommendations.length === 0) {
-    recommendations.push('Insufficient data for automated recommendations. Consult with agronomist.');
+    recommendations.push(
+      'Insufficient data for automated recommendations. Consult with agronomist.'
+    );
   }
 
   return recommendations;
