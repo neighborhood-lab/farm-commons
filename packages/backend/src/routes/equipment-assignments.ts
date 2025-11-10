@@ -1,12 +1,12 @@
 // Equipment assignment routes - Track equipment checkout/checkin
 
-import express from 'express';
+import express, { Router } from 'express';
 import { assignEquipmentSchema, returnEquipmentSchema } from '@farm-commons/shared';
 import db from '../db/connection.js';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // All equipment assignment routes require authentication
 router.use(authenticateToken);
@@ -23,9 +23,7 @@ router.post('/:id/assign', requireRole('admin', 'manager'), async (req: AuthRequ
     const userId = req.user?.id;
 
     // Verify equipment exists and belongs to farm
-    const equipment = await db('equipment')
-      .where({ id: equipmentId, farm_id: farmId })
-      .first();
+    const equipment = await db('equipment').where({ id: equipmentId, farm_id: farmId }).first();
 
     if (!equipment) {
       throw new AppError('Equipment not found', 404);
@@ -37,9 +35,7 @@ router.post('/:id/assign', requireRole('admin', 'manager'), async (req: AuthRequ
     }
 
     // Check if worker exists and belongs to farm
-    const worker = await db('workers')
-      .where({ id: data.worker_id, farm_id: farmId })
-      .first();
+    const worker = await db('workers').where({ id: data.worker_id, farm_id: farmId }).first();
 
     if (!worker) {
       throw new AppError('Worker not found', 404);
@@ -96,9 +92,7 @@ router.post('/:id/return', requireRole('admin', 'manager'), async (req: AuthRequ
     const userId = req.user?.id;
 
     // Verify equipment exists and belongs to farm
-    const equipment = await db('equipment')
-      .where({ id: equipmentId, farm_id: farmId })
-      .first();
+    const equipment = await db('equipment').where({ id: equipmentId, farm_id: farmId }).first();
 
     if (!equipment) {
       throw new AppError('Equipment not found', 404);
@@ -160,9 +154,7 @@ router.get('/:id/history', async (req: AuthRequest, res, next) => {
     const farmId = req.user?.farm_id;
 
     // Verify equipment exists and belongs to farm
-    const equipment = await db('equipment')
-      .where({ id: equipmentId, farm_id: farmId })
-      .first();
+    const equipment = await db('equipment').where({ id: equipmentId, farm_id: farmId }).first();
 
     if (!equipment) {
       throw new AppError('Equipment not found', 404);
@@ -172,8 +164,16 @@ router.get('/:id/history', async (req: AuthRequest, res, next) => {
     const history = await db('equipment_assignments')
       .where({ equipment_id: equipmentId, farm_id: farmId })
       .leftJoin('workers', 'equipment_assignments.worker_id', 'workers.id')
-      .leftJoin('users as assigned_by_user', 'equipment_assignments.assigned_by', 'assigned_by_user.id')
-      .leftJoin('users as returned_by_user', 'equipment_assignments.returned_by', 'returned_by_user.id')
+      .leftJoin(
+        'users as assigned_by_user',
+        'equipment_assignments.assigned_by',
+        'assigned_by_user.id'
+      )
+      .leftJoin(
+        'users as returned_by_user',
+        'equipment_assignments.returned_by',
+        'returned_by_user.id'
+      )
       .select(
         'equipment_assignments.*',
         'workers.first_name as worker_first_name',
@@ -205,9 +205,7 @@ router.get('/workers/:id/equipment', async (req: AuthRequest, res, next) => {
     const farmId = req.user?.farm_id;
 
     // Verify worker exists and belongs to farm
-    const worker = await db('workers')
-      .where({ id: workerId, farm_id: farmId })
-      .first();
+    const worker = await db('workers').where({ id: workerId, farm_id: farmId }).first();
 
     if (!worker) {
       throw new AppError('Worker not found', 404);
@@ -217,7 +215,11 @@ router.get('/workers/:id/equipment', async (req: AuthRequest, res, next) => {
     const assignedEquipment = await db('equipment_assignments')
       .where({ worker_id: workerId, farm_id: farmId, returned_at: null })
       .leftJoin('equipment', 'equipment_assignments.equipment_id', 'equipment.id')
-      .leftJoin('users as assigned_by_user', 'equipment_assignments.assigned_by', 'assigned_by_user.id')
+      .leftJoin(
+        'users as assigned_by_user',
+        'equipment_assignments.assigned_by',
+        'assigned_by_user.id'
+      )
       .select(
         'equipment_assignments.*',
         'equipment.name as equipment_name',

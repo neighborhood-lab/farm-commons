@@ -30,19 +30,19 @@ interface FieldMapProps {
 
 // Crop color mapping for visual distinction
 const CROP_COLORS: Record<string, string> = {
-  'corn': '#FFD700',
-  'wheat': '#F4E4C1',
-  'soybeans': '#90EE90',
-  'tomatoes': '#FF6347',
-  'lettuce': '#98FB98',
-  'carrots': '#FF8C00',
-  'potatoes': '#DEB887',
-  'peppers': '#DC143C',
-  'cucumbers': '#006400',
-  'beans': '#32CD32',
-  'squash': '#FFB347',
-  'pumpkins': '#FF8200',
-  'default': '#4A90E2',
+  corn: '#FFD700',
+  wheat: '#F4E4C1',
+  soybeans: '#90EE90',
+  tomatoes: '#FF6347',
+  lettuce: '#98FB98',
+  carrots: '#FF8C00',
+  potatoes: '#DEB887',
+  peppers: '#DC143C',
+  cucumbers: '#006400',
+  beans: '#32CD32',
+  squash: '#FFB347',
+  pumpkins: '#FF8200',
+  default: '#4A90E2',
 };
 
 // Get color for a crop type
@@ -61,15 +61,15 @@ function MapBoundsSetter({ fields }: { fields: Field[] }) {
 
     const bounds: LatLngExpression[] = [];
 
-    fields.forEach((field) => {
+    for (const field of fields) {
       if (field.boundary_gps && field.boundary_gps.length > 0) {
-        field.boundary_gps.forEach((point) => {
+        for (const point of field.boundary_gps) {
           bounds.push([point.lat, point.lng]);
-        });
+        }
       } else if (field.location_gps) {
         bounds.push([field.location_gps.lat, field.location_gps.lng]);
       }
-    });
+    }
 
     if (bounds.length > 0) {
       map.fitBounds(bounds as LatLngBoundsExpression, { padding: [50, 50] });
@@ -83,7 +83,7 @@ export default function FieldMap({
   fields,
   selectedFieldId,
   onFieldClick,
-  center = [40.7128, -74.0060], // Default to NYC coordinates
+  center = [40.7128, -74.006], // Default to NYC coordinates
   zoom = 13,
   height = '600px',
   className = '',
@@ -93,14 +93,14 @@ export default function FieldMap({
     if (fields.length === 0) return center;
 
     const validPoints: [number, number][] = [];
-    fields.forEach((field) => {
+    for (const field of fields) {
       if (field.location_gps) {
         validPoints.push([field.location_gps.lat, field.location_gps.lng]);
       } else if (field.boundary_gps && field.boundary_gps.length > 0) {
         const firstPoint = field.boundary_gps[0];
         validPoints.push([firstPoint.lat, firstPoint.lng]);
       }
-    });
+    }
 
     if (validPoints.length === 0) return center;
 
@@ -172,9 +172,7 @@ export default function FieldMap({
                           <span className="font-semibold">Soil:</span> {field.soil_type}
                         </p>
                       )}
-                      {field.notes && (
-                        <p className="mt-2 text-gray-600">{field.notes}</p>
-                      )}
+                      {field.notes && <p className="mt-2 text-gray-600">{field.notes}</p>}
                     </div>
                   </div>
                 </Popup>
@@ -213,9 +211,7 @@ export default function FieldMap({
                           <span className="font-semibold">Soil:</span> {field.soil_type}
                         </p>
                       )}
-                      {field.notes && (
-                        <p className="mt-2 text-gray-600">{field.notes}</p>
-                      )}
+                      {field.notes && <p className="mt-2 text-gray-600">{field.notes}</p>}
                     </div>
                   </div>
                 </Popup>
@@ -234,13 +230,13 @@ export default function FieldMap({
 export function FieldMapLegend({ fields }: { fields: Field[] }) {
   const cropColors = useMemo(() => {
     const uniqueCrops = new Set<string>();
-    fields.forEach((field) => {
+    for (const field of fields) {
       if (field.current_crop) {
         uniqueCrops.add(field.current_crop);
       }
-    });
+    }
 
-    return Array.from(uniqueCrops).map((crop) => ({
+    return [...uniqueCrops].map((crop) => ({
       crop,
       color: getCropColor(crop),
     }));
