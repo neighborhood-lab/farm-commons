@@ -1,14 +1,34 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Plus, Phone, Mail, Calendar } from 'lucide-react';
 import { api } from '../lib/api';
 import { formatDate, getInitials } from '@farm-commons/shared';
 import type { Worker, PaginatedResponse } from '@farm-commons/shared';
+import WorkerDetailModal from '../components/WorkerDetailModal';
 
 export default function WorkersPage() {
+  const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { data, isLoading } = useQuery({
     queryKey: ['workers'],
     queryFn: () => api.get<PaginatedResponse<Worker>>('/workers'),
   });
+
+  const handleWorkerClick = (worker: Worker) => {
+    setSelectedWorker(worker);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedWorker(null);
+  };
+
+  const handleEditWorker = (worker: Worker) => {
+    // TODO: Implement edit functionality
+    console.log('Edit worker:', worker);
+  };
 
   if (isLoading) {
     return <div className="text-center py-12">Loading workers...</div>;
@@ -36,7 +56,8 @@ export default function WorkersPage() {
         {workers.map((worker) => (
           <div
             key={worker.id}
-            className="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition-shadow"
+            onClick={() => handleWorkerClick(worker)}
+            className="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition-shadow cursor-pointer"
           >
             {/* Avatar and Name */}
             <div className="flex items-start gap-4 mb-4">
@@ -117,6 +138,16 @@ export default function WorkersPage() {
             Add First Worker
           </button>
         </div>
+      )}
+
+      {/* Worker Detail Modal */}
+      {selectedWorker && (
+        <WorkerDetailModal
+          worker={selectedWorker}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onEdit={handleEditWorker}
+        />
       )}
     </div>
   );
