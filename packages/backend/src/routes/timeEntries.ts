@@ -6,6 +6,8 @@ import { calculatePreciseHours } from '@farm-commons/shared';
 import db from '../db/connection.js';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { getActiveWorkersCount } from '../websocket/dashboard.js';
+import { getWebSocketServer } from '../websocket/serverInstance.js';
 
 const router = express.Router();
 
@@ -98,6 +100,33 @@ router.post('/clock-in', async (req: AuthRequest, res, next) => {
       })
       .returning('*');
 
+    // Get worker details for WebSocket broadcast
+    const worker = await db('workers')
+      .where({ id: data.worker_id })
+      .first();
+
+    // Broadcast clock-in event via WebSocket
+    const wsServer = getWebSocketServer();
+    if (wsServer && worker) {
+      wsServer.emitDashboardEvent('time-entry:change', {
+        type: 'clock_in',
+        entry,
+        worker: {
+          id: worker.id,
+          first_name: worker.first_name,
+          last_name: worker.last_name,
+        },
+        timestamp: new Date().toISOString(),
+      });
+
+      // Update active workers count
+      const activeCount = await getActiveWorkersCount(farmId as string);
+      wsServer.emitDashboardEvent('active-workers:update', {
+        count: activeCount,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     res.status(201).json({
       success: true,
       data: entry,
@@ -139,6 +168,33 @@ router.post('/:id/clock-out', async (req: AuthRequest, res, next) => {
         updated_at: new Date(),
       })
       .returning('*');
+
+    // Get worker details for WebSocket broadcast
+    const worker = await db('workers')
+      .where({ id: entry.worker_id })
+      .first();
+
+    // Broadcast clock-out event via WebSocket
+    const wsServer = getWebSocketServer();
+    if (wsServer && worker) {
+      wsServer.emitDashboardEvent('time-entry:change', {
+        type: 'clock_out',
+        entry: updatedEntry,
+        worker: {
+          id: worker.id,
+          first_name: worker.first_name,
+          last_name: worker.last_name,
+        },
+        timestamp: new Date().toISOString(),
+      });
+
+      // Update active workers count
+      const activeCount = await getActiveWorkersCount(farmId as string);
+      wsServer.emitDashboardEvent('active-workers:update', {
+        count: activeCount,
+        timestamp: new Date().toISOString(),
+      });
+    }
 
     res.json({
       success: true,

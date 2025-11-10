@@ -2,6 +2,7 @@
 
 import 'dotenv/config';
 import express from 'express';
+import { createServer } from 'http';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -16,6 +17,10 @@ import timeEntryRoutes from './routes/timeEntries.js';
 
 // Middleware
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+
+// WebSocket
+import { initializeWebSocket } from './websocket/index.js';
+import { setWebSocketServer } from './websocket/serverInstance.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -102,22 +107,36 @@ app.use(notFoundHandler);
 // Error handler
 app.use(errorHandler);
 
+// Create HTTP server
+const httpServer = createServer(app);
+
+// Initialize WebSocket
+export const wsServer = initializeWebSocket(httpServer);
+setWebSocketServer(wsServer);
+
 // Start server
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   logger.info(`🚜 Farm Commons API server running on port ${PORT}`);
   logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
   logger.info(`Health check: http://localhost:${PORT}/health`);
+  logger.info(`WebSocket: ws://localhost:${PORT}`);
 });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
   logger.info('SIGTERM signal received: closing HTTP server');
-  process.exit(0);
+  wsServer.io.close(() => {
+    logger.info('WebSocket server closed');
+    process.exit(0);
+  });
 });
 
 process.on('SIGINT', () => {
   logger.info('SIGINT signal received: closing HTTP server');
-  process.exit(0);
+  wsServer.io.close(() => {
+    logger.info('WebSocket server closed');
+    process.exit(0);
+  });
 });
 
 export default app;
