@@ -279,14 +279,3 @@ export const returnEquipmentSchema = z.object({
   condition_on_return: z.enum(['excellent', 'good', 'fair', 'poor', 'damaged']),
   return_notes: z.string().optional().nullable(),
 });
-
-// Equipment Assignment Schemas
-export const assignEquipmentSchema = z.object({
-  worker_id: z.string().uuid(),
-  assignment_notes: z.string().optional().nullable(),
-});
-
-export const returnEquipmentSchema = z.object({
-  condition_on_return: z.enum(['excellent', 'good', 'fair', 'poor', 'damaged']),
-  return_notes: z.string().optional().nullable(),
-});

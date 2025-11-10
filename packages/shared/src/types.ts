@@ -53,6 +53,7 @@ export interface Field {
   name: string;
   size_acres: number;
   location_gps: { lat: number; lng: number } | null;
+  boundary_gps?: { lat: number; lng: number }[] | null;
   current_crop: string | null;
   soil_type: string | null;
   notes: string | null;
