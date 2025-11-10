@@ -68,6 +68,50 @@
 
 ---
 
+#### 0003a: Implement Tasks API Routes
+
+**Package:** `packages/backend/src/routes/tasks.ts`
+**Dependencies:** Database schema already exists
+**Description:** Create CRUD endpoints for farm task management
+
+- GET /api/tasks - List all tasks for farm
+- GET /api/tasks/:id - Get single task with details
+- POST /api/tasks - Create new task
+- PUT /api/tasks/:id - Update task
+- DELETE /api/tasks/:id - Soft delete task
+- GET /api/tasks/template/:templateId - Create task from template
+  **Testing:** Create integration tests for all endpoints
+
+---
+
+#### 0003b: Implement Weather Alerts API Route
+
+**Package:** `packages/backend/src/routes/weather-alerts.ts`
+**Dependencies:** Database connection
+**Description:** Create weather alert endpoints for farm planning
+
+- GET /api/weather-alerts - List active weather alerts for farm location
+- GET /api/weather-alerts/history - Historical weather alerts
+- POST /api/weather-alerts/subscribe - Subscribe to weather notifications
+- DELETE /api/weather-alerts/subscribe/:id - Unsubscribe from alerts
+  **Testing:** Create integration tests with mock weather data
+
+---
+
+#### 0003c: Implement Reports API Routes
+
+**Package:** `packages/backend/src/routes/reports.ts`
+**Dependencies:** Existing database tables
+**Description:** Create reporting endpoints for various farm reports
+
+- GET /api/reports/labor-summary - Labor hours summary report
+- GET /api/reports/worker-attendance - Worker attendance report
+- GET /api/reports/field-activity - Field activity report
+- GET /api/reports/certification-status - Certification status report
+  **Testing:** Create integration tests for report generation
+
+---
+
 ### Backend Middleware & Services
 
 #### 0004: Implement Request Validation Middleware
@@ -123,6 +167,66 @@
 - Historical time entries
 - Sample certifications
   **Testing:** Verify seed data integrity
+
+---
+
+#### 0007a: Implement Logging Service
+
+**Package:** `packages/backend/src/services/logging.ts`
+**Dependencies:** None
+**Description:** Structured logging service for application
+
+- Winston logger configuration
+- Log levels (error, warn, info, debug)
+- Request ID tracking
+- Log rotation and retention
+- JSON structured logging for production
+  **Testing:** Unit tests for log formatting
+
+---
+
+#### 0007b: Implement Cache Service
+
+**Package:** `packages/backend/src/services/cache.ts`
+**Dependencies:** Redis connection
+**Description:** Reusable cache service wrapper
+
+- Generic cache get/set/delete operations
+- TTL management
+- Cache key namespacing
+- Bulk operations support
+- Cache invalidation patterns
+  **Testing:** Unit tests with Redis mock
+
+---
+
+#### 0007c: Implement PDF Generation Service
+
+**Package:** `packages/backend/src/services/pdf.ts`
+**Dependencies:** None
+**Description:** Generate PDF documents for reports
+
+- Report template system
+- Worker roster PDF generation
+- Schedule PDF generation
+- Certification document generation
+- Company logo and branding support
+  **Testing:** Unit tests with sample data
+
+---
+
+#### 0007d: Implement Geolocation Service
+
+**Package:** `packages/backend/src/services/geolocation.ts`
+**Dependencies:** None
+**Description:** GPS and location utilities
+
+- Calculate distance between coordinates
+- Validate GPS coordinates
+- Geocoding address to coordinates
+- Reverse geocoding coordinates to address
+- Field boundary calculations
+  **Testing:** Unit tests with various coordinate formats
 
 ---
 
@@ -214,6 +318,96 @@
 
 ---
 
+#### 0013a: Build Settings Page
+
+**Package:** `packages/frontend/src/pages/SettingsPage.tsx`
+**Dependencies:** None
+**Description:** User and farm settings interface
+
+- User profile settings
+- Farm information settings
+- Notification preferences
+- Password change form
+- Language selection
+  **Testing:** Component tests for forms
+
+---
+
+#### 0013b: Build Reports Page
+
+**Package:** `packages/frontend/src/pages/ReportsPage.tsx`
+**Dependencies:** Reports API (task 0003c)
+**Description:** Reports listing and generation page
+
+- Report type selector
+- Date range picker for reports
+- Generate report button
+- Download report as PDF/CSV
+- Saved reports list
+  **Testing:** E2E tests for report generation
+
+---
+
+#### 0013c: Build Notifications Panel
+
+**Package:** `packages/frontend/src/components/NotificationsPanel.tsx`
+**Dependencies:** None
+**Description:** Notifications dropdown component
+
+- List recent notifications
+- Mark as read functionality
+- Clear all notifications
+- Notification type indicators
+- Link to notification source
+  **Testing:** Component tests with mock notifications
+
+---
+
+#### 0013d: Build Search Component
+
+**Package:** `packages/frontend/src/components/GlobalSearch.tsx`
+**Dependencies:** None
+**Description:** Global search component
+
+- Search across workers, fields, schedules
+- Keyboard shortcut (Ctrl+K)
+- Recent searches history
+- Search result highlighting
+- Navigate to results
+  **Testing:** Component tests with search functionality
+
+---
+
+#### 0013e: Build Export Dialog
+
+**Package:** `packages/frontend/src/components/ExportDialog.tsx`
+**Dependencies:** Export API (task 0032)
+**Description:** Data export dialog component
+
+- Select data to export
+- Choose format (CSV, Excel, PDF)
+- Date range selection
+- Filter options
+- Progress indicator
+  **Testing:** Component tests with mock exports
+
+---
+
+#### 0013f: Build Filter Panel
+
+**Package:** `packages/frontend/src/components/FilterPanel.tsx`
+**Dependencies:** None
+**Description:** Reusable filter panel component
+
+- Dynamic filter fields
+- Date range filters
+- Multi-select filters
+- Apply/reset filters
+- Save filter presets
+  **Testing:** Component tests with various filters
+
+---
+
 ### Shared Utilities & Types
 
 #### 0014: Create Shared Validators
@@ -269,6 +463,96 @@
 - GPS coordinates validation
 - Safe string sanitization
   **Testing:** Unit tests with edge cases
+
+---
+
+#### 0017a: Create Array Utilities
+
+**Package:** `packages/shared/src/utils/array.ts`
+**Dependencies:** None
+**Description:** Array manipulation utilities
+
+- Chunk array into smaller arrays
+- Group by property
+- Remove duplicates
+- Sort by multiple properties
+- Flatten nested arrays
+  **Testing:** Unit tests with various data types
+
+---
+
+#### 0017b: Create String Utilities
+
+**Package:** `packages/shared/src/utils/string.ts`
+**Dependencies:** None
+**Description:** String manipulation helpers
+
+- Capitalize first letter
+- Convert to title case
+- Slugify strings for URLs
+- Truncate with ellipsis
+- Parse initials from name
+  **Testing:** Unit tests with Unicode characters
+
+---
+
+#### 0017c: Create Number Utilities
+
+**Package:** `packages/shared/src/utils/number.ts`
+**Dependencies:** None
+**Description:** Number formatting and calculations
+
+- Round to decimal places
+- Format percentages
+- Calculate average/median
+- Range validation
+- Number to words conversion
+  **Testing:** Unit tests with edge cases
+
+---
+
+#### 0017d: Create Error Utilities
+
+**Package:** `packages/shared/src/utils/errors.ts`
+**Dependencies:** None
+**Description:** Error handling and formatting
+
+- Custom error classes
+- Error message formatting
+- Stack trace utilities
+- Error serialization for API
+- Error logging helpers
+  **Testing:** Unit tests for error scenarios
+
+---
+
+#### 0017e: Create Formatting Utilities
+
+**Package:** `packages/shared/src/utils/formatting.ts`
+**Dependencies:** None
+**Description:** General data formatting utilities
+
+- Format addresses
+- Format names (first, last, full)
+- Format file sizes
+- Format durations
+- Format distances
+  **Testing:** Unit tests with various formats
+
+---
+
+#### 0017f: Create Constants
+
+**Package:** `packages/shared/src/constants.ts`
+**Dependencies:** None
+**Description:** Shared application constants
+
+- Task type constants
+- Worker role constants
+- Certification type constants
+- Time zone constants
+- Default configuration values
+  **Testing:** TypeScript type checks
 
 ---
 
@@ -374,6 +658,126 @@
 - Toast notification system
 - Loading states and skeletons
   **Testing:** Storybook stories for each component
+
+---
+
+#### 0024a: Create Badge Component
+
+**Package:** `packages/frontend/src/components/ui/Badge.tsx`
+**Dependencies:** Tailwind CSS
+**Description:** Status badge component for UI
+
+- Status variants (success, warning, error, info)
+- Size variants (small, medium, large)
+- Icon support
+- Removable badges with close button
+- Dot indicator variant
+  **Testing:** Component tests and Storybook stories
+
+---
+
+#### 0024b: Create Card Component
+
+**Package:** `packages/frontend/src/components/ui/Card.tsx`
+**Dependencies:** Tailwind CSS
+**Description:** Card container component
+
+- Card with header, body, footer sections
+- Elevation variants (flat, elevated, outlined)
+- Clickable card variant
+- Loading state skeleton
+- Image card variant
+  **Testing:** Component tests and Storybook stories
+
+---
+
+#### 0024c: Create Dropdown Component
+
+**Package:** `packages/frontend/src/components/ui/Dropdown.tsx`
+**Dependencies:** Tailwind CSS, headlessui
+**Description:** Dropdown menu component
+
+- Menu with items and dividers
+- Icon support for menu items
+- Keyboard navigation
+- Position variants (left, right, top, bottom)
+- Nested menu support
+  **Testing:** Component tests with keyboard interactions
+
+---
+
+#### 0024d: Create Tabs Component
+
+**Package:** `packages/frontend/src/components/ui/Tabs.tsx`
+**Dependencies:** Tailwind CSS
+**Description:** Tab navigation component
+
+- Horizontal and vertical tabs
+- Icon support
+- Badge/count indicators on tabs
+- Controlled and uncontrolled modes
+- Disabled tab state
+  **Testing:** Component tests and Storybook stories
+
+---
+
+#### 0024e: Create Table Component
+
+**Package:** `packages/frontend/src/components/ui/Table.tsx`
+**Dependencies:** Tailwind CSS
+**Description:** Data table component
+
+- Sortable columns
+- Row selection with checkboxes
+- Pagination support
+- Loading state
+- Empty state display
+  **Testing:** Component tests with large datasets
+
+---
+
+#### 0024f: Create Skeleton Component
+
+**Package:** `packages/frontend/src/components/ui/Skeleton.tsx`
+**Dependencies:** Tailwind CSS
+**Description:** Loading skeleton component
+
+- Text skeleton with line widths
+- Circle skeleton for avatars
+- Rectangle skeleton for images
+- Pulse animation
+- Custom color variants
+  **Testing:** Visual tests and Storybook stories
+
+---
+
+#### 0024g: Create Tooltip Component
+
+**Package:** `packages/frontend/src/components/ui/Tooltip.tsx`
+**Dependencies:** Tailwind CSS
+**Description:** Tooltip component
+
+- Position variants (top, bottom, left, right)
+- Trigger on hover or click
+- Delay configuration
+- Arrow indicator
+- Max-width handling
+  **Testing:** Component tests with positioning
+
+---
+
+#### 0024h: Create Alert Component
+
+**Package:** `packages/frontend/src/components/ui/Alert.tsx`
+**Dependencies:** Tailwind CSS
+**Description:** Alert/notification component
+
+- Variants (success, error, warning, info)
+- Dismissible alerts
+- Icon support
+- Action button support
+- Banner and inline styles
+  **Testing:** Component tests and Storybook stories
 
 ---
 
