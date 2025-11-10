@@ -160,3 +160,46 @@ export interface FarmStats {
   total_hours_this_week: number;
   scheduled_shifts_today: number;
 }
+
+// Worker Availability Types
+export interface WorkerAvailability {
+  id: string;
+  worker_id: string;
+  date: Date;
+  start_time: string;
+  end_time: string;
+  is_available: boolean;
+  recurrence_rule: string | null; // RRULE format for recurring patterns
+  notes: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface TimeOffRequest {
+  id: string;
+  worker_id: string;
+  start_date: Date;
+  end_date: Date;
+  reason: string | null;
+  status: TimeOffStatus;
+  approved_by: string | null;
+  approved_at: Date | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export type TimeOffStatus = 'pending' | 'approved' | 'denied' | 'cancelled';
+
+export interface AvailabilityPattern {
+  day_of_week: number; // 0-6, where 0 is Sunday
+  start_time: string;
+  end_time: string;
+  is_available: boolean;
+}
+
+export interface BulkAvailabilityUpdate {
+  worker_ids: string[];
+  start_date: Date;
+  end_date: Date;
+  pattern: AvailabilityPattern;
+}
