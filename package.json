@@ -1,0 +1,60 @@
+{
+  "name": "farm-commons",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared farm management software, community owned. For the humans who feed us.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.9.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "dev:backend": "turbo run dev --filter=@farm-commons/backend",
+    "dev:frontend": "turbo run dev --filter=@farm-commons/frontend",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "db:migrate": "npm run db:migrate --workspace=@farm-commons/backend",
+    "db:migrate:latest": "npm run db:migrate:latest --workspace=@farm-commons/backend",
+    "db:migrate:rollback": "npm run db:migrate:rollback --workspace=@farm-commons/backend",
+    "db:seed": "npm run db:seed --workspace=@farm-commons/backend"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.2",
+    "@typescript-eslint/parser": "^8.18.2",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-promise": "^7.2.1",
+    "eslint-plugin-sonarjs": "^3.0.1",
+    "eslint-plugin-unicorn": "^57.0.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.4.2",
+    "turbo": "^2.6.0",
+    "typescript": "^5.9.0",
+    "vitest": "^4.0.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neighborhood-lab/farm-commons"
+  },
+  "keywords": [
+    "agriculture",
+    "farm-management",
+    "farmworker",
+    "small-scale-farming",
+    "regenerative-agriculture",
+    "community-owned",
+    "agpl"
+  ],
+  "author": "Farm Commons Contributors",
+  "license": "AGPL-3.0"
+}
