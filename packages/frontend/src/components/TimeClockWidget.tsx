@@ -1,3 +1,5 @@
+/* eslint-env browser */
+/* global setInterval, clearInterval, alert */
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Clock, Play, Square, User } from 'lucide-react';
@@ -198,7 +200,7 @@ export default function TimeClockWidget() {
               min="0"
               step="15"
               value={breakMinutes}
-              onChange={(e) => setBreakMinutes(parseInt(e.target.value) || 0)}
+              onChange={(e) => setBreakMinutes(Number.parseInt(e.target.value) || 0)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="0"
             />
