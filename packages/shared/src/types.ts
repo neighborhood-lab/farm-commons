@@ -160,3 +160,29 @@ export interface FarmStats {
   total_hours_this_week: number;
   scheduled_shifts_today: number;
 }
+
+export type WorkerDocumentType =
+  | 'i9_form'
+  | 'w4_form'
+  | 'contract'
+  | 'id_document'
+  | 'work_authorization'
+  | 'training_certificate'
+  | 'other';
+
+export interface WorkerDocument {
+  id: string;
+  worker_id: string;
+  farm_id: string;
+  document_name: string;
+  document_type: WorkerDocumentType;
+  file_path: string;
+  file_name: string;
+  mime_type: string;
+  file_size: number;
+  expiration_date: Date | null;
+  notes: string | null;
+  uploaded_by: string;
+  created_at: Date;
+  updated_at: Date;
+}

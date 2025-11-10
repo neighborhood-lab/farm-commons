@@ -148,3 +148,47 @@ export const dateRangeSchema = z.object({
     .or(z.date())
     .transform((val) => new Date(val)),
 });
+
+// Worker Document Schemas
+export const uploadWorkerDocumentSchema = z.object({
+  worker_id: z.string().uuid(),
+  document_name: z.string().min(1).max(255),
+  document_type: z.enum([
+    'i9_form',
+    'w4_form',
+    'contract',
+    'id_document',
+    'work_authorization',
+    'training_certificate',
+    'other',
+  ]),
+  expiration_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional()
+    .nullable(),
+  notes: z.string().optional().nullable(),
+});
+
+export const updateWorkerDocumentSchema = z.object({
+  document_name: z.string().min(1).max(255).optional(),
+  document_type: z
+    .enum([
+      'i9_form',
+      'w4_form',
+      'contract',
+      'id_document',
+      'work_authorization',
+      'training_certificate',
+      'other',
+    ])
+    .optional(),
+  expiration_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional()
+    .nullable(),
+  notes: z.string().optional().nullable(),
+});
