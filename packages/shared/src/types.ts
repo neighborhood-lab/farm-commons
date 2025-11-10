@@ -160,3 +160,54 @@ export interface FarmStats {
   total_hours_this_week: number;
   scheduled_shifts_today: number;
 }
+
+// Weather Types
+export interface WeatherCondition {
+  id: number;
+  main: string;
+  description: string;
+  icon: string;
+}
+
+export interface CurrentWeather {
+  temp: number;
+  feels_like: number;
+  temp_min: number;
+  temp_max: number;
+  pressure: number;
+  humidity: number;
+  conditions: WeatherCondition[];
+  wind_speed: number;
+  wind_deg: number;
+  clouds: number;
+  dt: number;
+}
+
+export interface ForecastDay {
+  date: Date;
+  temp_min: number;
+  temp_max: number;
+  conditions: WeatherCondition[];
+  pop: number; // Probability of precipitation
+  humidity: number;
+}
+
+export interface WeatherAlert {
+  event: string;
+  start: Date;
+  end: Date;
+  description: string;
+  severity: 'minor' | 'moderate' | 'severe' | 'extreme';
+}
+
+export interface WeatherData {
+  current: CurrentWeather;
+  forecast: ForecastDay[];
+  alerts: WeatherAlert[];
+  location: {
+    name: string;
+    lat: number;
+    lon: number;
+  };
+  last_updated: Date;
+}
