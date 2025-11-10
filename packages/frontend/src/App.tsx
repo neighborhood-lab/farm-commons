@@ -6,6 +6,7 @@ import DashboardPage from './pages/DashboardPage';
 import WorkersPage from './pages/WorkersPage';
 import SchedulePage from './pages/SchedulePage';
 import TimeTrackingPage from './pages/TimeTrackingPage';
+import NotificationSettingsPage from './pages/NotificationSettingsPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
@@ -33,6 +34,7 @@ function App() {
         <Route path="workers" element={<WorkersPage />} />
         <Route path="schedule" element={<SchedulePage />} />
         <Route path="time-tracking" element={<TimeTrackingPage />} />
+        <Route path="settings/notifications" element={<NotificationSettingsPage />} />
       </Route>
     </Routes>
   );
