@@ -4,7 +4,6 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
 
@@ -16,6 +15,14 @@ import timeEntryRoutes from './routes/timeEntries.js';
 
 // Middleware
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import {
+  initializeRedisClient,
+  closeRedisClient,
+  authRateLimiter,
+  readOnlyRateLimiter,
+  writeRateLimiter,
+  healthCheckRateLimiter,
+} from './middleware/rateLimiting.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -46,17 +53,6 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
 }));
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
-  message: 'Too many requests from this IP, please try again later',
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-app.use('/api', limiter);
-
 // CORS
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
@@ -70,8 +66,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // HTTP logging
 app.use(httpLogger);
 
-// Health check
-app.get('/health', (req, res) => {
+// Health check with rate limiting
+app.get('/health', healthCheckRateLimiter, (req, res) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
@@ -80,11 +76,11 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/workers', workerRoutes);
-app.use('/api/schedules', scheduleRoutes);
-app.use('/api/time-entries', timeEntryRoutes);
+// API routes with route-specific rate limiting
+app.use('/api/auth', authRateLimiter, authRoutes);
+app.use('/api/workers', readOnlyRateLimiter, workerRoutes);
+app.use('/api/schedules', writeRateLimiter, scheduleRoutes);
+app.use('/api/time-entries', writeRateLimiter, timeEntryRoutes);
 
 // Welcome message
 app.get('/', (req, res) => {
@@ -102,22 +98,43 @@ app.use(notFoundHandler);
 // Error handler
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-  logger.info(`🚜 Farm Commons API server running on port ${PORT}`);
-  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  logger.info(`Health check: http://localhost:${PORT}/health`);
-});
+// Initialize Redis and start server
+async function startServer() {
+  try {
+    // Initialize Redis client for rate limiting
+    await initializeRedisClient();
+
+    // Start server
+    app.listen(PORT, () => {
+      logger.info(`🚜 Farm Commons API server running on port ${PORT}`);
+      logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      logger.info(`Health check: http://localhost:${PORT}/health`);
+    });
+  } catch (error) {
+    logger.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
-  logger.info('SIGTERM signal received: closing HTTP server');
-  process.exit(0);
-});
+async function shutdown(signal: string) {
+  logger.info(`${signal} signal received: closing server gracefully`);
 
-process.on('SIGINT', () => {
-  logger.info('SIGINT signal received: closing HTTP server');
+  try {
+    // Close Redis connection
+    await closeRedisClient();
+    logger.info('Redis connection closed');
+  } catch (error) {
+    logger.error('Error closing Redis connection:', error);
+  }
+
   process.exit(0);
-});
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
+
+// Start the server
+startServer();
 
 export default app;
