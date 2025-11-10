@@ -78,6 +78,8 @@ export interface Schedule {
 
 export type ScheduleStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
 
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
+
 export interface TimeEntry {
   id: string;
   farm_id: string;
@@ -92,6 +94,10 @@ export interface TimeEntry {
   notes: string | null;
   verified_by: string | null;
   verified_at: Date | null;
+  approval_status: ApprovalStatus;
+  approved_by: string | null;
+  approved_at: Date | null;
+  rejection_reason: string | null;
   created_at: Date;
   updated_at: Date;
 }
