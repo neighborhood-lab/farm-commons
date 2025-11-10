@@ -4,13 +4,14 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import { loginSchema, registerSchema } from '@farm-commons/shared';
 import db from '../db/connection.js';
-import { generateToken } from '../middleware/auth.js';
+import { generateToken, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { logAuthEvent } from '../middleware/auditLog.js';
 
 const router = express.Router();
 
 // Login
-router.post('/login', async (req, res, next) => {
+router.post('/login', async (req: AuthRequest, res, next) => {
   try {
     const { email, password } = loginSchema.parse(req.body);
 
@@ -19,12 +20,16 @@ router.post('/login', async (req, res, next) => {
       .first();
 
     if (!user) {
+      // Log failed login attempt
+      await logAuthEvent('login_failed', req, undefined, { email, reason: 'user_not_found' });
       throw new AppError('Invalid credentials', 401);
     }
 
     const validPassword = await bcrypt.compare(password, user.password_hash);
 
     if (!validPassword) {
+      // Log failed login attempt
+      await logAuthEvent('login_failed', req, user.id, { email, reason: 'invalid_password' });
       throw new AppError('Invalid credentials', 401);
     }
 
@@ -34,6 +39,9 @@ router.post('/login', async (req, res, next) => {
       role: user.role,
       farm_id: user.farm_id,
     });
+
+    // Log successful login
+    await logAuthEvent('login', req, user.id, { email, role: user.role });
 
     res.json({
       success: true,
@@ -54,7 +62,7 @@ router.post('/login', async (req, res, next) => {
 });
 
 // Register
-router.post('/register', async (req, res, next) => {
+router.post('/register', async (req: AuthRequest, res, next) => {
   try {
     const data = registerSchema.parse(req.body);
 
@@ -86,6 +94,9 @@ router.post('/register', async (req, res, next) => {
       role: user.role,
       farm_id: user.farm_id,
     });
+
+    // Log user registration
+    await logAuthEvent('login', req, user.id, { email: user.email, role: user.role, action: 'register' });
 
     res.status(201).json({
       success: true,
