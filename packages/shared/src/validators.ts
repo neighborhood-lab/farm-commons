@@ -149,6 +149,19 @@ export const dateRangeSchema = z.object({
     .transform((val) => new Date(val)),
 });
 
+// Time Entry Approval Schemas
+export const approveTimeEntrySchema = z.object({
+  notes: z.string().optional().nullable(),
+});
+
+export const rejectTimeEntrySchema = z.object({
+  rejection_reason: z.string().min(1, 'Rejection reason is required'),
+});
+
+export const batchApprovalSchema = z.object({
+  time_entry_ids: z.array(z.string().uuid()).min(1, 'At least one time entry ID is required'),
+});
+
 // Invoice Schemas
 export const createInvoiceSchema = z.object({
   client_name: z.string().min(1).max(200),
@@ -197,13 +210,17 @@ export const updateInvoiceSchema = z.object({
     .or(z.date())
     .transform((val) => new Date(val))
     .optional(),
-  tax_rate: z.number().min(0).max(100).optional(),
-  status: z.enum(['draft', 'sent', 'paid', 'overdue', 'cancelled']).optional(),
-  paid_date: z
+  period_start: z
     .string()
     .or(z.date())
     .transform((val) => new Date(val))
-    .optional()
-    .nullable(),
+    .optional(),
+  period_end: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional(),
+  tax_rate: z.number().min(0).max(100).optional(),
   notes: z.string().optional().nullable(),
+  status: z.enum(['draft', 'sent', 'paid', 'overdue', 'cancelled']).optional(),
 });
