@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import WorkersPage from './pages/WorkersPage';
+import WorkerPerformancePage from './pages/WorkerPerformancePage';
 import SchedulePage from './pages/SchedulePage';
 import TimeTrackingPage from './pages/TimeTrackingPage';
 import AnalyticsPage from './pages/AnalyticsPage';
@@ -32,6 +33,7 @@ function App() {
       >
         <Route index element={<DashboardPage />} />
         <Route path="workers" element={<WorkersPage />} />
+        <Route path="workers/:workerId/performance" element={<WorkerPerformancePage />} />
         <Route path="schedule" element={<SchedulePage />} />
         <Route path="time-tracking" element={<TimeTrackingPage />} />
         <Route path="analytics" element={<AnalyticsPage />} />

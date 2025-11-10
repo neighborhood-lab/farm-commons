@@ -16,6 +16,7 @@ import timeEntryRoutes from './routes/timeEntries.js';
 import equipmentAssignmentRoutes from './routes/equipment-assignments.js';
 import timeApprovalRoutes from './routes/time-approvals.js';
 import statsRoutes from './routes/stats.js';
+import taskChecklistRoutes from './routes/task-checklists.js';
 import soilDataRoutes from './routes/soil-data.js';
 import invoiceRoutes from './routes/invoices.js';
 
@@ -100,6 +101,7 @@ app.use('/api/time-entries', timeEntryRoutes);
 app.use('/api/equipment-assignments', equipmentAssignmentRoutes);
 app.use('/api/time-approvals', timeApprovalRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/task-checklists', taskChecklistRoutes);
 app.use('/api', soilDataRoutes);
 app.use('/api/invoices', invoiceRoutes);
 
