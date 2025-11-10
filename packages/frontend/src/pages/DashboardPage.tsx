@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { Users, Calendar, Clock, TrendingUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../lib/api';
 import type { FarmStats } from '@farm-commons/shared';
 import WeatherWidget from '../components/WeatherWidget';
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const { data: stats, isLoading } = useQuery({
     queryKey: ['farm-stats'],
     queryFn: () => api.get<FarmStats>('/stats/farm'),
@@ -20,26 +22,26 @@ export default function DashboardPage() {
 
   const statCards = [
     {
-      name: 'Active Workers',
+      name: t('dashboard.activeWorkers'),
       value: stats?.active_workers || 0,
       total: stats?.total_workers || 0,
       icon: Users,
       color: 'bg-blue-500',
     },
     {
-      name: 'Shifts Today',
+      name: t('dashboard.shiftsToday'),
       value: stats?.scheduled_shifts_today || 0,
       icon: Calendar,
       color: 'bg-green-500',
     },
     {
-      name: 'Hours This Week',
+      name: t('dashboard.hoursThisWeek'),
       value: stats?.total_hours_this_week || 0,
       icon: Clock,
       color: 'bg-purple-500',
     },
     {
-      name: 'Fields',
+      name: t('dashboard.fields'),
       value: stats?.total_fields || 0,
       icon: TrendingUp,
       color: 'bg-orange-500',
@@ -47,7 +49,7 @@ export default function DashboardPage() {
   ];
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>{t('dashboard.loading')}</div>;
   }
 
   return (
@@ -99,12 +101,12 @@ export default function DashboardPage() {
         </h2>
         <div className="prose dark:prose-invert text-earth-700 dark:text-earth-300">
           <p className="mb-4">
-            This is the initial MVP (Minimum Viable Product) showcasing Phase 1 features:
+            {t('dashboard.phase1Features')}
           </p>
           <ul className="list-disc list-inside space-y-2 mb-4">
-            <li><strong>Worker Management:</strong> Directory, certifications, contact information</li>
-            <li><strong>Scheduling:</strong> Daily work schedules and field assignments</li>
-            <li><strong>Time Tracking:</strong> Clock in/out, hours worked, compliance tracking</li>
+            <li>{t('dashboard.feature1')}</li>
+            <li>{t('dashboard.feature2')}</li>
+            <li>{t('dashboard.feature3')}</li>
           </ul>
           <p className="text-sm mt-6 pt-6 border-t border-earth-300 dark:border-earth-700">
             Built for farmworkers and small-scale farmers, not corporations. <br />

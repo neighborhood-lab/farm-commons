@@ -4,6 +4,7 @@ import { useAuthStore } from '../lib/store';
 import ThemeToggle from './ThemeToggle';
 
 export default function Layout() {
+  const { t } = useTranslation();
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
