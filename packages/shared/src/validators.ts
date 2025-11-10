@@ -104,3 +104,10 @@ export const dateRangeSchema = z.object({
   start_date: z.string().or(z.date()).transform((val) => new Date(val)),
   end_date: z.string().or(z.date()).transform((val) => new Date(val)),
 });
+
+// Batch Schedule Schemas
+export const batchScheduleSchema = z.object({
+  schedules: z.array(createScheduleSchema).min(1, 'At least one schedule is required'),
+  template_id: z.string().uuid().optional(), // Optional: for template-based creation
+  validate_conflicts: z.boolean().default(true), // Whether to check for conflicts
+});

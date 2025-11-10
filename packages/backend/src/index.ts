@@ -12,6 +12,7 @@ import pinoHttp from 'pino-http';
 import authRoutes from './routes/auth.js';
 import workerRoutes from './routes/workers.js';
 import scheduleRoutes from './routes/schedules.js';
+import batchScheduleRoutes from './routes/batch-schedules.js';
 import timeEntryRoutes from './routes/timeEntries.js';
 
 // Middleware
@@ -83,6 +84,7 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/workers', workerRoutes);
+app.use('/api/schedules/batch', batchScheduleRoutes);
 app.use('/api/schedules', scheduleRoutes);
 app.use('/api/time-entries', timeEntryRoutes);
 
