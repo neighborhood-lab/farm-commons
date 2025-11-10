@@ -160,3 +160,36 @@ export interface FarmStats {
   total_hours_this_week: number;
   scheduled_shifts_today: number;
 }
+
+// Chart Data Types
+export interface WeeklyLaborHoursData {
+  date: string; // ISO date string
+  hours: number;
+  workers: number;
+}
+
+export interface WorkerAttendanceData {
+  worker_id: string;
+  worker_name: string;
+  dates: {
+    date: string; // ISO date string
+    present: boolean;
+    hours: number;
+  }[];
+}
+
+export interface FieldUtilizationData {
+  field_id: string;
+  field_name: string;
+  hours_used: number;
+  percentage: number;
+}
+
+export interface CertificationExpiryData {
+  id: string;
+  worker_id: string;
+  worker_name: string;
+  certification_name: string;
+  expiration_date: Date;
+  days_until_expiry: number;
+}
