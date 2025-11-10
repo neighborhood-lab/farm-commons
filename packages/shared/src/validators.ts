@@ -148,3 +148,47 @@ export const dateRangeSchema = z.object({
     .or(z.date())
     .transform((val) => new Date(val)),
 });
+
+// Task Checklist Schemas
+export const createChecklistTemplateSchema = z.object({
+  name: z.string().min(1).max(200),
+  description: z.string().optional().nullable(),
+  task_type: z.string().max(100).optional().nullable(),
+  items: z.array(
+    z.object({
+      description: z.string().min(1),
+      is_required: z.boolean().default(false),
+      sort_order: z.number().int().min(0).default(0),
+    })
+  ),
+});
+
+export const updateChecklistTemplateSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  description: z.string().optional().nullable(),
+  task_type: z.string().max(100).optional().nullable(),
+});
+
+export const createChecklistTemplateItemSchema = z.object({
+  template_id: z.string().uuid(),
+  description: z.string().min(1),
+  is_required: z.boolean().default(false),
+  sort_order: z.number().int().min(0).default(0),
+});
+
+export const updateChecklistTemplateItemSchema = z.object({
+  description: z.string().min(1).optional(),
+  is_required: z.boolean().optional(),
+  sort_order: z.number().int().min(0).optional(),
+});
+
+export const assignChecklistToScheduleSchema = z.object({
+  schedule_id: z.string().uuid(),
+  template_id: z.string().uuid(),
+});
+
+export const completeChecklistItemSchema = z.object({
+  completed: z.boolean(),
+  notes: z.string().optional().nullable(),
+  photo_url: z.string().url().optional().nullable(),
+});
