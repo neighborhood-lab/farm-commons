@@ -1,8 +1,8 @@
-import { expect, afterEach, vi } from 'vitest';
-import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { cleanup } from '@testing-library/react';
+import { afterEach, vi } from 'vitest';
 
-// Cleanup after each test case
+// Cleanup after each test
 afterEach(() => {
   cleanup();
 });
@@ -10,7 +10,7 @@ afterEach(() => {
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
