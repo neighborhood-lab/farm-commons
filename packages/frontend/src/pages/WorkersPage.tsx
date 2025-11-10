@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Phone, Mail, Calendar } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Phone, Mail, Calendar, Users, TrendingUp } from 'lucide-react';
 import { api } from '../lib/api';
 import { formatDate, getInitials } from '@farm-commons/shared';
 import type { Worker, PaginatedResponse } from '@farm-commons/shared';
@@ -9,7 +10,7 @@ import WorkerDetailModal from '../components/WorkerDetailModal';
 export default function WorkersPage() {
   const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery({
     queryKey: ['workers'],
     queryFn: () => api.get<PaginatedResponse<Worker>>('/workers'),
@@ -41,9 +42,7 @@ export default function WorkersPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Workers</h1>
-          <p className="text-gray-600 mt-2">
-            Manage your farm workforce - {workers.length} total
-          </p>
+          <p className="text-gray-600 mt-2">Manage your farm workforce - {workers.length} total</p>
         </div>
         <button className="flex items-center gap-2 bg-earth-700 text-white px-6 py-3 rounded-lg hover:bg-earth-800 transition-colors">
           <Plus size={20} />
@@ -73,8 +72,8 @@ export default function WorkersPage() {
                     worker.status === 'active'
                       ? 'bg-green-100 text-green-800'
                       : worker.status === 'seasonal'
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-gray-100 text-gray-800'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-gray-100 text-gray-800'
                   }`}
                 >
                   {worker.status}
@@ -121,6 +120,17 @@ export default function WorkersPage() {
                 </div>
               </div>
             )}
+
+            {/* View Performance Button */}
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <button
+                onClick={() => navigate(`/workers/${worker.id}/performance`)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-earth-700 text-white rounded-lg hover:bg-earth-800 transition-colors text-sm font-medium"
+              >
+                <TrendingUp size={16} />
+                View Performance
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -130,9 +140,7 @@ export default function WorkersPage() {
         <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
           <Users className="mx-auto text-gray-400 mb-4" size={48} />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No workers yet</h3>
-          <p className="text-gray-600 mb-6">
-            Get started by adding your first farmworker
-          </p>
+          <p className="text-gray-600 mb-6">Get started by adding your first farmworker</p>
           <button className="inline-flex items-center gap-2 bg-earth-700 text-white px-6 py-3 rounded-lg hover:bg-earth-800 transition-colors">
             <Plus size={20} />
             Add First Worker

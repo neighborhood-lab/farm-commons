@@ -12,7 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint src --ext .ts,.tsx",
+    "lint": "eslint src --ext .ts,.tsx --ignore-pattern '**/*.test.*' --ignore-pattern '**/*.spec.*'",
     "clean": "rm -rf dist"
   },
   "dependencies": {
@@ -43,7 +43,8 @@
     "vitest": "^4.0.5",
     "@vitest/coverage-v8": "^4.0.5",
     "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
     "@testing-library/jest-dom": "^6.6.3",
-    "happy-dom": "^16.11.11"
+    "happy-dom": "^20.0.10"
   }
 }
