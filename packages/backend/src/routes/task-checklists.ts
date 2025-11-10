@@ -34,13 +34,10 @@ router.get('/templates', async (req: AuthRequest, res, next) => {
       .count('* as count')
       .groupBy('template_id');
 
-    const countMap = itemCounts.reduce(
-      (acc, item) => {
-        acc[item.template_id] = Number.parseInt(item.count as string, 10);
-        return acc;
-      },
-      {} as Record<string, number>
-    );
+    const countMap: Record<string, number> = {};
+    for (const item of itemCounts) {
+      countMap[item.template_id] = Number.parseInt(item.count as string, 10);
+    }
 
     const templatesWithCounts = templates.map((t) => ({
       ...t,
@@ -62,9 +59,7 @@ router.get('/templates/:id', async (req: AuthRequest, res, next) => {
     const { id } = req.params;
     const farmId = req.user?.farm_id;
 
-    const template = await db('checklist_templates')
-      .where({ id, farm_id: farmId })
-      .first();
+    const template = await db('checklist_templates').where({ id, farm_id: farmId }).first();
 
     if (!template) {
       throw new AppError('Checklist template not found', 404);
@@ -133,32 +128,36 @@ router.post('/templates', requireRole('admin', 'manager'), async (req: AuthReque
 });
 
 // Update checklist template
-router.put('/templates/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
-  try {
-    const { id } = req.params;
-    const data = updateChecklistTemplateSchema.parse(req.body);
-    const farmId = req.user?.farm_id;
+router.put(
+  '/templates/:id',
+  requireRole('admin', 'manager'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const { id } = req.params;
+      const data = updateChecklistTemplateSchema.parse(req.body);
+      const farmId = req.user?.farm_id;
 
-    const [template] = await db('checklist_templates')
-      .where({ id, farm_id: farmId })
-      .update({
-        ...data,
-        updated_at: new Date(),
-      })
-      .returning('*');
+      const [template] = await db('checklist_templates')
+        .where({ id, farm_id: farmId })
+        .update({
+          ...data,
+          updated_at: new Date(),
+        })
+        .returning('*');
 
-    if (!template) {
-      throw new AppError('Checklist template not found', 404);
+      if (!template) {
+        throw new AppError('Checklist template not found', 404);
+      }
+
+      res.json({
+        success: true,
+        data: template,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    res.json({
-      success: true,
-      data: template,
-    });
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 // Delete checklist template
 router.delete(
@@ -195,9 +194,7 @@ router.post(
       const farmId = req.user?.farm_id;
 
       // Verify template exists and belongs to farm
-      const template = await db('checklist_templates')
-        .where({ id, farm_id: farmId })
-        .first();
+      const template = await db('checklist_templates').where({ id, farm_id: farmId }).first();
 
       if (!template) {
         throw new AppError('Checklist template not found', 404);
@@ -236,11 +233,7 @@ router.put('/items/:id', requireRole('admin', 'manager'), async (req: AuthReques
 
     // Verify item belongs to a template in the user's farm
     const item = await db('checklist_template_items')
-      .join(
-        'checklist_templates',
-        'checklist_template_items.template_id',
-        'checklist_templates.id'
-      )
+      .join('checklist_templates', 'checklist_template_items.template_id', 'checklist_templates.id')
       .where({
         'checklist_template_items.id': id,
         'checklist_templates.farm_id': farmId,
@@ -269,110 +262,108 @@ router.put('/items/:id', requireRole('admin', 'manager'), async (req: AuthReques
 });
 
 // Delete checklist item
-router.delete('/items/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
-  try {
-    const { id } = req.params;
-    const farmId = req.user?.farm_id;
-
-    // Verify item belongs to a template in the user's farm
-    const item = await db('checklist_template_items')
-      .join(
-        'checklist_templates',
-        'checklist_template_items.template_id',
-        'checklist_templates.id'
-      )
-      .where({
-        'checklist_template_items.id': id,
-        'checklist_templates.farm_id': farmId,
-      })
-      .first('checklist_template_items.*');
-
-    if (!item) {
-      throw new AppError('Checklist item not found', 404);
-    }
-
-    await db('checklist_template_items').where({ id }).delete();
-
-    res.json({
-      success: true,
-      message: 'Checklist item deleted successfully',
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-// Assign checklist template to schedule
-router.post(
-  '/assign',
+router.delete(
+  '/items/:id',
   requireRole('admin', 'manager'),
   async (req: AuthRequest, res, next) => {
     try {
-      const data = assignChecklistToScheduleSchema.parse(req.body);
+      const { id } = req.params;
       const farmId = req.user?.farm_id;
 
-      // Verify schedule exists and belongs to farm
-      const schedule = await db('schedules')
-        .where({ id: data.schedule_id, farm_id: farmId })
-        .first();
-
-      if (!schedule) {
-        throw new AppError('Schedule not found', 404);
-      }
-
-      // Verify template exists and belongs to farm
-      const template = await db('checklist_templates')
-        .where({ id: data.template_id, farm_id: farmId })
-        .first();
-
-      if (!template) {
-        throw new AppError('Checklist template not found', 404);
-      }
-
-      // Check if already assigned
-      const existing = await db('schedule_checklists')
+      // Verify item belongs to a template in the user's farm
+      const item = await db('checklist_template_items')
+        .join(
+          'checklist_templates',
+          'checklist_template_items.template_id',
+          'checklist_templates.id'
+        )
         .where({
-          schedule_id: data.schedule_id,
-          template_id: data.template_id,
+          'checklist_template_items.id': id,
+          'checklist_templates.farm_id': farmId,
         })
-        .first();
+        .first('checklist_template_items.*');
 
-      if (existing) {
-        throw new AppError('Checklist already assigned to this schedule', 409);
+      if (!item) {
+        throw new AppError('Checklist item not found', 404);
       }
 
-      // Create schedule checklist assignment
-      const [scheduleChecklist] = await db('schedule_checklists')
-        .insert({
-          schedule_id: data.schedule_id,
-          template_id: data.template_id,
-        })
-        .returning('*');
+      await db('checklist_template_items').where({ id }).delete();
 
-      // Get all template items and create completions
-      const items = await db('checklist_template_items')
-        .where({ template_id: data.template_id })
-        .orderBy('sort_order', 'asc');
-
-      if (items.length > 0) {
-        await db('checklist_item_completions').insert(
-          items.map((item) => ({
-            schedule_checklist_id: scheduleChecklist.id,
-            template_item_id: item.id,
-            completed: false,
-          }))
-        );
-      }
-
-      res.status(201).json({
+      res.json({
         success: true,
-        data: scheduleChecklist,
+        message: 'Checklist item deleted successfully',
       });
     } catch (error) {
       next(error);
     }
   }
 );
+
+// Assign checklist template to schedule
+router.post('/assign', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
+  try {
+    const data = assignChecklistToScheduleSchema.parse(req.body);
+    const farmId = req.user?.farm_id;
+
+    // Verify schedule exists and belongs to farm
+    const schedule = await db('schedules').where({ id: data.schedule_id, farm_id: farmId }).first();
+
+    if (!schedule) {
+      throw new AppError('Schedule not found', 404);
+    }
+
+    // Verify template exists and belongs to farm
+    const template = await db('checklist_templates')
+      .where({ id: data.template_id, farm_id: farmId })
+      .first();
+
+    if (!template) {
+      throw new AppError('Checklist template not found', 404);
+    }
+
+    // Check if already assigned
+    const existing = await db('schedule_checklists')
+      .where({
+        schedule_id: data.schedule_id,
+        template_id: data.template_id,
+      })
+      .first();
+
+    if (existing) {
+      throw new AppError('Checklist already assigned to this schedule', 409);
+    }
+
+    // Create schedule checklist assignment
+    const [scheduleChecklist] = await db('schedule_checklists')
+      .insert({
+        schedule_id: data.schedule_id,
+        template_id: data.template_id,
+      })
+      .returning('*');
+
+    // Get all template items and create completions
+    const items = await db('checklist_template_items')
+      .where({ template_id: data.template_id })
+      .orderBy('sort_order', 'asc');
+
+    if (items.length > 0) {
+      await db('checklist_item_completions').insert(
+        items.map((item) => ({
+          schedule_checklist_id: scheduleChecklist.id,
+          template_item_id: item.id,
+          completed: false,
+        }))
+      );
+    }
+
+    res.status(201).json({
+      success: true,
+      data: scheduleChecklist,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Get checklists for a schedule
 router.get('/schedule/:scheduleId', async (req: AuthRequest, res, next) => {
@@ -381,9 +372,7 @@ router.get('/schedule/:scheduleId', async (req: AuthRequest, res, next) => {
     const farmId = req.user?.farm_id;
 
     // Verify schedule belongs to farm
-    const schedule = await db('schedules')
-      .where({ id: scheduleId, farm_id: farmId })
-      .first();
+    const schedule = await db('schedules').where({ id: scheduleId, farm_id: farmId }).first();
 
     if (!schedule) {
       throw new AppError('Schedule not found', 404);

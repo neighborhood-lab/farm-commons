@@ -177,9 +177,7 @@ describe('Task Checklist System', () => {
       ]);
 
       // Retrieve template with items
-      const template = await testDb('checklist_templates')
-        .where({ id: templateId })
-        .first();
+      const template = await testDb('checklist_templates').where({ id: templateId }).first();
 
       const items = await testDb('checklist_template_items')
         .where({ template_id: templateId })
@@ -231,8 +229,7 @@ describe('Task Checklist System', () => {
       await testDb('checklist_templates').where({ id: templateId }).delete();
 
       // Verify items were also deleted
-      const items = await testDb('checklist_template_items')
-        .where({ template_id: templateId });
+      const items = await testDb('checklist_template_items').where({ template_id: templateId });
 
       expect(items.length).toBe(0);
     });
@@ -363,8 +360,7 @@ describe('Task Checklist System', () => {
         })
         .returning('*');
 
-      const items = await testDb('checklist_template_items')
-        .where({ template_id: templateId });
+      const items = await testDb('checklist_template_items').where({ template_id: templateId });
 
       await testDb('checklist_item_completions').insert(
         items.map((item) => ({
@@ -374,8 +370,9 @@ describe('Task Checklist System', () => {
         }))
       );
 
-      const completions = await testDb('checklist_item_completions')
-        .where({ schedule_checklist_id: scheduleChecklist.id });
+      const completions = await testDb('checklist_item_completions').where({
+        schedule_checklist_id: scheduleChecklist.id,
+      });
 
       expect(completions.length).toBe(2);
       expect(completions.every((c) => c.completed === false)).toBe(true);
@@ -432,6 +429,7 @@ describe('Task Checklist System', () => {
       [{ id: userId }] = await testDb('users')
         .insert({
           email: 'test@example.com',
+          // eslint-disable-next-line sonarjs/no-hardcoded-passwords
           password_hash: 'hash',
           role: 'manager',
           farm_id: farmId,
@@ -523,13 +521,11 @@ describe('Task Checklist System', () => {
 
     it('should unmark completed item', async () => {
       // First, mark as completed
-      await testDb('checklist_item_completions')
-        .where({ id: completionId })
-        .update({
-          completed: true,
-          completed_by: userId,
-          completed_at: new Date(),
-        });
+      await testDb('checklist_item_completions').where({ id: completionId }).update({
+        completed: true,
+        completed_by: userId,
+        completed_at: new Date(),
+      });
 
       // Then unmark
       const [updated] = await testDb('checklist_item_completions')
