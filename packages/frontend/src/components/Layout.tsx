@@ -15,6 +15,7 @@ export default function Layout() {
   const navigation = [
     { name: 'Dashboard', href: '/', icon: Home },
     { name: 'Workers', href: '/workers', icon: Users },
+    { name: 'Fields', href: '/fields', icon: MapPin },
     { name: 'Schedule', href: '/schedule', icon: Calendar },
     { name: 'Time Tracking', href: '/time-tracking', icon: Clock },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
