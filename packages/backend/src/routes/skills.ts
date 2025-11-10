@@ -1,17 +1,17 @@
 // Worker skills management routes
 
-import express from 'express';
+import express, { Router } from 'express';
 import {
   createSkillSchema,
   updateSkillSchema,
   addWorkerSkillSchema,
-  paginationSchema
+  paginationSchema,
 } from '@farm-commons/shared';
 import db from '../db/connection.js';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // All skill routes require authentication
 router.use(authenticateToken);
@@ -31,19 +31,17 @@ router.get('/', async (req: AuthRequest, res, next) => {
         .limit(per_page)
         .offset(offset)
         .select('*'),
-      db('skills')
-        .where({ farm_id: farmId })
-        .count('* as count'),
+      db('skills').where({ farm_id: farmId }).count('* as count'),
     ]);
 
     res.json({
       success: true,
       data: {
         data: skills,
-        total: parseInt(count as string),
+        total: Number.parseInt(count as string),
         page,
         per_page,
-        total_pages: Math.ceil(parseInt(count as string) / per_page),
+        total_pages: Math.ceil(Number.parseInt(count as string) / per_page),
       },
     });
   } catch (error) {
@@ -57,9 +55,7 @@ router.get('/:id', async (req: AuthRequest, res, next) => {
     const { id } = req.params;
     const farmId = req.user?.farm_id;
 
-    const skill = await db('skills')
-      .where({ id, farm_id: farmId })
-      .first();
+    const skill = await db('skills').where({ id, farm_id: farmId }).first();
 
     if (!skill) {
       throw new AppError('Skill not found', 404);
@@ -145,9 +141,7 @@ router.delete('/:id', requireRole('admin'), async (req: AuthRequest, res, next) 
     const { id } = req.params;
     const farmId = req.user?.farm_id;
 
-    const deleted = await db('skills')
-      .where({ id, farm_id: farmId })
-      .delete();
+    const deleted = await db('skills').where({ id, farm_id: farmId }).delete();
 
     if (!deleted) {
       throw new AppError('Skill not found', 404);
@@ -163,61 +157,61 @@ router.delete('/:id', requireRole('admin'), async (req: AuthRequest, res, next) 
 });
 
 // POST /api/workers/:id/skills - Add skill to worker (managers and admins only)
-router.post('/workers/:id/skills', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
-  try {
-    const { id: workerId } = req.params;
-    const data = addWorkerSkillSchema.parse(req.body);
-    const farmId = req.user?.farm_id;
+router.post(
+  '/workers/:id/skills',
+  requireRole('admin', 'manager'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const { id: workerId } = req.params;
+      const data = addWorkerSkillSchema.parse(req.body);
+      const farmId = req.user?.farm_id;
 
-    // Verify worker exists and belongs to farm
-    const worker = await db('workers')
-      .where({ id: workerId, farm_id: farmId })
-      .first();
+      // Verify worker exists and belongs to farm
+      const worker = await db('workers').where({ id: workerId, farm_id: farmId }).first();
 
-    if (!worker) {
-      throw new AppError('Worker not found', 404);
+      if (!worker) {
+        throw new AppError('Worker not found', 404);
+      }
+
+      // Verify skill exists and belongs to farm
+      const skill = await db('skills').where({ id: data.skill_id, farm_id: farmId }).first();
+
+      if (!skill) {
+        throw new AppError('Skill not found', 404);
+      }
+
+      // Add skill to worker
+      const [workerSkill] = await db('worker_skills')
+        .insert({
+          worker_id: workerId,
+          skill_id: data.skill_id,
+          proficiency_level: data.proficiency_level || null,
+          years_experience: data.years_experience || null,
+          notes: data.notes || null,
+        })
+        .returning('*');
+
+      // Get the skill details to return
+      const skillDetails = await db('worker_skills')
+        .join('skills', 'worker_skills.skill_id', 'skills.id')
+        .where({ 'worker_skills.id': workerSkill.id })
+        .select(
+          'worker_skills.*',
+          'skills.name as skill_name',
+          'skills.description as skill_description',
+          'skills.category as skill_category'
+        )
+        .first();
+
+      res.status(201).json({
+        success: true,
+        data: skillDetails,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    // Verify skill exists and belongs to farm
-    const skill = await db('skills')
-      .where({ id: data.skill_id, farm_id: farmId })
-      .first();
-
-    if (!skill) {
-      throw new AppError('Skill not found', 404);
-    }
-
-    // Add skill to worker
-    const [workerSkill] = await db('worker_skills')
-      .insert({
-        worker_id: workerId,
-        skill_id: data.skill_id,
-        proficiency_level: data.proficiency_level || null,
-        years_experience: data.years_experience || null,
-        notes: data.notes || null,
-      })
-      .returning('*');
-
-    // Get the skill details to return
-    const skillDetails = await db('worker_skills')
-      .join('skills', 'worker_skills.skill_id', 'skills.id')
-      .where({ 'worker_skills.id': workerSkill.id })
-      .select(
-        'worker_skills.*',
-        'skills.name as skill_name',
-        'skills.description as skill_description',
-        'skills.category as skill_category'
-      )
-      .first();
-
-    res.status(201).json({
-      success: true,
-      data: skillDetails,
-    });
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 // GET /api/workers/:id/skills - Get all skills for a worker
 router.get('/workers/:id/skills', async (req: AuthRequest, res, next) => {
@@ -226,9 +220,7 @@ router.get('/workers/:id/skills', async (req: AuthRequest, res, next) => {
     const farmId = req.user?.farm_id;
 
     // Verify worker exists and belongs to farm
-    const worker = await db('workers')
-      .where({ id: workerId, farm_id: farmId })
-      .first();
+    const worker = await db('workers').where({ id: workerId, farm_id: farmId }).first();
 
     if (!worker) {
       throw new AppError('Worker not found', 404);
@@ -261,40 +253,42 @@ router.get('/workers/:id/skills', async (req: AuthRequest, res, next) => {
 });
 
 // DELETE /api/workers/:id/skills/:skillId - Remove skill from worker (managers and admins only)
-router.delete('/workers/:id/skills/:skillId', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
-  try {
-    const { id: workerId, skillId } = req.params;
-    const farmId = req.user?.farm_id;
+router.delete(
+  '/workers/:id/skills/:skillId',
+  requireRole('admin', 'manager'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const { id: workerId, skillId } = req.params;
+      const farmId = req.user?.farm_id;
 
-    // Verify worker exists and belongs to farm
-    const worker = await db('workers')
-      .where({ id: workerId, farm_id: farmId })
-      .first();
+      // Verify worker exists and belongs to farm
+      const worker = await db('workers').where({ id: workerId, farm_id: farmId }).first();
 
-    if (!worker) {
-      throw new AppError('Worker not found', 404);
+      if (!worker) {
+        throw new AppError('Worker not found', 404);
+      }
+
+      // Delete the worker skill association
+      const deleted = await db('worker_skills')
+        .where({
+          worker_id: workerId,
+          skill_id: skillId,
+        })
+        .delete();
+
+      if (!deleted) {
+        throw new AppError('Worker skill association not found', 404);
+      }
+
+      res.json({
+        success: true,
+        message: 'Skill removed from worker successfully',
+      });
+    } catch (error) {
+      next(error);
     }
-
-    // Delete the worker skill association
-    const deleted = await db('worker_skills')
-      .where({
-        worker_id: workerId,
-        skill_id: skillId,
-      })
-      .delete();
-
-    if (!deleted) {
-      throw new AppError('Worker skill association not found', 404);
-    }
-
-    res.json({
-      success: true,
-      message: 'Skill removed from worker successfully',
-    });
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 // GET /api/workers/by-skill/:skillId - Find workers with specific skill
 router.get('/workers/by-skill/:skillId', async (req: AuthRequest, res, next) => {
@@ -303,9 +297,7 @@ router.get('/workers/by-skill/:skillId', async (req: AuthRequest, res, next) => 
     const farmId = req.user?.farm_id;
 
     // Verify skill exists and belongs to farm
-    const skill = await db('skills')
-      .where({ id: skillId, farm_id: farmId })
-      .first();
+    const skill = await db('skills').where({ id: skillId, farm_id: farmId }).first();
 
     if (!skill) {
       throw new AppError('Skill not found', 404);

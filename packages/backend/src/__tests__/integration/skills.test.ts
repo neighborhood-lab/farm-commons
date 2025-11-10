@@ -14,21 +14,26 @@ describe('Skills API', () => {
 
   beforeAll(async () => {
     // Create test farm
-    const [farm] = await db('farms').insert({
-      name: 'Test Farm',
-      location: 'Test Location',
-      size_acres: 100,
-      organic_certified: false,
-    }).returning('*');
+    const [farm] = await db('farms')
+      .insert({
+        name: 'Test Farm',
+        location: 'Test Location',
+        size_acres: 100,
+        organic_certified: false,
+      })
+      .returning('*');
     farmId = farm.id;
 
     // Create test user with manager role
-    const [user] = await db('users').insert({
-      email: 'manager@test.com',
-      password_hash: '$2b$10$test',
-      role: 'manager',
-      farm_id: farmId,
-    }).returning('*');
+    const [user] = await db('users')
+      .insert({
+        email: 'manager@test.com',
+        // eslint-disable-next-line sonarjs/no-hardcoded-passwords
+        password_hash: '$2b$10$test',
+        role: 'manager',
+        farm_id: farmId,
+      })
+      .returning('*');
 
     // Generate auth token
     authToken = jwt.sign(
@@ -38,14 +43,16 @@ describe('Skills API', () => {
     );
 
     // Create test worker
-    const [worker] = await db('workers').insert({
-      farm_id: farmId,
-      first_name: 'John',
-      last_name: 'Doe',
-      phone: '555-0100',
-      hire_date: new Date(),
-      status: 'active',
-    }).returning('*');
+    const [worker] = await db('workers')
+      .insert({
+        farm_id: farmId,
+        first_name: 'John',
+        last_name: 'Doe',
+        phone: '555-0100',
+        hire_date: new Date(),
+        status: 'active',
+      })
+      .returning('*');
     workerId = worker.id;
   });
 
@@ -97,9 +104,7 @@ describe('Skills API', () => {
         description: 'Ability to operate various farm tractors',
       };
 
-      const response = await request(app)
-        .post('/api/skills')
-        .send(skillData);
+      const response = await request(app).post('/api/skills').send(skillData);
 
       expect(response.status).toBe(401);
     });
@@ -122,9 +127,24 @@ describe('Skills API', () => {
     beforeEach(async () => {
       // Create test skills
       await db('skills').insert([
-        { farm_id: farmId, name: 'Planting', description: 'Crop planting skills', category: 'Farming' },
-        { farm_id: farmId, name: 'Harvesting', description: 'Crop harvesting skills', category: 'Farming' },
-        { farm_id: farmId, name: 'Irrigation', description: 'Irrigation system operation', category: 'Equipment' },
+        {
+          farm_id: farmId,
+          name: 'Planting',
+          description: 'Crop planting skills',
+          category: 'Farming',
+        },
+        {
+          farm_id: farmId,
+          name: 'Harvesting',
+          description: 'Crop harvesting skills',
+          category: 'Farming',
+        },
+        {
+          farm_id: farmId,
+          name: 'Irrigation',
+          description: 'Irrigation system operation',
+          category: 'Equipment',
+        },
       ]);
     });
 
@@ -154,12 +174,14 @@ describe('Skills API', () => {
 
   describe('GET /api/skills/:id', () => {
     beforeEach(async () => {
-      const [skill] = await db('skills').insert({
-        farm_id: farmId,
-        name: 'Pruning',
-        description: 'Tree and vine pruning',
-        category: 'Farming',
-      }).returning('*');
+      const [skill] = await db('skills')
+        .insert({
+          farm_id: farmId,
+          name: 'Pruning',
+          description: 'Tree and vine pruning',
+          category: 'Farming',
+        })
+        .returning('*');
       skillId = skill.id;
     });
 
@@ -186,11 +208,13 @@ describe('Skills API', () => {
 
   describe('PUT /api/skills/:id', () => {
     beforeEach(async () => {
-      const [skill] = await db('skills').insert({
-        farm_id: farmId,
-        name: 'Old Name',
-        description: 'Old description',
-      }).returning('*');
+      const [skill] = await db('skills')
+        .insert({
+          farm_id: farmId,
+          name: 'Old Name',
+          description: 'Old description',
+        })
+        .returning('*');
       skillId = skill.id;
     });
 
@@ -226,11 +250,13 @@ describe('Skills API', () => {
 
   describe('DELETE /api/skills/:id', () => {
     beforeEach(async () => {
-      const [skill] = await db('skills').insert({
-        farm_id: farmId,
-        name: 'To Delete',
-        description: 'This will be deleted',
-      }).returning('*');
+      const [skill] = await db('skills')
+        .insert({
+          farm_id: farmId,
+          name: 'To Delete',
+          description: 'This will be deleted',
+        })
+        .returning('*');
       skillId = skill.id;
     });
 
@@ -251,11 +277,13 @@ describe('Skills API', () => {
 
   describe('POST /api/skills/workers/:id/skills', () => {
     beforeEach(async () => {
-      const [skill] = await db('skills').insert({
-        farm_id: farmId,
-        name: 'Welding',
-        description: 'Metal welding and repair',
-      }).returning('*');
+      const [skill] = await db('skills')
+        .insert({
+          farm_id: farmId,
+          name: 'Welding',
+          description: 'Metal welding and repair',
+        })
+        .returning('*');
       skillId = skill.id;
     });
 
@@ -304,10 +332,12 @@ describe('Skills API', () => {
   describe('GET /api/skills/workers/:id/skills', () => {
     beforeEach(async () => {
       // Create skills
-      const skills = await db('skills').insert([
-        { farm_id: farmId, name: 'Skill 1', description: 'First skill' },
-        { farm_id: farmId, name: 'Skill 2', description: 'Second skill' },
-      ]).returning('*');
+      const skills = await db('skills')
+        .insert([
+          { farm_id: farmId, name: 'Skill 1', description: 'First skill' },
+          { farm_id: farmId, name: 'Skill 2', description: 'Second skill' },
+        ])
+        .returning('*');
 
       // Add skills to worker
       await db('worker_skills').insert([
@@ -341,11 +371,13 @@ describe('Skills API', () => {
 
   describe('DELETE /api/skills/workers/:id/skills/:skillId', () => {
     beforeEach(async () => {
-      const [skill] = await db('skills').insert({
-        farm_id: farmId,
-        name: 'Removable Skill',
-        description: 'This skill will be removed',
-      }).returning('*');
+      const [skill] = await db('skills')
+        .insert({
+          farm_id: farmId,
+          name: 'Removable Skill',
+          description: 'This skill will be removed',
+        })
+        .returning('*');
       skillId = skill.id;
 
       await db('worker_skills').insert({
@@ -375,32 +407,36 @@ describe('Skills API', () => {
   describe('GET /api/skills/workers/by-skill/:skillId', () => {
     beforeEach(async () => {
       // Create a skill
-      const [skill] = await db('skills').insert({
-        farm_id: farmId,
-        name: 'Common Skill',
-        description: 'A skill many workers have',
-      }).returning('*');
+      const [skill] = await db('skills')
+        .insert({
+          farm_id: farmId,
+          name: 'Common Skill',
+          description: 'A skill many workers have',
+        })
+        .returning('*');
       skillId = skill.id;
 
       // Create additional workers
-      const workers = await db('workers').insert([
-        {
-          farm_id: farmId,
-          first_name: 'Jane',
-          last_name: 'Smith',
-          phone: '555-0101',
-          hire_date: new Date(),
-          status: 'active',
-        },
-        {
-          farm_id: farmId,
-          first_name: 'Bob',
-          last_name: 'Johnson',
-          phone: '555-0102',
-          hire_date: new Date(),
-          status: 'active',
-        },
-      ]).returning('*');
+      const workers = await db('workers')
+        .insert([
+          {
+            farm_id: farmId,
+            first_name: 'Jane',
+            last_name: 'Smith',
+            phone: '555-0101',
+            hire_date: new Date(),
+            status: 'active',
+          },
+          {
+            farm_id: farmId,
+            first_name: 'Bob',
+            last_name: 'Johnson',
+            phone: '555-0102',
+            hire_date: new Date(),
+            status: 'active',
+          },
+        ])
+        .returning('*');
 
       // Add skill to multiple workers
       await db('worker_skills').insert([
