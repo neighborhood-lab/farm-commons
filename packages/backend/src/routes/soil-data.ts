@@ -321,7 +321,7 @@ function generateRecommendations(soilTest: Record<string, string | number | null
 
   // Phosphorus recommendations
   if (soilTest.phosphorus_ppm !== null) {
-    const p = Number.parseFloat(soilTest.phosphorus_ppm);
+    const p = Number.parseFloat(String(soilTest.phosphorus_ppm));
     if (p < 25) {
       recommendations.push('Phosphorus is low. Apply phosphate fertilizer or bone meal.');
     } else if (p > 75) {
@@ -331,7 +331,7 @@ function generateRecommendations(soilTest: Record<string, string | number | null
 
   // Potassium recommendations
   if (soilTest.potassium_ppm !== null) {
-    const k = Number.parseFloat(soilTest.potassium_ppm);
+    const k = Number.parseFloat(String(soilTest.potassium_ppm));
     if (k < 100) {
       recommendations.push('Potassium is low. Apply potash or wood ash.');
     } else if (k > 300) {
