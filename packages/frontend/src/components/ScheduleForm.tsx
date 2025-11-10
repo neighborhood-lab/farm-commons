@@ -72,7 +72,7 @@ export default function ScheduleForm({
       ? {
           worker_id: schedule.worker_id,
           field_id: schedule.field_id,
-          scheduled_date: format(new Date(schedule.scheduled_date), 'yyyy-MM-dd'),
+          scheduled_date: new Date(schedule.scheduled_date),
           start_time: schedule.start_time,
           end_time: schedule.end_time,
           task_type: schedule.task_type,
@@ -80,13 +80,11 @@ export default function ScheduleForm({
           notes: schedule.notes || '',
         }
       : {
-          scheduled_date: format(new Date(), 'yyyy-MM-dd'),
+          scheduled_date: new Date(),
           start_time: '08:00',
           end_time: '17:00',
         },
   });
-
-  const taskType = watch('task_type');
 
   // Set default values for new schedule
   useEffect(() => {
@@ -180,7 +178,14 @@ export default function ScheduleForm({
         <input
           id="scheduled_date"
           type="date"
-          {...register('scheduled_date')}
+          {...register('scheduled_date', {
+            setValueAs: (value) => (value ? new Date(value) : new Date()),
+          })}
+          defaultValue={
+            schedule
+              ? format(new Date(schedule.scheduled_date), 'yyyy-MM-dd')
+              : format(new Date(), 'yyyy-MM-dd')
+          }
           disabled={isSubmitting}
           className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-earth-500 focus:border-earth-500 ${
             errors.scheduled_date ? 'border-red-500' : 'border-gray-300'
@@ -281,10 +286,7 @@ export default function ScheduleForm({
 
       {/* Task Description (Optional) */}
       <div>
-        <label
-          htmlFor="task_description"
-          className="text-sm font-medium text-gray-700 mb-2 block"
-        >
+        <label htmlFor="task_description" className="text-sm font-medium text-gray-700 mb-2 block">
           Task Description
         </label>
         <textarea
@@ -331,8 +333,8 @@ export default function ScheduleForm({
       {/* Future Feature Note */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <p className="text-sm text-blue-800">
-          <strong>Coming soon:</strong> Repeating schedule functionality will allow you to
-          create recurring shifts (daily, weekly, etc.)
+          <strong>Coming soon:</strong> Repeating schedule functionality will allow you to create
+          recurring shifts (daily, weekly, etc.)
         </p>
       </div>
 
@@ -353,11 +355,7 @@ export default function ScheduleForm({
           disabled={isSubmitting}
           className="flex-1 px-4 py-2 bg-earth-700 text-white rounded-lg hover:bg-earth-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting
-            ? 'Saving...'
-            : isEditMode
-            ? 'Update Schedule'
-            : 'Create Schedule'}
+          {isSubmitting ? 'Saving...' : isEditMode ? 'Update Schedule' : 'Create Schedule'}
         </button>
       </div>
     </form>
