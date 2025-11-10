@@ -1,3 +1,5 @@
+/* eslint-env browser */
+/* global Blob, URL, URLSearchParams, alert, navigator */
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -15,16 +17,8 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import {
-  Calendar,
-  Download,
-  Share2,
-  TrendingUp,
-  TrendingDown,
-  Users,
-  Clock,
-} from 'lucide-react';
-import { format, subDays, subYears, startOfDay, endOfDay } from 'date-fns';
+import { Calendar, Download, Share2, TrendingUp, TrendingDown, Users, Clock } from 'lucide-react';
+import { format, subDays, subYears } from 'date-fns';
 import { api } from '../lib/api';
 
 interface LaborHoursData {
@@ -94,7 +88,7 @@ export default function AnalyticsPage() {
   });
 
   // Fetch comparison period labor hours
-  const { data: comparisonLaborHours, isLoading: comparisonLoading } = useQuery({
+  const { data: comparisonLaborHours } = useQuery({
     queryKey: ['labor-hours-comparison', comparisonRange],
     queryFn: () =>
       api.get<{ period: string; start_date: Date; end_date: Date; labor_hours: LaborHoursData[] }>(
@@ -170,14 +164,15 @@ export default function AnalyticsPage() {
       const link = document.createElement('a');
       link.href = url;
       link.download = `farm-analytics-${format(new Date(), 'yyyy-MM-dd')}.json`;
-      document.body.appendChild(link);
+      document.body.append(link);
       link.click();
-      document.body.removeChild(link);
+      link.remove();
       URL.revokeObjectURL(url);
 
       // Note: For full PDF support, we would need to add jspdf library
       alert('Analytics exported successfully! (JSON format - PDF support coming soon)');
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Export error:', error);
       alert('Failed to export analytics');
     }
@@ -190,7 +185,7 @@ export default function AnalyticsPage() {
       end: dateRange.end,
       comparison: comparisonEnabled.toString(),
     });
-    const link = `${window.location.origin}/analytics?${params.toString()}`;
+    const link = `${globalThis.location.origin}/analytics?${params.toString()}`;
     setShareableLink(link);
     navigator.clipboard.writeText(link);
     alert('Shareable link copied to clipboard!');
