@@ -20,7 +20,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@farm-commons/shared": "workspace:*",
+    "@farm-commons/shared": "*",
     "express": "^5.1.0",
     "cors": "^2.8.5",
     "helmet": "^8.0.0",
