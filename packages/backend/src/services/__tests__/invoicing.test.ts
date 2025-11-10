@@ -157,7 +157,7 @@ describe('Invoice Service', () => {
         period_start: new Date('2024-01-01'),
         period_end: new Date('2024-01-15'),
         invoice_date: futureDate,
-        due_date: new Date(futureDate.getTime() + 86400000), // +1 day
+        due_date: new Date(futureDate.getTime() + 86_400_000), // +1 day
       };
 
       const result = validateInvoiceData(data);
