@@ -238,7 +238,7 @@ describe('Statistics Calculations', () => {
       const daysResult = await testDb('time_entries')
         .where({ worker_id: worker1Id })
         .whereNotNull('clock_out')
-        .countDistinct(testDb.raw('DATE(clock_in) as days'));
+        .countDistinct({ days: testDb.raw('DATE(clock_in)') });
 
       const daysValue = (daysResult[0] as Record<string, unknown>)?.days || 0;
       expect(Number.parseInt(String(daysValue))).toBe(2);
