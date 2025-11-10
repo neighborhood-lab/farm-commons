@@ -24,7 +24,6 @@ export function errorHandler(
   err: ApiError | ZodError,
   _req: Request,
   res: Response,
-
   _next: NextFunction
 ): void {
   // Handle Zod validation errors
