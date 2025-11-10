@@ -40,6 +40,7 @@ export function errorHandler(
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal server error';
 
+  // eslint-disable-next-line no-console
   console.error('Error:', {
     message: err.message,
     statusCode,

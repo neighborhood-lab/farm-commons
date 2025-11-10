@@ -16,6 +16,19 @@ export const registerSchema = z.object({
   farm_id: z.string().uuid(),
 });
 
+export const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string().min(1),
+  new_password: z.string().min(8),
+});
+
+export const refreshTokenSchema = z.object({
+  refresh_token: z.string().min(1),
+});
+
 // Worker Schemas
 export const createWorkerSchema = z.object({
   first_name: z.string().min(1).max(100),
