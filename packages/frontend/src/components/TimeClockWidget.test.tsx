@@ -28,7 +28,7 @@ const mockWorkers: PaginatedResponse<Worker> = {
       emergency_contact_phone: null,
       hire_date: new Date('2024-01-01'),
       status: 'active',
-      hourly_rate: 15.0,
+      hourly_rate: 15,
       piece_rate: null,
       certifications: [],
       skills: ['harvesting'],
@@ -49,7 +49,7 @@ const mockWorkers: PaginatedResponse<Worker> = {
       emergency_contact_phone: null,
       hire_date: new Date('2024-01-01'),
       status: 'active',
-      hourly_rate: 16.0,
+      hourly_rate: 16,
       piece_rate: null,
       certifications: [],
       skills: ['planting'],
@@ -291,7 +291,7 @@ describe('TimeClockWidget', () => {
     });
 
     // Advance time by 1 minute
-    vi.advanceTimersByTime(60000);
+    vi.advanceTimersByTime(60_000);
 
     await waitFor(() => {
       expect(screen.getByText('00:01')).toBeInTheDocument();
@@ -370,7 +370,7 @@ describe('TimeClockWidget', () => {
   });
 
   it('shows alert when trying to clock in without selecting worker', async () => {
-    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    const alertSpy = vi.spyOn(globalThis, 'alert').mockImplementation(() => {});
 
     vi.mocked(api.get).mockImplementation((endpoint: string) => {
       if (endpoint.includes('/workers')) {
@@ -392,7 +392,7 @@ describe('TimeClockWidget', () => {
   });
 
   it('shows alert when trying to clock in without task type', async () => {
-    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    const alertSpy = vi.spyOn(globalThis, 'alert').mockImplementation(() => {});
 
     vi.mocked(api.get).mockImplementation((endpoint: string) => {
       if (endpoint.includes('/workers')) {
