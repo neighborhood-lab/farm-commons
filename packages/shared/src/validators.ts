@@ -104,3 +104,14 @@ export const dateRangeSchema = z.object({
   start_date: z.string().or(z.date()).transform((val) => new Date(val)),
   end_date: z.string().or(z.date()).transform((val) => new Date(val)),
 });
+
+// Equipment Assignment Schemas
+export const assignEquipmentSchema = z.object({
+  worker_id: z.string().uuid(),
+  assignment_notes: z.string().optional().nullable(),
+});
+
+export const returnEquipmentSchema = z.object({
+  condition_on_return: z.enum(['excellent', 'good', 'fair', 'poor', 'damaged']),
+  return_notes: z.string().optional().nullable(),
+});

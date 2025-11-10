@@ -160,3 +160,37 @@ export interface FarmStats {
   total_hours_this_week: number;
   scheduled_shifts_today: number;
 }
+
+export interface Equipment {
+  id: string;
+  farm_id: string;
+  name: string;
+  type: string;
+  model: string | null;
+  serial_number: string | null;
+  purchase_date: Date | null;
+  status: EquipmentStatus;
+  notes: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export type EquipmentStatus = 'available' | 'in_use' | 'maintenance' | 'retired';
+
+export interface EquipmentAssignment {
+  id: string;
+  farm_id: string;
+  equipment_id: string;
+  worker_id: string;
+  assigned_at: Date;
+  returned_at: Date | null;
+  assigned_by: string | null;
+  returned_by: string | null;
+  assignment_notes: string | null;
+  return_notes: string | null;
+  condition_on_return: EquipmentCondition | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export type EquipmentCondition = 'excellent' | 'good' | 'fair' | 'poor' | 'damaged';
