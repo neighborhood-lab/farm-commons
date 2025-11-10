@@ -1,12 +1,12 @@
 // Worker management routes
 
-import express from 'express';
+import express, { type Router } from 'express';
 import { createWorkerSchema, updateWorkerSchema, paginationSchema } from '@farm-commons/shared';
 import db from '../db/connection.js';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // All worker routes require authentication
 router.use(authenticateToken);
@@ -26,19 +26,17 @@ router.get('/', async (req: AuthRequest, res, next) => {
         .limit(per_page)
         .offset(offset)
         .select('*'),
-      db('workers')
-        .where({ farm_id: farmId })
-        .count('* as count'),
+      db('workers').where({ farm_id: farmId }).count('* as count'),
     ]);
 
     res.json({
       success: true,
       data: {
         data: workers,
-        total: parseInt(count as string),
+        total: Number.parseInt(count as string),
         page,
         per_page,
-        total_pages: Math.ceil(parseInt(count as string) / per_page),
+        total_pages: Math.ceil(Number.parseInt(count as string) / per_page),
       },
     });
   } catch (error) {
@@ -52,9 +50,7 @@ router.get('/:id', async (req: AuthRequest, res, next) => {
     const { id } = req.params;
     const farmId = req.user?.farm_id;
 
-    const worker = await db('workers')
-      .where({ id, farm_id: farmId })
-      .first();
+    const worker = await db('workers').where({ id, farm_id: farmId }).first();
 
     if (!worker) {
       throw new AppError('Worker not found', 404);
@@ -125,9 +121,7 @@ router.delete('/:id', requireRole('admin'), async (req: AuthRequest, res, next) 
     const { id } = req.params;
     const farmId = req.user?.farm_id;
 
-    const deleted = await db('workers')
-      .where({ id, farm_id: farmId })
-      .delete();
+    const deleted = await db('workers').where({ id, farm_id: farmId }).delete();
 
     if (!deleted) {
       throw new AppError('Worker not found', 404);

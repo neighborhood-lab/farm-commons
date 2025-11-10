@@ -25,6 +25,24 @@ const config = {
       max: 10,
     },
   },
+  test: {
+    client: 'pg',
+    connection: process.env.DATABASE_URL || {
+      host: process.env.POSTGRES_HOST || 'localhost',
+      port: parseInt(process.env.POSTGRES_PORT || '5432'),
+      database: process.env.POSTGRES_DB || 'farm_commons_test',
+      user: process.env.POSTGRES_USER || 'postgres',
+      password: process.env.POSTGRES_PASSWORD || 'postgres',
+    },
+    migrations: {
+      directory: './src/db/migrations',
+      extension: 'ts',
+    },
+    pool: {
+      min: 1,
+      max: 5,
+    },
+  },
   production: {
     client: 'pg',
     connection: process.env.DATABASE_URL,
