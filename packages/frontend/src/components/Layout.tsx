@@ -1,6 +1,7 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { Users, Calendar, Clock, Home, LogOut } from 'lucide-react';
 import { useAuthStore } from '../lib/store';
+import QuickActionsMenu from './QuickActionsMenu';
 
 export default function Layout() {
   const { user, logout } = useAuthStore();
@@ -80,6 +81,9 @@ export default function Layout() {
           <Outlet />
         </main>
       </div>
+
+      {/* Quick Actions Menu */}
+      <QuickActionsMenu />
     </div>
   );
 }
