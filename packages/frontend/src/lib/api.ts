@@ -15,17 +15,14 @@ export class ApiError extends Error {
   }
 }
 
-export async function apiRequest<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<T> {
+export async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem('farm-commons-auth')
     ? JSON.parse(localStorage.getItem('farm-commons-auth')!).state?.token
     : null;
 
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...options.headers,
+    ...(options.headers as Record<string, string>),
   };
 
   if (token) {
@@ -40,11 +37,7 @@ export async function apiRequest<T>(
   const data: ApiResponse<T> = await response.json();
 
   if (!response.ok) {
-    throw new ApiError(
-      data.error || 'An error occurred',
-      response.status,
-      data
-    );
+    throw new ApiError(data.error || 'An error occurred', response.status, data);
   }
 
   return data.data as T;
@@ -65,6 +58,5 @@ export const api = {
       body: JSON.stringify(body),
     }),
 
-  delete: <T>(endpoint: string) =>
-    apiRequest<T>(endpoint, { method: 'DELETE' }),
+  delete: <T>(endpoint: string) => apiRequest<T>(endpoint, { method: 'DELETE' }),
 };
