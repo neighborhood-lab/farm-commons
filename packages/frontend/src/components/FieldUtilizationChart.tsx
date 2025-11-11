@@ -6,23 +6,30 @@ interface FieldUtilizationChartProps {
 }
 
 // Color palette for the pie chart
-const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#8b5cf6', '#ec4899'];
+const COLORS = [
+  '#3b82f6',
+  '#8b5cf6',
+  '#10b981',
+  '#f59e0b',
+  '#ef4444',
+  '#06b6d4',
+  '#8b5cf6',
+  '#ec4899',
+];
+
+// Custom label to show percentage
+function renderCustomLabel(entry: FieldUtilizationData & { percent?: number }) {
+  const percent = entry.percent ? (entry.percent * 100).toFixed(0) : entry.percentage.toFixed(0);
+  return `${percent}%`;
+}
 
 export default function FieldUtilizationChart({ data }: FieldUtilizationChartProps) {
-  // Custom label to show percentage
-  const renderCustomLabel = (entry: FieldUtilizationData & { percent?: number }) => {
-    const percent = entry.percent ? (entry.percent * 100).toFixed(0) : entry.percentage.toFixed(0);
-    return `${percent}%`;
-  };
-
   return (
     <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
       <h2 className="text-xl font-bold text-gray-900 mb-4">Field Utilization</h2>
 
       {data.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
-          No field utilization data available
-        </div>
+        <div className="text-center py-8 text-gray-500">No field utilization data available</div>
       ) : (
         <>
           <ResponsiveContainer width="100%" height={300}>
@@ -44,16 +51,20 @@ export default function FieldUtilizationChart({ data }: FieldUtilizationChartPro
                 ))}
               </Pie>
               <Tooltip
-                formatter={(value: number, name: string, props: { payload: FieldUtilizationData }) => {
+                formatter={(
+                  value: number,
+                  name: string,
+                  props: { payload: FieldUtilizationData }
+                ) => {
                   return [
                     `${value.toFixed(1)} hours (${props.payload.percentage.toFixed(1)}%)`,
-                    props.payload.field_name
+                    props.payload.field_name,
                   ];
                 }}
                 contentStyle={{
                   backgroundColor: '#fff',
                   border: '1px solid #e2e8f0',
-                  borderRadius: '0.375rem'
+                  borderRadius: '0.375rem',
                 }}
               />
               <Legend

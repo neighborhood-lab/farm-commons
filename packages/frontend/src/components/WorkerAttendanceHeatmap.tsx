@@ -6,31 +6,31 @@ interface WorkerAttendanceHeatmapProps {
   data: WorkerAttendanceData[];
 }
 
+// Function to get color based on hours worked
+function getHeatmapColor(hours: number, present: boolean) {
+  if (!present) return 'bg-gray-100';
+  if (hours === 0) return 'bg-red-100';
+  if (hours < 4) return 'bg-yellow-200';
+  if (hours < 8) return 'bg-green-300';
+  return 'bg-green-500';
+}
+
 export default function WorkerAttendanceHeatmap({ data }: WorkerAttendanceHeatmapProps) {
-  const [hoveredCell, setHoveredCell] = useState<{ worker: string; date: string; hours: number } | null>(null);
+  const [hoveredCell, setHoveredCell] = useState<{
+    worker: string;
+    date: string;
+    hours: number;
+  } | null>(null);
 
   // Get all unique dates from the data
-  const allDates = data.length > 0
-    ? data[0].dates.map(d => d.date).sort()
-    : [];
-
-  // Function to get color based on hours worked
-  const getHeatmapColor = (hours: number, present: boolean) => {
-    if (!present) return 'bg-gray-100';
-    if (hours === 0) return 'bg-red-100';
-    if (hours < 4) return 'bg-yellow-200';
-    if (hours < 8) return 'bg-green-300';
-    return 'bg-green-500';
-  };
+  const allDates = data.length > 0 ? data[0].dates.map((d) => d.date).sort() : [];
 
   return (
     <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
       <h2 className="text-xl font-bold text-gray-900 mb-4">Worker Attendance Heatmap</h2>
 
       {data.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
-          No attendance data available
-        </div>
+        <div className="text-center py-8 text-gray-500">No attendance data available</div>
       ) : (
         <div className="overflow-x-auto">
           <div className="min-w-max">
@@ -47,7 +47,10 @@ export default function WorkerAttendanceHeatmap({ data }: WorkerAttendanceHeatma
             {/* Worker rows */}
             {data.map((worker) => (
               <div key={worker.worker_id} className="flex items-center mb-1">
-                <div className="w-32 text-sm font-medium text-gray-700 truncate flex-shrink-0" title={worker.worker_name}>
+                <div
+                  className="w-32 text-sm font-medium text-gray-700 truncate flex-shrink-0"
+                  title={worker.worker_name}
+                >
                   {worker.worker_name}
                 </div>
                 {worker.dates.map((dayData, index) => {
@@ -56,11 +59,13 @@ export default function WorkerAttendanceHeatmap({ data }: WorkerAttendanceHeatma
                     <div
                       key={index}
                       className={`w-16 h-8 ${colorClass} border border-gray-200 cursor-pointer transition-opacity hover:opacity-75 flex-shrink-0`}
-                      onMouseEnter={() => setHoveredCell({
-                        worker: worker.worker_name,
-                        date: dayData.date,
-                        hours: dayData.hours
-                      })}
+                      onMouseEnter={() =>
+                        setHoveredCell({
+                          worker: worker.worker_name,
+                          date: dayData.date,
+                          hours: dayData.hours,
+                        })
+                      }
                       onMouseLeave={() => setHoveredCell(null)}
                       title={`${worker.worker_name} - ${format(parseISO(dayData.date), 'MMM dd')}: ${dayData.hours}h`}
                     />
