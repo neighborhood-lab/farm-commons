@@ -71,8 +71,8 @@ describe('passwordStrength', () => {
     });
 
     it('should penalize repeated characters', () => {
-      const repeated = calculatePasswordScore('Aaaa1111!!!!');
-      const varied = calculatePasswordScore('Abcd1234!@#$');
+      const repeated = calculatePasswordScore('Aaaa1111'); // 8 chars with repeated chars
+      const varied = calculatePasswordScore('Afc!63G@'); // 8 chars without repeated chars or sequential
 
       expect(varied).toBeGreaterThan(repeated);
     });
@@ -181,17 +181,17 @@ describe('passwordStrength', () => {
 
     it('should warn about common passwords', () => {
       const result = validatePasswordStrength('password123');
-      expect(result.feedback.some(f => f.includes('common'))).toBe(true);
+      expect(result.feedback.some((f) => f.includes('common'))).toBe(true);
     });
 
     it('should warn about repeated characters', () => {
       const result = validatePasswordStrength('Aaaa1111!!!!');
-      expect(result.feedback.some(f => f.includes('repeated'))).toBe(true);
+      expect(result.feedback.some((f) => f.includes('repeated'))).toBe(true);
     });
 
     it('should warn about sequential patterns', () => {
       const result = validatePasswordStrength('Abc12345!@#');
-      expect(result.feedback.some(f => f.includes('sequential'))).toBe(true);
+      expect(result.feedback.some((f) => f.includes('sequential'))).toBe(true);
     });
 
     it('should provide positive feedback for strong passwords', () => {
@@ -199,7 +199,7 @@ describe('passwordStrength', () => {
       expect(result.meetsRequirements).toBe(true);
       expect(result.score).toBeGreaterThanOrEqual(PasswordStrength.STRONG);
       if (result.score >= PasswordStrength.STRONG) {
-        expect(result.feedback.some(f => f.includes('Great'))).toBe(true);
+        expect(result.feedback.some((f) => f.includes('Great'))).toBe(true);
       }
     });
 
@@ -232,7 +232,7 @@ describe('passwordStrength', () => {
       expect(texts).toContain('At least one uppercase letter');
       expect(texts).toContain('At least one lowercase letter');
       expect(texts).toContain('At least one number');
-      expect(texts.some(t => t.includes('special character'))).toBe(true);
+      expect(texts.some((t) => t.includes('special character'))).toBe(true);
     });
 
     it('should return custom requirement texts', () => {
@@ -249,12 +249,12 @@ describe('passwordStrength', () => {
       expect(texts).toContain('At least one lowercase letter');
       expect(texts).toContain('At least one number');
       expect(texts).not.toContain('At least one uppercase letter');
-      expect(texts.some(t => t.includes('special character'))).toBe(false);
+      expect(texts.some((t) => t.includes('special character'))).toBe(false);
     });
 
     it('should always include length requirement', () => {
       const texts = getPasswordRequirementsText();
-      expect(texts.some(t => t.includes('characters'))).toBe(true);
+      expect(texts.some((t) => t.includes('characters'))).toBe(true);
     });
   });
 
@@ -305,15 +305,9 @@ describe('passwordStrength', () => {
 
   describe('Real-world Password Examples', () => {
     it('should rate weak passwords as weak', () => {
-      const weakPasswords = [
-        'password',
-        '123456',
-        'abc123',
-        'qwerty',
-        'letmein',
-      ];
+      const weakPasswords = ['password', '123456', 'abc123', 'qwerty', 'letmein'];
 
-      weakPasswords.forEach(pwd => {
+      weakPasswords.forEach((pwd) => {
         const result = validatePasswordStrength(pwd);
         expect(result.score).toBeLessThanOrEqual(PasswordStrength.WEAK);
         expect(result.meetsRequirements).toBe(false);
@@ -321,13 +315,9 @@ describe('passwordStrength', () => {
     });
 
     it('should rate medium passwords as fair to strong', () => {
-      const mediumPasswords = [
-        'P@ssword123',
-        'MyP@ss2024',
-        'Welcome!23',
-      ];
+      const mediumPasswords = ['P@ssword123', 'MyP@ss2024', 'Welcome!23'];
 
-      mediumPasswords.forEach(pwd => {
+      mediumPasswords.forEach((pwd) => {
         const result = validatePasswordStrength(pwd);
         expect(result.score).toBeGreaterThanOrEqual(PasswordStrength.FAIR);
         expect(result.meetsRequirements).toBe(true);
@@ -341,7 +331,7 @@ describe('passwordStrength', () => {
         'Tr0ub4dor&3$ecure!P@ss',
       ];
 
-      strongPasswords.forEach(pwd => {
+      strongPasswords.forEach((pwd) => {
         const result = validatePasswordStrength(pwd);
         expect(result.score).toBeGreaterThanOrEqual(PasswordStrength.STRONG);
         expect(result.meetsRequirements).toBe(true);

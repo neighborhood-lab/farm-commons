@@ -19,9 +19,7 @@ describe('formatCurrency', () => {
   });
 
   it('should format currency in US locale explicitly', () => {
-    expect(formatCurrency(1234.56, { locale: 'en-US', currency: 'USD' })).toBe(
-      '$1,234.56'
-    );
+    expect(formatCurrency(1234.56, { locale: 'en-US', currency: 'USD' })).toBe('$1,234.56');
   });
 
   it('should format currency in Mexican locale', () => {
@@ -96,7 +94,8 @@ describe('calculateHourlyWage', () => {
 
   it('should handle decimal hours', () => {
     expect(calculateHourlyWage(7.5, 10)).toBe(75);
-    expect(calculateHourlyWage(40.5, 15, 0.5, 1.5)).toBe(618.75);
+    // 40.5 total hours with 0.5 OT: (40 regular * 15) + (0.5 OT * 15 * 1.5) = 600 + 11.25 = 611.25
+    expect(calculateHourlyWage(40.5, 15, 0.5, 1.5)).toBe(611.25);
   });
 
   it('should throw error for negative hours', () => {
@@ -108,9 +107,7 @@ describe('calculateHourlyWage', () => {
   });
 
   it('should throw error for negative overtime hours', () => {
-    expect(() => calculateHourlyWage(40, 15, -5)).toThrow(
-      'Hours and rates must be non-negative'
-    );
+    expect(() => calculateHourlyWage(40, 15, -5)).toThrow('Hours and rates must be non-negative');
   });
 
   it('should throw error when overtime exceeds total hours', () => {
@@ -186,15 +183,11 @@ describe('calculateMixedEarnings', () => {
   });
 
   it('should throw error for negative hourly wage', () => {
-    expect(() => calculateMixedEarnings(-500, 150)).toThrow(
-      'Earnings must be non-negative'
-    );
+    expect(() => calculateMixedEarnings(-500, 150)).toThrow('Earnings must be non-negative');
   });
 
   it('should throw error for negative piece rate earnings', () => {
-    expect(() => calculateMixedEarnings(500, -150)).toThrow(
-      'Earnings must be non-negative'
-    );
+    expect(() => calculateMixedEarnings(500, -150)).toThrow('Earnings must be non-negative');
   });
 
   it('should handle decimal values', () => {
