@@ -55,7 +55,7 @@ export class EmailService {
 
     this.config = {
       host: process.env.SMTP_HOST || 'localhost',
-      port: parseInt(process.env.SMTP_PORT || '587'),
+      port: Number.parseInt(process.env.SMTP_PORT || '587'),
       secure: process.env.SMTP_SECURE === 'true',
       auth: {
         user: process.env.SMTP_USER || '',
@@ -153,9 +153,7 @@ export class EmailService {
   /**
    * Send schedule change notification
    */
-  async sendScheduleChangeNotification(
-    data: ScheduleChangeEmailData
-  ): Promise<boolean> {
+  async sendScheduleChangeNotification(data: ScheduleChangeEmailData): Promise<boolean> {
     const { worker, schedule, changeType, fieldName } = data;
 
     if (!worker.email) {
@@ -164,11 +162,7 @@ export class EmailService {
     }
 
     const subject = this.getScheduleChangeSubject(changeType);
-    const { text, html } = this.generateScheduleChangeEmail(
-      data,
-      changeType,
-      fieldName
-    );
+    const { text, html } = this.generateScheduleChangeEmail(data, changeType, fieldName);
 
     return this.sendEmail({
       to: worker.email,
@@ -181,9 +175,7 @@ export class EmailService {
   /**
    * Send certification expiry reminder
    */
-  async sendCertificationExpiryReminder(
-    data: CertificationExpiryEmailData
-  ): Promise<boolean> {
+  async sendCertificationExpiryReminder(data: CertificationExpiryEmailData): Promise<boolean> {
     const { worker, certifications } = data;
 
     if (!worker.email) {
@@ -192,10 +184,7 @@ export class EmailService {
     }
 
     const subject = 'Certification Expiry Reminder - Farm Commons';
-    const { text, html } = this.generateCertificationExpiryEmail(
-      worker,
-      certifications
-    );
+    const { text, html } = this.generateCertificationExpiryEmail(worker, certifications);
 
     return this.sendEmail({
       to: worker.email,
@@ -369,19 +358,27 @@ Farm Commons Team
         <span>${schedule.task_type}${location}</span>
       </div>
 
-      ${schedule.task_description ? `
+      ${
+        schedule.task_description
+          ? `
         <div class="detail-row">
           <span class="label">Description:</span>
           <span>${schedule.task_description}</span>
         </div>
-      ` : ''}
+      `
+          : ''
+      }
 
-      ${schedule.notes ? `
+      ${
+        schedule.notes
+          ? `
         <div class="detail-row">
           <span class="label">Notes:</span>
           <span>${schedule.notes}</span>
         </div>
-      ` : ''}
+      `
+          : ''
+      }
     </div>
 
     <p>If you have any questions or concerns, please contact your farm manager.</p>
@@ -411,9 +408,7 @@ Farm Commons Team
     const workerName = `${worker.first_name} ${worker.last_name}`;
 
     // Sort certifications by days until expiry
-    const sortedCerts = [...certifications].sort(
-      (a, b) => a.daysUntilExpiry - b.daysUntilExpiry
-    );
+    const sortedCerts = [...certifications].sort((a, b) => a.daysUntilExpiry - b.daysUntilExpiry);
 
     // Generate certification list for text
     const certListText = sortedCerts
@@ -449,11 +444,7 @@ Farm Commons Team
           ? new Date(cert.expiration_date).toLocaleDateString()
           : 'No expiration date';
         const urgencyClass =
-          cert.daysUntilExpiry <= 30
-            ? 'urgent'
-            : cert.daysUntilExpiry <= 60
-            ? 'warning'
-            : 'notice';
+          cert.daysUntilExpiry <= 30 ? 'urgent' : cert.daysUntilExpiry <= 60 ? 'warning' : 'notice';
 
         return `
         <div class="cert-item ${urgencyClass}">
@@ -601,7 +592,8 @@ Farm Commons Team
    */
   async sendTestEmail(to: string): Promise<boolean> {
     const subject = 'Test Email - Farm Commons';
-    const text = 'This is a test email from Farm Commons. If you receive this, your email configuration is working correctly.';
+    const text =
+      'This is a test email from Farm Commons. If you receive this, your email configuration is working correctly.';
     const html = `
       <div style="font-family: Arial, sans-serif; padding: 20px;">
         <h2>Test Email</h2>

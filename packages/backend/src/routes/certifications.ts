@@ -1,12 +1,12 @@
 // Certification management routes
 
-import express from 'express';
+import express, { Router } from 'express';
 import { createCertificationSchema, updateCertificationSchema } from '@farm-commons/shared';
 import db from '../db/connection.js';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // All certification routes require authentication
 router.use(authenticateToken);
@@ -18,9 +18,7 @@ router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
     const farmId = req.user?.farm_id;
 
     // Verify worker belongs to the farm
-    const worker = await db('workers')
-      .where({ id: workerId, farm_id: farmId })
-      .first();
+    const worker = await db('workers').where({ id: workerId, farm_id: farmId }).first();
 
     if (!worker) {
       throw new AppError('Worker not found', 404);
@@ -44,7 +42,7 @@ router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
 router.get('/expiring', async (req: AuthRequest, res, next) => {
   try {
     const farmId = req.user?.farm_id;
-    const days = parseInt(req.query.days as string) || 30;
+    const days = Number.parseInt(req.query.days as string) || 30;
 
     const expiringDate = new Date();
     expiringDate.setDate(expiringDate.getDate() + days);
@@ -55,11 +53,7 @@ router.get('/expiring', async (req: AuthRequest, res, next) => {
       .where('certifications.expiration_date', '<=', expiringDate)
       .where('certifications.expiration_date', '>=', new Date())
       .orderBy('certifications.expiration_date', 'asc')
-      .select(
-        'certifications.*',
-        'workers.first_name',
-        'workers.last_name'
-      );
+      .select('certifications.*', 'workers.first_name', 'workers.last_name');
 
     res.json({
       success: true,
@@ -77,17 +71,13 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
     const farmId = req.user?.farm_id;
 
     // Verify worker belongs to the farm
-    const worker = await db('workers')
-      .where({ id: data.worker_id, farm_id: farmId })
-      .first();
+    const worker = await db('workers').where({ id: data.worker_id, farm_id: farmId }).first();
 
     if (!worker) {
       throw new AppError('Worker not found', 404);
     }
 
-    const [certification] = await db('certifications')
-      .insert(data)
-      .returning('*');
+    const [certification] = await db('certifications').insert(data).returning('*');
 
     res.status(201).json({
       success: true,
@@ -150,9 +140,7 @@ router.delete('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, 
       throw new AppError('Certification not found', 404);
     }
 
-    await db('certifications')
-      .where({ id })
-      .delete();
+    await db('certifications').where({ id }).delete();
 
     res.json({
       success: true,
