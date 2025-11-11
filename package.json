@@ -19,12 +19,16 @@
     "test:coverage": "turbo run test:coverage",
     "test:e2e": "turbo run test:e2e",
     "lint": "turbo run lint",
+    "lint:fix": "turbo run lint -- --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean && rm -rf node_modules",
     "db:migrate": "npm run db:migrate --workspace=@farm-commons/backend",
     "db:migrate:latest": "npm run db:migrate:latest --workspace=@farm-commons/backend",
     "db:migrate:rollback": "npm run db:migrate:rollback --workspace=@farm-commons/backend",
-    "db:seed": "npm run db:seed --workspace=@farm-commons/backend"
+    "db:seed": "npm run db:seed --workspace=@farm-commons/backend",
+    "prepare": "husky"
   },
   "workspaces": [
     "packages/*"
@@ -41,6 +45,7 @@
     "eslint-plugin-sonarjs": "^3.0.1",
     "eslint-plugin-unicorn": "^57.0.0",
     "husky": "^9.1.7",
+    "lint-staged": "^15.2.11",
     "prettier": "^3.4.2",
     "turbo": "^2.6.0",
     "typescript": "^5.9.0",
