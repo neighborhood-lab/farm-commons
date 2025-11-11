@@ -1,0 +1,123 @@
+{
+  "app": {
+    "name": "Farm Commons",
+    "tagline": "Community owned",
+    "description": "Shared farm management software, community owned",
+    "forWhom": "For the humans who feed us"
+  },
+  "auth": {
+    "login": "Sign In",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "emailPlaceholder": "your@email.com",
+    "passwordPlaceholder": "••••••••",
+    "signingIn": "Signing in...",
+    "loginFailed": "Login failed",
+    "builtWith": "Built with soil under our fingernails",
+    "license": "AGPL-3.0 Licensed · Community Owned"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "workers": "Workers",
+    "schedule": "Schedule",
+    "timeTracking": "Time Tracking"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Welcome to Farm Commons - Overview of your farm operations",
+    "activeWorkers": "Active Workers",
+    "shiftsToday": "Shifts Today",
+    "hoursThisWeek": "Hours This Week",
+    "fields": "Fields",
+    "loading": "Loading...",
+    "welcome": "Welcome to Farm Commons MVP",
+    "phase1Features": "This is the initial MVP (Minimum Viable Product) showcasing Phase 1 features:",
+    "feature1": "Worker Management: Directory, certifications, contact information",
+    "feature2": "Scheduling: Daily work schedules and field assignments",
+    "feature3": "Time Tracking: Clock in/out, hours worked, compliance tracking",
+    "footer": "Built for farmworkers and small-scale farmers, not corporations.",
+    "communityOwned": "Community owned · AGPL-3.0 Licensed · Open Source"
+  },
+  "workers": {
+    "title": "Workers",
+    "subtitle": "Manage your farm workforce - {{count}} total",
+    "addWorker": "Add Worker",
+    "addFirstWorker": "Add First Worker",
+    "loading": "Loading workers...",
+    "noWorkersTitle": "No workers yet",
+    "noWorkersDescription": "Get started by adding your first farmworker",
+    "hired": "Hired",
+    "skills": "Skills",
+    "moreSkills": "+{{count}} more",
+    "status": {
+      "active": "active",
+      "seasonal": "seasonal",
+      "inactive": "inactive"
+    }
+  },
+  "schedule": {
+    "title": "Schedule",
+    "subtitle": "Weekly schedule and field assignments",
+    "addShift": "Add Shift",
+    "loading": "Loading schedule...",
+    "previousWeek": "← Previous Week",
+    "nextWeek": "Next Week →",
+    "noShiftsTitle": "No shifts scheduled",
+    "noShiftsDescription": "Start planning your week by adding shifts for your workers",
+    "status": {
+      "completed": "completed",
+      "inProgress": "in_progress",
+      "scheduled": "scheduled"
+    }
+  },
+  "timeTracking": {
+    "title": "Time Tracking",
+    "subtitle": "Clock in/out and hours management"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "search": "Search",
+    "filter": "Filter",
+    "actions": "Actions",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "total": "Total",
+    "of": "of",
+    "more": "more"
+  },
+  "days": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "sun": "Sun"
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "networkError": "Network error. Please check your connection.",
+    "unauthorized": "You are not authorized to perform this action",
+    "notFound": "The requested resource was not found",
+    "serverError": "Server error. Please try again later."
+  }
+}

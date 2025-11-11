@@ -46,7 +46,7 @@ describe('Audit Logging Middleware', () => {
       headers: {
         'user-agent': 'test-agent',
       },
-      ip: '127.0.0.1',
+      ip: '127.1.1.1',
     };
 
     // Setup mock response with json spy
@@ -80,7 +80,7 @@ describe('Audit Logging Middleware', () => {
         action: 'create',
         resourceType: 'worker',
         resourceId: 'worker-123',
-        ipAddress: '127.0.0.1',
+        ipAddress: '127.1.1.1',
         userAgent: 'test-agent',
       });
 
@@ -92,7 +92,7 @@ describe('Audit Logging Middleware', () => {
           action: 'create',
           resource_type: 'worker',
           resource_id: 'worker-123',
-          ip_address: '127.0.0.1',
+          ip_address: '127.1.1.1',
           user_agent: 'test-agent',
         })
       );

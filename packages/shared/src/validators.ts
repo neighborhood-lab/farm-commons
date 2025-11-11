@@ -361,3 +361,58 @@ export const certificationDocumentUploadSchema = z.object({
   certification_id: z.string().uuid(),
   document_url: z.string().url().optional(), // For direct URL uploads
 });
+
+// Webhook Schemas
+export const webhookEvents = [
+  'worker.created',
+  'worker.updated',
+  'worker.deleted',
+  'schedule.created',
+  'schedule.updated',
+  'schedule.deleted',
+  'time_entry.created',
+  'time_entry.updated',
+  'certification.expiring',
+] as const;
+
+export const createWebhookSchema = z.object({
+  url: z.string().url().max(2048),
+  events: z.array(z.enum(webhookEvents)).min(1),
+  description: z.string().optional().nullable(),
+});
+
+export const updateWebhookSchema = z.object({
+  url: z.string().url().max(2048).optional(),
+  events: z.array(z.enum(webhookEvents)).min(1).optional(),
+  active: z.boolean().optional(),
+  description: z.string().optional().nullable(),
+});
+
+// Crop Schemas
+export const createCropSchema = z.object({
+  field_id: z.string().uuid(),
+  crop_name: z.string().min(1).max(200),
+  crop_variety: z.string().max(200).optional().nullable(),
+  planting_date: z.string().or(z.date()).transform((val) => new Date(val)),
+  expected_harvest_date: z.string().or(z.date()).transform((val) => new Date(val)).optional().nullable(),
+  actual_harvest_date: z.string().or(z.date()).transform((val) => new Date(val)).optional().nullable(),
+  planted_area_acres: z.number().positive().optional().nullable(),
+  yield_amount: z.number().positive().optional().nullable(),
+  yield_unit: z.string().max(50).optional().nullable(),
+  season: z.enum(['spring', 'summer', 'fall', 'winter']),
+  status: z.enum(['planned', 'planted', 'growing', 'harvested', 'failed']).default('planned'),
+  crop_family_id: z.string().uuid().optional().nullable(),
+  notes: z.string().optional().nullable(),
+});
+
+export const updateCropSchema = createCropSchema.partial().omit({ field_id: true });
+
+export const createCropCompanionSchema = z.object({
+  crop_name: z.string().min(1).max(200),
+  companion_crop: z.string().min(1).max(200),
+  relationship_type: z.enum(['beneficial', 'neutral', 'antagonistic']),
+  benefits: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+});
+
+export const updateCropCompanionSchema = createCropCompanionSchema.partial();

@@ -1,0 +1,44 @@
+{
+  "name": "@farm-commons/sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for Farm Commons API - external integrations",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "farm-commons",
+    "agriculture",
+    "farm-management",
+    "sdk",
+    "api-client"
+  ],
+  "author": "Farm Commons",
+  "license": "MIT",
+  "dependencies": {
+    "@farm-commons/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.0.0"
+  }
+}

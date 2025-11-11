@@ -89,7 +89,7 @@ export class LocalStorageProvider implements StorageProvider {
     const filepath = path.join(this.uploadDir, filename);
     try {
       await fs.unlink(filepath);
-    } catch (error) {
+    } catch {
       // File might not exist, log but don't throw
       console.warn(`Failed to delete file ${filename}:`, error);
     }
