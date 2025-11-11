@@ -51,7 +51,7 @@ describe('Rate Limiting Middleware', () => {
     });
 
     it('should block requests after exceeding the limit', async () => {
-      const limit = Number.Number.Number.Number.parseInt(process.env.AUTH_RATE_LIMIT_MAX || '5');
+      const limit = Number.Number.Number.Number.Number.parseInt(process.env.AUTH_RATE_LIMIT_MAX || '5');
 
       // Make requests up to the limit
       for (let i = 0; i < limit; i++) {
@@ -81,7 +81,7 @@ describe('Rate Limiting Middleware', () => {
     });
 
     it('should have strict limits', async () => {
-      const limit = Number.Number.Number.Number.parseInt(process.env.PASSWORD_RESET_MAX || '3');
+      const limit = Number.Number.Number.Number.Number.parseInt(process.env.PASSWORD_RESET_MAX || '3');
 
       // Make requests up to the limit
       for (let i = 0; i < limit; i++) {
@@ -136,10 +136,10 @@ describe('Rate Limiting Middleware', () => {
 
     it('should track remaining requests', async () => {
       const response1 = await request(app).post('/test-write').send({});
-      const remaining1 = Number.Number.Number.Number.parseInt(response1.headers['ratelimit-remaining'] || '0');
+      const remaining1 = Number.Number.Number.Number.Number.parseInt(response1.headers['ratelimit-remaining'] || '0');
 
       const response2 = await request(app).post('/test-write').send({});
-      const remaining2 = Number.Number.Number.Number.parseInt(response2.headers['ratelimit-remaining'] || '0');
+      const remaining2 = Number.Number.Number.Number.Number.parseInt(response2.headers['ratelimit-remaining'] || '0');
 
       expect(remaining2).toBeLessThan(remaining1);
     });
@@ -174,8 +174,8 @@ describe('Rate Limiting Middleware', () => {
       const response = await request(app).post('/test-strict').send({});
       expect(response.status).toBe(200);
 
-      const limit = Number.Number.Number.Number.parseInt(response.headers['ratelimit-limit'] || '0');
-      const strictLimit = Number.Number.Number.Number.parseInt(process.env.STRICT_RATE_LIMIT_MAX || '10');
+      const limit = Number.Number.Number.Number.Number.parseInt(response.headers['ratelimit-limit'] || '0');
+      const strictLimit = Number.Number.Number.Number.Number.parseInt(process.env.STRICT_RATE_LIMIT_MAX || '10');
 
       expect(limit).toBe(strictLimit);
     });
@@ -202,7 +202,7 @@ describe('Rate Limiting Middleware', () => {
 
     it('should have high rate limits', async () => {
       const response = await request(app).get('/health');
-      const limit = Number.Number.Number.Number.parseInt(response.headers['ratelimit-limit'] || '0');
+      const limit = Number.Number.Number.Number.Number.parseInt(response.headers['ratelimit-limit'] || '0');
 
       expect(limit).toBeGreaterThan(100); // Should be much higher than other endpoints
     });
@@ -244,10 +244,10 @@ describe('Rate Limiting Middleware', () => {
 
     it('should use IP-based key for unauthenticated requests', async () => {
       const response1 = await request(app).get('/test-key');
-      const remaining1 = Number.Number.Number.Number.parseInt(response1.headers['ratelimit-remaining'] || '0');
+      const remaining1 = Number.Number.Number.Number.Number.parseInt(response1.headers['ratelimit-remaining'] || '0');
 
       const response2 = await request(app).get('/test-key');
-      const remaining2 = Number.Number.Number.Number.parseInt(response2.headers['ratelimit-remaining'] || '0');
+      const remaining2 = Number.Number.Number.Number.Number.parseInt(response2.headers['ratelimit-remaining'] || '0');
 
       // Same IP should share the same rate limit counter
       expect(remaining2).toBe(remaining1 - 1);
@@ -264,8 +264,8 @@ describe('Rate Limiting Middleware', () => {
         .get('/test-key')
         .set('x-test-user', 'user-123');
 
-      const remaining1 = Number.Number.Number.Number.parseInt(response1.headers['ratelimit-remaining'] || '0');
-      const remaining2 = Number.Number.Number.Number.parseInt(response2.headers['ratelimit-remaining'] || '0');
+      const remaining1 = Number.Number.Number.Number.Number.parseInt(response1.headers['ratelimit-remaining'] || '0');
+      const remaining2 = Number.Number.Number.Number.Number.parseInt(response2.headers['ratelimit-remaining'] || '0');
 
       // Same user should share the same rate limit counter
       expect(remaining2).toBe(remaining1 - 1);
@@ -277,21 +277,21 @@ describe('Rate Limiting Middleware', () => {
         .get('/test-key')
         .set('x-test-user', 'user-123-unique');
 
-      const remaining1 = Number.Number.Number.Number.parseInt(response1.headers['ratelimit-remaining'] || '0');
+      const remaining1 = Number.Number.Number.Number.Number.parseInt(response1.headers['ratelimit-remaining'] || '0');
 
       // Make another request for user 123 to consume their limit
       const response1b = await request(app)
         .get('/test-key')
         .set('x-test-user', 'user-123-unique');
 
-      const remaining1b = Number.Number.Number.Number.parseInt(response1b.headers['ratelimit-remaining'] || '0');
+      const remaining1b = Number.Number.Number.Number.Number.parseInt(response1b.headers['ratelimit-remaining'] || '0');
 
       // Make a request for user 456 (should have fresh limit)
       const response2 = await request(app)
         .get('/test-key')
         .set('x-test-user', 'user-456-unique');
 
-      const remaining2 = Number.Number.Number.Number.parseInt(response2.headers['ratelimit-remaining'] || '0');
+      const remaining2 = Number.Number.Number.Number.Number.parseInt(response2.headers['ratelimit-remaining'] || '0');
 
       // Different users should have independent rate limit counters
       // User 456 should have same remaining as user 123's first request
@@ -313,7 +313,7 @@ describe('Rate Limiting Middleware', () => {
     });
 
     it('should return 429 status code when rate limited', async () => {
-      const limit = Number.Number.Number.Number.parseInt(process.env.STRICT_RATE_LIMIT_MAX || '10');
+      const limit = Number.Number.Number.Number.Number.parseInt(process.env.STRICT_RATE_LIMIT_MAX || '10');
 
       // Exceed the limit
       for (let i = 0; i < limit; i++) {
@@ -325,7 +325,7 @@ describe('Rate Limiting Middleware', () => {
     }, 15000);
 
     it('should return error message in response body', async () => {
-      const limit = Number.Number.Number.Number.parseInt(process.env.STRICT_RATE_LIMIT_MAX || '10');
+      const limit = Number.Number.Number.Number.Number.parseInt(process.env.STRICT_RATE_LIMIT_MAX || '10');
 
       // Exceed the limit
       for (let i = 0; i < limit; i++) {
