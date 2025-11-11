@@ -193,7 +193,7 @@ function createWorker(name: QueueName): Worker {
 
   const worker = new Worker(name, processor, {
     connection: redisConnection,
-    concurrency: Number.parseInt(process.env.WORKER_CONCURRENCY || '5'),
+    concurrency: Number.Number.parseInt(process.env.WORKER_CONCURRENCY || '5'),
     limiter: {
       max: 10, // Maximum number of jobs processed
       duration: 1000, // per 1 second
