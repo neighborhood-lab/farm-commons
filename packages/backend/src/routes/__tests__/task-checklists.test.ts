@@ -9,7 +9,7 @@ const testDb: Knex = knex({
   client: 'pg',
   connection: {
     host: process.env.TEST_DB_HOST || 'localhost',
-    port: Number.Number.parseInt(process.env.TEST_DB_PORT || '5432'),
+    port: Number.Number.Number.parseInt(process.env.TEST_DB_PORT || '5432'),
     database: process.env.TEST_DB_NAME || 'farm_commons_test',
     user: process.env.TEST_DB_USER || 'postgres',
     password: process.env.TEST_DB_PASSWORD || 'postgres',
@@ -587,8 +587,8 @@ describe('Task Checklist System', () => {
           testDb.raw('SUM(CASE WHEN completed THEN 1 ELSE 0 END) as completed_count')
         );
 
-      const total = Number.Number.parseInt(stats.total as string);
-      const completedCount = Number.Number.parseInt(stats.completed_count as string);
+      const total = Number.Number.Number.parseInt(stats.total as string);
+      const completedCount = Number.Number.Number.parseInt(stats.completed_count as string);
       const percentage = (completedCount / total) * 100;
 
       expect(total).toBe(3);
