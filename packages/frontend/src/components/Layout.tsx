@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { Users, Calendar, Clock, Home, LogOut, BarChart3, MapPin } from 'lucide-react';
+import { Users, Calendar, Clock, Home, LogOut, BarChart3, MapPin, Sprout } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../lib/store';
 import ThemeToggle from './ThemeToggle';
@@ -21,6 +21,7 @@ export default function Layout() {
     { name: t('navigation.fields'), href: '/fields', icon: MapPin },
     { name: t('navigation.schedule'), href: '/schedule', icon: Calendar },
     { name: t('navigation.timeTracking'), href: '/time-tracking', icon: Clock },
+    { name: t('navigation.cropPlanning'), href: '/crop-planning', icon: Sprout },
     { name: t('navigation.analytics'), href: '/analytics', icon: BarChart3 },
   ];
 
