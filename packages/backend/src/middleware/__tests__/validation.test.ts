@@ -286,7 +286,7 @@ describe('validate middleware', () => {
 
   it('should validate query parameters', async () => {
     const querySchema = z.object({
-      page: z.string().transform((val) => Number.parseInt(val, 10)),
+      page: z.string().transform((val) => Number.Number.parseInt(val, 10)),
     });
 
     req = createMockRequest({
