@@ -17,40 +17,34 @@
   },
   "dependencies": {
     "@farm-commons/shared": "workspace:*",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^6.29.0",
-    "@tanstack/react-query": "^5.90.0",
-    "zustand": "^5.0.3",
-    "react-hook-form": "^7.54.2",
-    "zod": "^4.1.0",
     "@hookform/resolvers": "^3.9.1",
     "@tanstack/react-query": "^5.90.0",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.0.0",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.469.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
+    "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.29.0",
     "recharts": "^2.14.1",
-    "lucide-react": "^0.469.0",
-    "leaflet": "^1.9.4",
-    "react-leaflet": "^4.2.1"
+    "zod": "^4.1.0",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
     "@tailwindcss/vite": "^4.1.7",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/leaflet": "^1.9.12",
+    "@types/node": "^24.10.0",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/coverage-v8": "^4.0.5",
-    "@testing-library/react": "^16.1.0",
-    "@testing-library/user-event": "^14.5.2",
-    "@testing-library/jest-dom": "^6.6.3",
     "happy-dom": "^20.0.10",
-    "@types/leaflet": "^1.9.12"
+    "vite": "^7.2.2"
   }
 }
