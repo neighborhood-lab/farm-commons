@@ -7,7 +7,8 @@ beforeAll(async () => {
   // Ensure database connection is established
   try {
     await db.raw('SELECT 1');
-  } catch {
+  } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Database connection failed:', error);
   }
 });
