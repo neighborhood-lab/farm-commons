@@ -72,6 +72,7 @@
     "@types/supertest": "^6.0.2",
     "@vitest/coverage-v8": "^4.0.5",
     "happy-dom": "^20.0.10",
+    "sqlite3": "^5.1.7",
     "supertest": "^7.0.0",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.19.2",
