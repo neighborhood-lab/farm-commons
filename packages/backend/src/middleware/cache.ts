@@ -33,6 +33,7 @@ export interface CacheOptions {
  * Generate a cache key from the request
  */
 export function generateCacheKey(req: Request, prefix = 'api'): string {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { method, originalUrl, user } = req as any;
   const userId = user?.id || 'anonymous';
 
@@ -61,7 +62,6 @@ export function cache(options: CacheOptions = {}) {
     ttl = 300, // 5 minutes default
     keyGenerator = generateCacheKey,
     onlySuccessful = true,
-    prefix = 'api',
     skipQueryParams = [],
   } = options;
 
@@ -91,7 +91,7 @@ export function cache(options: CacheOptions = {}) {
         cacheStats.hits++;
         logger.debug({ cacheKey, source: 'cache' }, 'Cache hit');
 
-        const parsed = JSON.parse(cachedResponse);
+        const parsed = JSON.parse(cachedResponse.toString());
         res.setHeader('X-Cache', 'HIT');
         res.setHeader('X-Cache-Key', cacheKey);
         res.status(parsed.status || 200).json(parsed.data);
@@ -106,6 +106,7 @@ export function cache(options: CacheOptions = {}) {
       const originalJson = res.json.bind(res);
 
       // Override the json method to cache the response
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       res.json = function (data: any) {
         const statusCode = res.statusCode;
 
@@ -117,13 +118,15 @@ export function cache(options: CacheOptions = {}) {
             data,
           };
 
+          // Cache asynchronously - intentionally not awaiting
           redisClient
             .setEx(cacheKey, ttl, JSON.stringify(cacheData))
+            // eslint-disable-next-line promise/always-return
             .then(() => {
               logger.debug({ cacheKey, ttl }, 'Response cached');
             })
-            .catch((err) => {
-              logger.error({ err, cacheKey }, 'Failed to cache response');
+            .catch((error) => {
+              logger.error({ err: error, cacheKey }, 'Failed to cache response');
               cacheStats.errors++;
             });
         }
@@ -160,7 +163,7 @@ export async function invalidateCache(pattern: string): Promise<number> {
   try {
     logger.info({ pattern }, 'Invalidating cache');
 
-    let cursor = 0;
+    let cursor = '0';
     let deletedCount = 0;
 
     do {
@@ -170,7 +173,7 @@ export async function invalidateCache(pattern: string): Promise<number> {
         COUNT: 100,
       });
 
-      cursor = result.cursor;
+      cursor = result.cursor.toString();
       const keys = result.keys;
 
       // Delete matched keys
@@ -178,7 +181,7 @@ export async function invalidateCache(pattern: string): Promise<number> {
         const deleted = await redisClient.del(keys);
         deletedCount += deleted;
       }
-    } while (cursor !== 0);
+    } while (cursor !== '0');
 
     logger.info({ pattern, deletedCount }, 'Cache invalidated');
     return deletedCount;
@@ -255,6 +258,7 @@ export function resetCacheStats() {
  */
 export interface CacheWarmer {
   key: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fetcher: () => Promise<any>;
   ttl?: number;
 }
@@ -297,18 +301,20 @@ export function cacheInvalidator(resource: string) {
     const originalJson = res.json.bind(res);
 
     // Override json method to invalidate cache after successful mutations
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     res.json = function (data: any) {
       const statusCode = res.statusCode;
 
       // Invalidate cache on successful mutations (2xx status codes)
       if (statusCode >= 200 && statusCode < 300) {
-        // Invalidate asynchronously (don't block the response)
+        // Invalidate asynchronously (don't block the response) - intentionally not awaiting
         invalidateCacheByResource(resource)
+          // eslint-disable-next-line promise/always-return
           .then((count) => {
             logger.info({ resource, count }, 'Cache invalidated after mutation');
           })
-          .catch((err) => {
-            logger.error({ err, resource }, 'Failed to invalidate cache after mutation');
+          .catch((error) => {
+            logger.error({ err: error, resource }, 'Failed to invalidate cache after mutation');
           });
       }
 
