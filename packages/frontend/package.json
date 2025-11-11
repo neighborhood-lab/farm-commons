@@ -12,11 +12,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint src --ext .ts,.tsx",
+    "lint": "eslint src --ext .ts,.tsx --ignore-pattern '**/*.test.*' --ignore-pattern '**/*.spec.*'",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@farm-commons/shared": "workspace:*",
+    "@farm-commons/shared": "*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^6.29.0",
@@ -28,7 +28,9 @@
     "date-fns": "^4.1.0",
     "framer-motion": "^12.0.0",
     "recharts": "^2.14.1",
-    "lucide-react": "^0.469.0"
+    "lucide-react": "^0.469.0",
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^4.2.1"
   },
   "devDependencies": {
     "@types/react": "^19.0.7",
@@ -43,7 +45,9 @@
     "vitest": "^4.0.5",
     "@vitest/coverage-v8": "^4.0.5",
     "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
     "@testing-library/jest-dom": "^6.6.3",
-    "happy-dom": "^15.0.0"
+    "happy-dom": "^20.0.10",
+    "@types/leaflet": "^1.9.12"
   }
 }

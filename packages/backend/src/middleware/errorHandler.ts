@@ -24,7 +24,7 @@ export class AppError extends Error implements ApiError {
 
 export function errorHandler(
   err: ApiError | ZodError,
-  req: Request,
+  _req: Request,
   res: Response,
   _next: NextFunction
 ): void {
@@ -38,7 +38,7 @@ export function errorHandler(
     res.status(400).json({
       success: false,
       error: 'Validation error',
-      details: err.errors,
+      details: err.issues,
     });
     return;
   }
@@ -62,12 +62,11 @@ export function errorHandler(
     });
   }
 
+  // eslint-disable-next-line no-console
   console.error('Error:', {
     message: err.message,
     statusCode,
     stack: err.stack,
-    url: req.url,
-    method: req.method,
   });
 
   res.status(statusCode).json({
