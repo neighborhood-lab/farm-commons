@@ -143,7 +143,7 @@ export class S3StorageProvider implements StorageProvider {
     // In a real implementation, you would use @aws-sdk/client-s3
     // For now, we'll throw an error indicating S3 is not fully implemented
     const filename = this.generateFilename(file.originalname, file.mimetype);
-    const key = `${folder}/${filename}`;
+    // const key = `${folder}/${filename}`;
 
     // Placeholder - would use AWS SDK here
     // const client = new S3Client({ region: this.region, endpoint: this.endpoint });
