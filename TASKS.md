@@ -899,10 +899,851 @@
 
 ---
 
+#### 0061: Implement Worker Skills Management
+
+**Package:** `packages/backend/src/routes/skills.ts`
+**Dependencies:** Workers API
+**Description:** Track and manage worker skills and competencies
+
+- GET /api/skills - List all available skills
+- POST /api/workers/:id/skills - Add skill to worker
+- DELETE /api/workers/:id/skills/:skillId - Remove skill
+- GET /api/workers/by-skill/:skillId - Find workers with specific skill
+- PUT /api/skills/:id - Update skill details
+  **Testing:** Integration tests for skill assignment
+
+---
+
+#### 0062: Create Break Time Tracking Component
+
+**Package:** `packages/frontend/src/components/BreakTimer.tsx`
+**Dependencies:** Time entries API
+**Description:** Track meal and rest breaks
+
+- Start/stop break timer
+- Multiple break types (lunch, rest, restroom)
+- Break history display
+- Compliance warnings (minimum break requirements)
+  **Testing:** Component tests with timer mocking
+
+---
+
+#### 0063: Implement Weather Widget for Dashboard
+
+**Package:** `packages/frontend/src/components/WeatherWidget.tsx`
+**Dependencies:** Weather API (task 0038)
+**Description:** Display current weather on dashboard
+
+- Current temperature and conditions
+- 3-day forecast preview
+- Weather alerts display
+- Location-based weather data
+  **Testing:** Component tests with mock weather data
+
+---
+
+#### 0064: Create Field Map Visualization
+
+**Package:** `packages/frontend/src/components/FieldMap.tsx`
+**Dependencies:** Fields API (task 0000)
+**Description:** Interactive map of farm fields
+
+- Leaflet/Mapbox integration
+- GPS polygon rendering
+- Click field to view details
+- Color-code by current crop
+  **Testing:** Map rendering tests
+
+---
+
+#### 0065: Implement Password Strength Validator
+
+**Package:** `packages/shared/src/utils/passwordStrength.ts`
+**Dependencies:** None
+**Description:** Password validation utilities
+
+- Minimum strength requirements
+- Common password checking
+- Strength score calculation
+- Visual strength indicator
+  **Testing:** Unit tests with weak/strong passwords
+
+---
+
+#### 0066: Create Equipment Assignment API
+
+**Package:** `packages/backend/src/routes/equipment-assignments.ts`
+**Dependencies:** Equipment API (task 0043)
+**Description:** Track equipment checkout/checkin
+
+- POST /api/equipment/:id/assign - Assign to worker
+- POST /api/equipment/:id/return - Return equipment
+- GET /api/equipment/:id/history - Assignment history
+- GET /api/workers/:id/equipment - Current equipment
+  **Testing:** Assignment workflow tests
+
+---
+
+#### 0067: Build Notification Preferences Page
+
+**Package:** `packages/frontend/src/pages/NotificationSettingsPage.tsx`
+**Dependencies:** None (UI only)
+**Description:** User notification preferences
+
+- Email notification toggles
+- SMS notification preferences
+- Notification timing settings
+- Test notification button
+  **Testing:** E2E tests for preference saving
+
+---
+
+#### 0068: Implement Photo Upload for Workers
+
+**Package:** `packages/backend/src/routes/worker-photos.ts`
+**Dependencies:** Upload service (task 0005)
+**Description:** Worker profile photo management
+
+- POST /api/workers/:id/photo - Upload photo
+- GET /api/workers/:id/photo - Retrieve photo
+- DELETE /api/workers/:id/photo - Remove photo
+- Image resizing and optimization
+  **Testing:** Upload tests with various formats
+
+---
+
+#### 0069: Create Task Duration Estimator
+
+**Package:** `packages/shared/src/utils/taskEstimation.ts`
+**Dependencies:** Historical time entries
+**Description:** Estimate task completion times
+
+- Calculate average duration by task type
+- Factor in field size
+- Worker efficiency rating
+- Confidence intervals
+  **Testing:** Estimation accuracy tests
+
+---
+
+#### 0070: Implement Real-time Dashboard Updates
+
+**Package:** `packages/backend/src/websocket/dashboard.ts`
+**Dependencies:** WebSocket infrastructure
+**Description:** Live dashboard data updates
+
+- WebSocket connection setup
+- Broadcast time entry changes
+- Live worker clock in/out events
+- Active workers counter
+  **Testing:** WebSocket connection tests
+
+---
+
+#### 0071: Create Batch Schedule Creation
+
+**Package:** `packages/backend/src/routes/batch-schedules.ts`
+**Dependencies:** Schedules API
+**Description:** Create multiple schedules at once
+
+- POST /api/schedules/batch - Bulk create
+- Template-based batch creation
+- Validation for conflicts
+- Rollback on error
+  **Testing:** Batch creation tests
+
+---
+
+#### 0072: Build Schedule Calendar View
+
+**Package:** `packages/frontend/src/components/ScheduleCalendar.tsx`
+**Dependencies:** Schedules API
+**Description:** Month/week calendar view
+
+- FullCalendar integration
+- Drag-and-drop schedule editing
+- Color-code by worker or task
+- Filter by worker/field
+  **Testing:** Calendar interaction tests
+
+---
+
+#### 0073: Implement Session Management
+
+**Package:** `packages/backend/src/services/session.ts`
+**Dependencies:** Redis
+**Description:** User session tracking
+
+- Redis-backed session store
+- Multi-device session support
+- Session expiration handling
+- Active sessions list per user
+  **Testing:** Session lifecycle tests
+
+---
+
+#### 0074: Create Emergency Contact Management
+
+**Package:** `packages/backend/src/routes/emergency-contacts.ts`
+**Dependencies:** Workers API
+**Description:** Worker emergency contacts
+
+- POST /api/workers/:id/emergency-contacts - Add contact
+- GET /api/workers/:id/emergency-contacts - List contacts
+- PUT /api/emergency-contacts/:id - Update contact
+- DELETE /api/emergency-contacts/:id - Remove contact
+  **Testing:** CRUD operation tests
+
+---
+
+#### 0075: Build Worker Availability Calendar
+
+**Package:** `packages/frontend/src/components/AvailabilityCalendar.tsx`
+**Dependencies:** Workers API
+**Description:** Track when workers are available
+
+- Calendar interface for availability
+- Recurring availability patterns
+- Time-off request integration
+- Bulk availability updates
+  **Testing:** Availability setting tests
+
+---
+
+#### 0076: Implement Activity Feed
+
+**Package:** `packages/backend/src/routes/activity.ts`
+**Dependencies:** Audit log (task 0020)
+**Description:** Recent activity stream
+
+- GET /api/activity - Recent farm activities
+- Filter by type (schedules, time entries, etc)
+- Pagination support
+- Real-time updates via WebSocket
+  **Testing:** Activity feed generation tests
+
+---
+
+#### 0077: Create Mobile Clock-In Screen
+
+**Package:** `packages/mobile/src/screens/ClockInScreen.tsx`
+**Dependencies:** Mobile API client (task 0023)
+**Description:** Mobile worker clock in/out
+
+- Large clock in/out buttons
+- GPS location capture
+- Offline queue support
+- Photo capture option (verification)
+  **Testing:** Mobile screen tests
+
+---
+
+#### 0078: Implement Field Soil Data Tracking
+
+**Package:** `packages/backend/src/routes/soil-data.ts`
+**Dependencies:** Fields API (task 0000)
+**Description:** Soil testing and analysis data
+
+- POST /api/fields/:id/soil-tests - Record test
+- GET /api/fields/:id/soil-tests - Test history
+- Soil nutrient tracking
+- Test recommendations
+  **Testing:** Soil data CRUD tests
+
+---
+
+#### 0079: Build Analytics Dashboard
+
+**Package:** `packages/frontend/src/pages/AnalyticsPage.tsx`
+**Dependencies:** Stats API (task 0002)
+**Description:** Advanced analytics and insights
+
+- Custom date range selection
+- Comparative analytics (this year vs last)
+- Export analytics to PDF
+- Shareable report links
+  **Testing:** Analytics rendering tests
+
+---
+
+#### 0080: Create Invoice Generation System
+
+**Package:** `packages/backend/src/services/invoicing.ts`
+**Dependencies:** Time entries API
+**Description:** Generate invoices for contract work
+
+- PDF invoice generation
+- Itemized labor charges
+- Tax calculations
+- Invoice numbering system
+  **Testing:** Invoice format tests
+
+---
+
+#### 0081: Implement Worker Document Vault
+
+**Package:** `packages/backend/src/routes/worker-documents.ts`
+**Dependencies:** Upload service (task 0005)
+**Description:** Store worker-related documents
+
+- Upload I-9 forms, contracts, etc.
+- Document type categorization
+- Expiration tracking
+- Secure access control
+  **Testing:** Document upload/retrieval tests
+
+---
+
+#### 0082: Create Quick Actions Menu
+
+**Package:** `packages/frontend/src/components/QuickActionsMenu.tsx`
+**Dependencies:** Various APIs
+**Description:** Floating action button with shortcuts
+
+- Quick clock in/out
+- Create schedule shortcut
+- Add time entry
+- Keyboard shortcuts
+  **Testing:** Quick action trigger tests
+
+---
+
+#### 0083: Implement Time Entry Approval Workflow
+
+**Package:** `packages/backend/src/routes/time-approvals.ts`
+**Dependencies:** Time entries API
+**Description:** Manager approval for time entries
+
+- POST /api/time-entries/:id/approve - Approve entry
+- POST /api/time-entries/:id/reject - Reject with reason
+- GET /api/time-entries/pending - Pending approvals
+- Batch approval endpoint
+  **Testing:** Approval workflow tests
+
+---
+
+#### 0084: Build Worker Performance Dashboard
+
+**Package:** `packages/frontend/src/pages/WorkerPerformancePage.tsx`
+**Dependencies:** Stats API
+**Description:** Individual worker performance metrics
+
+- Hours worked trends
+- Task completion rates
+- Attendance reliability score
+- Skills proficiency ratings
+  **Testing:** Performance calculation tests
+
+---
+
+#### 0085: Create Geofence Validation
+
+**Package:** `packages/backend/src/services/geofence.ts`
+**Dependencies:** None
+**Description:** Verify clock-ins are on farm property
+
+- GPS coordinate validation
+- Farm boundary definition
+- Distance calculation
+- Override mechanism for edge cases
+  **Testing:** Geofence boundary tests
+
+---
+
+#### 0086: Implement Task Checklist System
+
+**Package:** `packages/backend/src/routes/task-checklists.ts`
+**Dependencies:** Schedules API
+**Description:** Checklist items for scheduled tasks
+
+- Create checklist templates
+- Check off items as completed
+- Required vs optional items
+- Photo attachments for verification
+  **Testing:** Checklist completion tests
+
+---
+
+#### 0087: Build Mobile Schedule View
+
+**Package:** `packages/mobile/src/screens/ScheduleScreen.tsx`
+**Dependencies:** Mobile API client
+**Description:** Mobile schedule display
+
+- Today's schedule highlight
+- Week view with swipe navigation
+- Accept/decline schedule
+- Notifications for changes
+  **Testing:** Mobile schedule interaction tests
+
+---
+
+#### 0088: Create Report Builder
+
+**Package:** `packages/frontend/src/pages/ReportBuilderPage.tsx`
+**Dependencies:** Various APIs
+**Description:** Custom report generation
+
+- Drag-and-drop report fields
+- Save report templates
+- Schedule automatic reports
+- Export to multiple formats
+  **Testing:** Report generation tests
+
+---
+
+#### 0089: Implement Labor Cost Calculator
+
+**Package:** `packages/backend/src/services/laborCost.ts`
+**Dependencies:** Time entries API
+**Description:** Calculate true labor costs
+
+- Base wage + overhead calculations
+- Benefits cost allocation
+- Field/crop profitability analysis
+- Historical cost trends
+  **Testing:** Cost calculation accuracy tests
+
+---
+
+#### 0090: Create Field Notes System
+
+**Package:** `packages/backend/src/routes/field-notes.ts`
+**Dependencies:** Fields API
+**Description:** Daily field observations
+
+- POST /api/fields/:id/notes - Add note
+- GET /api/fields/:id/notes - List notes
+- Tag notes by category
+- Photo attachments
+  **Testing:** Field notes CRUD tests
+
+---
+
+#### 0091: Build Training Module System
+
+**Package:** `packages/backend/src/routes/training.ts`
+**Dependencies:** Workers API
+**Description:** Track worker training completion
+
+- Training module library
+- Assignment to workers
+- Progress tracking
+- Quiz/assessment system
+  **Testing:** Training completion workflow tests
+
+---
+
+#### 0092: Implement Search Functionality
+
+**Package:** `packages/backend/src/routes/search.ts`
+**Dependencies:** PostgreSQL full-text search
+**Description:** Global search across entities
+
+- GET /api/search?q=query - Search all entities
+- Search workers, fields, schedules
+- Fuzzy matching support
+- Search result ranking
+  **Testing:** Search relevance tests
+
+---
+
+#### 0093: Create Vehicle Tracking
+
+**Package:** `packages/backend/src/routes/vehicles.ts`
+**Dependencies:** None
+**Description:** Farm vehicle management
+
+- Vehicle inventory
+- Maintenance schedules
+- Fuel logging
+- Mileage tracking
+  **Testing:** Vehicle CRUD tests
+
+---
+
+#### 0094: Build Expense Tracking
+
+**Package:** `packages/backend/src/routes/expenses.ts`
+**Dependencies:** None
+**Description:** Farm expense management
+
+- Categorized expense tracking
+- Receipt uploads
+- Budget tracking
+- Expense reports
+  **Testing:** Expense calculation tests
+
+---
+
+#### 0095: Implement Multi-Farm Support
+
+**Package:** `packages/backend/src/middleware/farmContext.ts`
+**Dependencies:** Database schema changes
+**Description:** Support users managing multiple farms
+
+- Farm switching interface
+- Farm-scoped data isolation
+- Cross-farm reporting
+- Shared worker pool option
+  **Testing:** Multi-tenant isolation tests
+
+---
+
+#### 0096: Create Worker Onboarding Workflow
+
+**Package:** `packages/frontend/src/pages/OnboardingPage.tsx`
+**Dependencies:** Workers API
+**Description:** Guided new worker setup
+
+- Step-by-step onboarding wizard
+- Document collection checklist
+- Training assignment
+- Welcome email automation
+  **Testing:** Onboarding flow E2E tests
+
+---
+
+#### 0097: Implement Time Clock Kiosk Mode
+
+**Package:** `packages/frontend/src/pages/KioskMode.tsx`
+**Dependencies:** Time entries API
+**Description:** Tablet time clock station
+
+- Full-screen kiosk interface
+- PIN-based worker identification
+- QR code clock-in option
+- Prevent navigation/exit
+  **Testing:** Kiosk mode security tests
+
+---
+
+#### 0098: Build Harvest Tracking System
+
+**Package:** `packages/backend/src/routes/harvests.ts`
+**Dependencies:** Fields API
+**Description:** Track harvest yields
+
+- Record harvest quantities
+- Quality grading
+- Post-harvest handling notes
+- Yield per acre calculations
+  **Testing:** Harvest recording tests
+
+---
+
+#### 0099: Create Notification Center
+
+**Package:** `packages/frontend/src/components/NotificationCenter.tsx`
+**Dependencies:** Activity feed (task 0076)
+**Description:** Centralized notification panel
+
+- Notification list with filters
+- Mark as read/unread
+- Notification preferences link
+- Real-time notification badge
+  **Testing:** Notification display tests
+
+---
+
+#### 0100: Implement API Rate Limit Dashboard
+
+**Package:** `packages/backend/src/routes/admin/rate-limits.ts`
+**Dependencies:** Rate limiting (task 0019)
+**Description:** Monitor and adjust rate limits
+
+- View current rate limit usage
+- Adjust limits per route
+- IP whitelist/blacklist
+- Rate limit analytics
+  **Testing:** Rate limit monitoring tests
+
+---
+
+#### 0101: Create Equipment Maintenance Scheduler
+
+**Package:** `packages/backend/src/services/maintenanceScheduler.ts`
+**Dependencies:** Equipment API (task 0043)
+**Description:** Automated maintenance reminders
+
+- Schedule based on hours/days
+- Maintenance checklist templates
+- Service history tracking
+- Vendor contact management
+  **Testing:** Maintenance scheduling tests
+
+---
+
+#### 0102: Build Time Entry Corrections Interface
+
+**Package:** `packages/frontend/src/components/TimeEntryCorrection.tsx`
+**Dependencies:** Time entries API
+**Description:** Edit time entries with audit trail
+
+- Edit start/end times
+- Correction reason required
+- Manager approval workflow
+- Audit log of all changes
+  **Testing:** Correction workflow tests
+
+---
+
+#### 0103: Implement Seed Inventory System
+
+**Package:** `packages/backend/src/routes/seed-inventory.ts`
+**Dependencies:** None
+**Description:** Track seed stock
+
+- Seed varieties database
+- Quantity tracking
+- Expiration date monitoring
+- Reorder alerts
+  **Testing:** Inventory CRUD tests
+
+---
+
+#### 0104: Create Worker Scheduling Preferences
+
+**Package:** `packages/backend/src/routes/worker-preferences.ts`
+**Dependencies:** Workers API
+**Description:** Worker availability and preferences
+
+- Preferred working days/hours
+- Maximum hours per week
+- Preferred tasks/fields
+- Transportation needs
+  **Testing:** Preference management tests
+
+---
+
+#### 0105: Build Compliance Checklist Dashboard
+
+**Package:** `packages/frontend/src/pages/CompliancePage.tsx`
+**Dependencies:** Various compliance APIs
+**Description:** Compliance status overview
+
+- Outstanding compliance items
+- Upcoming deadlines
+- Certification status grid
+- Compliance score
+  **Testing:** Compliance status tests
+
+---
+
+#### 0106: Implement Shift Trading System
+
+**Package:** `packages/backend/src/routes/shift-trades.ts`
+**Dependencies:** Schedules API
+**Description:** Workers can trade shifts
+
+- POST /api/shifts/:id/trade-request - Request trade
+- POST /api/shift-trades/:id/accept - Accept trade
+- Manager approval workflow
+- Notification system
+  **Testing:** Trade workflow tests
+
+---
+
+#### 0107: Create Mobile Push Notifications
+
+**Package:** `packages/mobile/src/services/pushNotifications.ts`
+**Dependencies:** Expo Push Notifications
+**Description:** Mobile push notification setup
+
+- Device token registration
+- Notification handling
+- Deep linking to relevant screens
+- Notification preferences sync
+  **Testing:** Push notification delivery tests
+
+---
+
+#### 0108: Build Field Activity Timeline
+
+**Package:** `packages/frontend/src/components/FieldTimeline.tsx`
+**Dependencies:** Fields API
+**Description:** Visual field history
+
+- Timeline of all field activities
+- Planting, harvesting, maintenance
+- Soil test results display
+- Photo gallery
+  **Testing:** Timeline rendering tests
+
+---
+
+#### 0109: Implement Two-Factor Authentication
+
+**Package:** `packages/backend/src/services/twoFactor.ts`
+**Dependencies:** Auth routes
+**Description:** 2FA for enhanced security
+
+- TOTP-based 2FA
+- QR code generation
+- Backup codes
+- 2FA enforcement policies
+  **Testing:** 2FA flow integration tests
+
+---
+
+#### 0110: Create Language-Specific Help Content
+
+**Package:** `packages/frontend/src/content/help/`
+**Dependencies:** i18n (task 0026)
+**Description:** Contextual help system
+
+- In-app help tooltips
+- Multi-language support
+- Searchable help articles
+- Video tutorial embedding
+  **Testing:** Help content accessibility tests
+
+---
+
+#### 0111: Implement Payroll Period Locking
+
+**Package:** `packages/backend/src/routes/payroll-periods.ts`
+**Dependencies:** Time entries API
+**Description:** Lock periods after payroll processing
+
+- Define pay periods
+- Lock/unlock periods
+- Prevent edits to locked periods
+- Manager override capability
+  **Testing:** Period locking tests
+
+---
+
+#### 0112: Build Worker Communication Hub
+
+**Package:** `packages/frontend/src/pages/MessagesPage.tsx`
+**Dependencies:** New messaging API
+**Description:** Internal messaging system
+
+- One-on-one messaging
+- Group announcements
+- Message read receipts
+- File attachments
+  **Testing:** Message delivery tests
+
+---
+
+#### 0113: Create Irrigation Scheduling
+
+**Package:** `packages/backend/src/routes/irrigation.ts`
+**Dependencies:** Fields API
+**Description:** Track irrigation schedules
+
+- Irrigation schedule creation
+- Water usage tracking
+- Weather-based recommendations
+- Irrigation equipment tracking
+  **Testing:** Irrigation scheduling tests
+
+---
+
+#### 0114: Implement Backup Verification System
+
+**Package:** `packages/backend/src/services/backupVerification.ts`
+**Dependencies:** Backup script (task 0034)
+**Description:** Automated backup testing
+
+- Restore test on staging
+- Backup integrity verification
+- Alert on backup failure
+- Backup size monitoring
+  **Testing:** Backup restore tests
+
+---
+
+#### 0115: Build Custom Dashboard Widgets
+
+**Package:** `packages/frontend/src/components/DashboardWidget.tsx`
+**Dependencies:** Dashboard page
+**Description:** Customizable dashboard
+
+- Widget library
+- Drag-and-drop arrangement
+- Save dashboard layouts
+- Widget preferences
+  **Testing:** Widget customization tests
+
+---
+
+#### 0116: Create Time Entry Photo Verification
+
+**Package:** `packages/backend/src/routes/time-entry-photos.ts`
+**Dependencies:** Time entries API, Upload service
+**Description:** Photo proof for time entries
+
+- Upload photo with time entry
+- GPS coordinates embedded
+- Photo compression
+- Privacy settings
+  **Testing:** Photo upload tests
+
+---
+
+#### 0117: Implement Smart Schedule Suggestions
+
+**Package:** `packages/backend/src/services/scheduleSuggestions.ts`
+**Dependencies:** Schedules API, Stats API
+**Description:** AI-powered scheduling recommendations
+
+- Suggest workers based on skills
+- Avoid overtime predictions
+- Weather-aware scheduling
+- Historical pattern analysis
+  **Testing:** Suggestion accuracy tests
+
+---
+
+#### 0118: Build Chemical Application Tracking
+
+**Package:** `packages/backend/src/routes/chemical-applications.ts`
+**Dependencies:** Fields API
+**Description:** Pesticide/fertilizer application logs
+
+- Application records with EPA numbers
+- Re-entry interval tracking
+- Certified applicator verification
+- Compliance reporting
+  **Testing:** Chemical tracking tests
+
+---
+
+#### 0119: Create Worker Badge Printing
+
+**Package:** `packages/backend/src/services/badgePrinting.ts`
+**Dependencies:** Workers API
+**Description:** Generate printable worker ID badges
+
+- PDF badge generation
+- QR code with worker ID
+- Photo integration
+- Batch printing support
+  **Testing:** Badge generation tests
+
+---
+
+#### 0120: Implement API Versioning
+
+**Package:** `packages/backend/src/middleware/apiVersion.ts`
+**Dependencies:** Existing routes
+**Description:** API version management
+
+- Version routing middleware
+- Multiple API versions support
+- Deprecation warnings
+- Version documentation
+  **Testing:** Version routing tests
+
+---
+
 ## Notes
 
 - Tasks 0000-0023 can be worked on immediately without dependencies
-- Tasks 0024-0060 may have dependencies noted in each task
+- Tasks 0024-0120 may have dependencies noted in each task
 - Each task should result in a single, focused pull request
 - All tasks should include tests and documentation updates
 - Breaking changes should be coordinated with the team
