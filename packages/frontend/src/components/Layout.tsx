@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { Users, Calendar, Clock, Home, LogOut } from 'lucide-react';
+import { Users, Calendar, Clock, Home, LogOut, BarChart3 } from 'lucide-react';
 import { useAuthStore } from '../lib/store';
 
 export default function Layout() {
@@ -17,6 +17,7 @@ export default function Layout() {
     { name: 'Workers', href: '/workers', icon: Users },
     { name: 'Schedule', href: '/schedule', icon: Calendar },
     { name: 'Time Tracking', href: '/time-tracking', icon: Clock },
+    { name: 'Analytics', href: '/analytics', icon: BarChart3 },
   ];
 
   return (

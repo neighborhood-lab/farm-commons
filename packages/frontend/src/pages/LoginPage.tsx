@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../lib/store';
 import { api } from '../lib/api';
-import type { AuthUser, AuthTokens } from '@farm-commons/shared';
+import type { AuthUser } from '@farm-commons/shared';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -19,15 +19,15 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await api.post<{ user: AuthUser; access_token: string }>(
-        '/auth/login',
-        { email, password }
-      );
+      const response = await api.post<{ user: AuthUser; access_token: string }>('/auth/login', {
+        email,
+        password,
+      });
 
       login(response.user, response.access_token);
       navigate('/');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+    } catch (error_) {
+      setError(error_ instanceof Error ? error_.message : 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -37,15 +37,9 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-earth-100 to-sage-100">
       <div className="max-w-md w-full bg-white rounded-lg shadow-xl p-8">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-earth-800 mb-2">
-            🚜 Farm Commons
-          </h1>
-          <p className="text-sage-600">
-            Shared farm management software, community owned
-          </p>
-          <p className="text-sm text-sage-500 mt-1">
-            For the humans who feed us
-          </p>
+          <h1 className="text-4xl font-bold text-earth-800 mb-2">🚜 Farm Commons</h1>
+          <p className="text-sage-600">Shared farm management software, community owned</p>
+          <p className="text-sm text-sage-500 mt-1">For the humans who feed us</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
