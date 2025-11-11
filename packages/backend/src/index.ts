@@ -8,6 +8,17 @@ import rateLimit from 'express-rate-limit';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
 
+// Monitoring
+import {
+  initSentry,
+  sentryRequestHandler,
+  sentryTracingHandler,
+  sentryErrorHandler,
+  metricsMiddleware,
+  getMetrics,
+  getMetricsContentType,
+} from './monitoring/index.js';
+
 // Routes
 import authRoutes from './routes/auth.js';
 import workerRoutes from './routes/workers.js';
@@ -28,6 +39,9 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 const app: Express = express();
 const PORT = process.env.PORT || 3001;
 
+// Initialize Sentry error tracking (must be first)
+initSentry(app);
+
 // Logger
 const logger = pino({
   level: process.env.LOG_LEVEL || 'info',
@@ -43,6 +57,15 @@ const logger = pino({
 });
 
 const httpLogger = pinoHttp({ logger });
+
+// Sentry request handler (must be first middleware)
+app.use(sentryRequestHandler());
+
+// Sentry tracing handler (must be after request handler)
+app.use(sentryTracingHandler());
+
+// Prometheus metrics collection
+app.use(metricsMiddleware());
 
 // Security middleware
 app.use(
@@ -95,6 +118,17 @@ app.get('/health', (_req, res) => {
   });
 });
 
+// Prometheus metrics endpoint
+app.get('/metrics', async (_req, res) => {
+  try {
+    res.set('Content-Type', getMetricsContentType());
+    const metrics = await getMetrics();
+    res.end(metrics);
+  } catch (error) {
+    res.status(500).end(error);
+  }
+});
+
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/workers', workerRoutes);
@@ -121,6 +155,9 @@ app.get('/', (_req, res) => {
 
 // 404 handler
 app.use(notFoundHandler);
+
+// Sentry error handler (must be before other error handlers)
+app.use(sentryErrorHandler());
 
 // Error handler
 app.use(errorHandler);
