@@ -21,6 +21,9 @@
     "db:migrate:latest": "knex migrate:latest",
     "db:migrate:rollback": "knex migrate:rollback",
     "db:seed": "knex seed:run",
+    "queue:worker": "NODE_ENV=production tsx src/queue/worker.ts",
+    "queue:worker:dev": "NODE_ENV=development tsx watch src/queue/worker.ts",
+    "queue:schedule": "tsx src/queue/scheduler.ts",
     "clean": "rm -rf dist"
   },
   "dependencies": {
