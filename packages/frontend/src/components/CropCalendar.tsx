@@ -26,7 +26,7 @@ const SAMPLE_FIELDS = [
   { id: '3', name: 'Greenhouse' },
 ];
 
-export default function CropCalendar({ year }: CropCalendarProps) {
+export default function CropCalendar({ year: _year }: CropCalendarProps) {
   const { t } = useTranslation();
 
   return (

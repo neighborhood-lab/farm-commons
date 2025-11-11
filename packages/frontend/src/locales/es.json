@@ -22,11 +22,12 @@
     "info": "Información"
   },
   "navigation": {
-    "dashboard": "Panel",
+    "dashboard": "Tablero",
     "workers": "Trabajadores",
     "schedule": "Horario",
     "timeTracking": "Control de Tiempo",
     "fields": "Campos",
+    "cropPlanning": "Planificación de Cultivos",
     "analytics": "Análisis",
     "settings": "Configuración",
     "logout": "Cerrar Sesión"
@@ -157,5 +158,31 @@
     "theme": "Tema",
     "lightMode": "Modo Claro",
     "darkMode": "Modo Oscuro"
+  },
+  "cropPlanning": {
+    "title": "Calendario de Planificación de Cultivos",
+    "subtitle": "Planifique sus rotaciones de cultivos estacionales y horarios de siembra",
+    "addCrop": "Agregar Cultivo",
+    "fields": "Campos",
+    "cropLibrary": "Biblioteca de Cultivos",
+    "emptyState": "Haga clic en \"Agregar Cultivo\" para comenzar a planificar su temporada",
+    "helpTitle": "Consejos de Planificación",
+    "tip1": "Arrastre cultivos desde la biblioteca para planificar sus temporadas",
+    "tip2": "La codificación por colores ayuda a visualizar familias de cultivos para la rotación",
+    "tip3": "El sistema advierte sobre siembras de sucesión incompatibles"
+  },
+  "months": {
+    "january": "Ene",
+    "february": "Feb",
+    "march": "Mar",
+    "april": "Abr",
+    "may": "May",
+    "june": "Jun",
+    "july": "Jul",
+    "august": "Ago",
+    "september": "Sep",
+    "october": "Oct",
+    "november": "Nov",
+    "december": "Dic"
   }
 }

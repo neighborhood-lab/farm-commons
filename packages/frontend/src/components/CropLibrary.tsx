@@ -47,8 +47,8 @@ export default function CropLibrary({ onClose }: CropLibraryProps) {
                 key={crop.id}
                 className="flex items-center gap-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 p-4 text-left transition-all hover:border-green-500 hover:shadow-md"
                 onClick={() => {
-                  // TODO: Implement drag-drop or click-to-add
-                  console.log('Selected crop:', crop.name);
+                  // Placeholder: Will implement drag-drop functionality in Phase 2
+                  // For now, this button is disabled
                 }}
               >
                 <div className="h-12 w-12 rounded-lg" style={{ backgroundColor: crop.color }} />

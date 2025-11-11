@@ -27,6 +27,7 @@
     "schedule": "Schedule",
     "timeTracking": "Time Tracking",
     "fields": "Fields",
+    "cropPlanning": "Crop Planning",
     "analytics": "Analytics",
     "settings": "Settings",
     "logout": "Logout"
@@ -157,5 +158,31 @@
     "theme": "Theme",
     "lightMode": "Light Mode",
     "darkMode": "Dark Mode"
+  },
+  "cropPlanning": {
+    "title": "Crop Planning Calendar",
+    "subtitle": "Plan your seasonal crop rotations and planting schedules",
+    "addCrop": "Add Crop",
+    "fields": "Fields",
+    "cropLibrary": "Crop Library",
+    "emptyState": "Click \"Add Crop\" to start planning your season",
+    "helpTitle": "Planning Tips",
+    "tip1": "Drag crops from the library to plan your seasons",
+    "tip2": "Color-coding helps visualize crop families for rotation",
+    "tip3": "System warns about incompatible succession plantings"
+  },
+  "months": {
+    "january": "Jan",
+    "february": "Feb",
+    "march": "Mar",
+    "april": "Apr",
+    "may": "May",
+    "june": "Jun",
+    "july": "Jul",
+    "august": "Aug",
+    "september": "Sep",
+    "october": "Oct",
+    "november": "Nov",
+    "december": "Dec"
   }
 }
