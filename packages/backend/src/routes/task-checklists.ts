@@ -36,7 +36,7 @@ router.get('/templates', async (req: AuthRequest, res, next) => {
 
     const countMap: Record<string, number> = {};
     for (const item of itemCounts) {
-      countMap[item.template_id] = Number.parseInt(item.count as string, 10);
+      countMap[item.template_id] = Number.Number.parseInt(item.count as string, 10);
     }
 
     const templatesWithCounts = templates.map((t) => ({
@@ -48,7 +48,7 @@ router.get('/templates', async (req: AuthRequest, res, next) => {
       success: true,
       data: templatesWithCounts,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -77,7 +77,7 @@ router.get('/templates/:id', async (req: AuthRequest, res, next) => {
         items,
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -122,7 +122,7 @@ router.post('/templates', requireRole('admin', 'manager'), async (req: AuthReque
       success: true,
       data: result,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -153,7 +153,7 @@ router.put(
         success: true,
         data: template,
       });
-    } catch (error) {
+    } catch {
       next(error);
     }
   }
@@ -178,7 +178,7 @@ router.delete(
         success: true,
         message: 'Checklist template deleted successfully',
       });
-    } catch (error) {
+    } catch {
       next(error);
     }
   }
@@ -218,7 +218,7 @@ router.post(
         success: true,
         data: item,
       });
-    } catch (error) {
+    } catch {
       next(error);
     }
   }
@@ -256,7 +256,7 @@ router.put('/items/:id', requireRole('admin', 'manager'), async (req: AuthReques
       success: true,
       data: updatedItem,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -293,7 +293,7 @@ router.delete(
         success: true,
         message: 'Checklist item deleted successfully',
       });
-    } catch (error) {
+    } catch {
       next(error);
     }
   }
@@ -360,7 +360,7 @@ router.post('/assign', requireRole('admin', 'manager'), async (req: AuthRequest,
       success: true,
       data: scheduleChecklist,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -422,7 +422,7 @@ router.get('/schedule/:scheduleId', async (req: AuthRequest, res, next) => {
       success: true,
       data: checklists,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -477,7 +477,7 @@ router.put('/completions/:id', async (req: AuthRequest, res, next) => {
       success: true,
       data: updatedCompletion,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });

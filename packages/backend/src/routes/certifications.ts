@@ -35,7 +35,7 @@ router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
       success: true,
       data: certifications,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -44,7 +44,7 @@ router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
 router.get('/expiring', async (req: AuthRequest, res, next) => {
   try {
     const farmId = req.user?.farm_id;
-    const days = parseInt(req.query.days as string) || 30;
+    const days = Number.parseInt(req.query.days as string) || 30;
 
     const expiringDate = new Date();
     expiringDate.setDate(expiringDate.getDate() + days);
@@ -65,7 +65,7 @@ router.get('/expiring', async (req: AuthRequest, res, next) => {
       success: true,
       data: certifications,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -93,7 +93,7 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
       success: true,
       data: certification,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -128,7 +128,7 @@ router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res
       success: true,
       data: certification,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -158,7 +158,7 @@ router.delete('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, 
       success: true,
       message: 'Certification deleted successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });

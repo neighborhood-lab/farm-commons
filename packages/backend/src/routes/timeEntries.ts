@@ -39,7 +39,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: entries,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -63,7 +63,7 @@ router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
       success: true,
       data: entries,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -100,7 +100,7 @@ router.post('/clock-in', auditLog('create', 'time_entry'), async (req: AuthReque
       success: true,
       data: entry,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -140,7 +140,7 @@ router.post('/:id/clock-out', auditLog('update', 'time_entry'), async (req: Auth
       success: true,
       data: updatedEntry,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -169,7 +169,7 @@ router.post('/:id/verify', requireRole('admin', 'manager'), auditLog('update', '
       success: true,
       data: entry,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
