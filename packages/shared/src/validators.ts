@@ -361,3 +361,29 @@ export const certificationDocumentUploadSchema = z.object({
   certification_id: z.string().uuid(),
   document_url: z.string().url().optional(), // For direct URL uploads
 });
+
+// Webhook Schemas
+export const webhookEvents = [
+  'worker.created',
+  'worker.updated',
+  'worker.deleted',
+  'schedule.created',
+  'schedule.updated',
+  'schedule.deleted',
+  'time_entry.created',
+  'time_entry.updated',
+  'certification.expiring',
+] as const;
+
+export const createWebhookSchema = z.object({
+  url: z.string().url().max(2048),
+  events: z.array(z.enum(webhookEvents)).min(1),
+  description: z.string().optional().nullable(),
+});
+
+export const updateWebhookSchema = z.object({
+  url: z.string().url().max(2048).optional(),
+  events: z.array(z.enum(webhookEvents)).min(1).optional(),
+  active: z.boolean().optional(),
+  description: z.string().optional().nullable(),
+});
