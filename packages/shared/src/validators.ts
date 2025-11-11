@@ -387,3 +387,32 @@ export const updateWebhookSchema = z.object({
   active: z.boolean().optional(),
   description: z.string().optional().nullable(),
 });
+
+// Crop Schemas
+export const createCropSchema = z.object({
+  field_id: z.string().uuid(),
+  crop_name: z.string().min(1).max(200),
+  crop_variety: z.string().max(200).optional().nullable(),
+  planting_date: z.string().or(z.date()).transform((val) => new Date(val)),
+  expected_harvest_date: z.string().or(z.date()).transform((val) => new Date(val)).optional().nullable(),
+  actual_harvest_date: z.string().or(z.date()).transform((val) => new Date(val)).optional().nullable(),
+  planted_area_acres: z.number().positive().optional().nullable(),
+  yield_amount: z.number().positive().optional().nullable(),
+  yield_unit: z.string().max(50).optional().nullable(),
+  season: z.enum(['spring', 'summer', 'fall', 'winter']),
+  status: z.enum(['planned', 'planted', 'growing', 'harvested', 'failed']).default('planned'),
+  crop_family_id: z.string().uuid().optional().nullable(),
+  notes: z.string().optional().nullable(),
+});
+
+export const updateCropSchema = createCropSchema.partial().omit({ field_id: true });
+
+export const createCropCompanionSchema = z.object({
+  crop_name: z.string().min(1).max(200),
+  companion_crop: z.string().min(1).max(200),
+  relationship_type: z.enum(['beneficial', 'neutral', 'antagonistic']),
+  benefits: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+});
+
+export const updateCropCompanionSchema = createCropCompanionSchema.partial();
