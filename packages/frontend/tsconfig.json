@@ -22,8 +22,7 @@
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx",
-    "src/test/**/*",
-    "src/locales/**/*"
+    "src/test/**/*"
   ],
   "references": [{ "path": "../shared" }]
 }
