@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Phone, Mail, Calendar, Users, TrendingUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../lib/api';
 import { formatDate, getInitials } from '@farm-commons/shared';
 import type { Worker, PaginatedResponse } from '@farm-commons/shared';
 import WorkerDetailModal from '../components/WorkerDetailModal';
 
 export default function WorkersPage() {
+  const { t } = useTranslation();
   const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -96,7 +98,9 @@ export default function WorkersPage() {
               )}
               <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                 <Calendar size={16} />
-                <span>{t('workers.hired')}: {formatDate(worker.hire_date)}</span>
+                <span>
+                  {t('workers.hired')}: {formatDate(worker.hire_date)}
+                </span>
               </div>
             </div>
 

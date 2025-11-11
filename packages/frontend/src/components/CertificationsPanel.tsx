@@ -19,13 +19,14 @@ interface CertificationsPanelProps {
   workerId: string;
 }
 
+// TODO: Remove if not needed - currently unused, getExpiryStatus is used instead
 // Calculate days until expiration
-function getDaysUntilExpiry(expirationDate: Date | string): number {
-  const expDate = typeof expirationDate === 'string' ? new Date(expirationDate) : expirationDate;
-  const today = new Date();
-  const diffTime = expDate.getTime() - today.getTime();
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-}
+// function getDaysUntilExpiry(expirationDate: Date | string): number {
+//   const expDate = typeof expirationDate === 'string' ? new Date(expirationDate) : expirationDate;
+//   const today = new Date();
+//   const diffTime = expDate.getTime() - today.getTime();
+//   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+// }
 
 export default function CertificationsPanel({ workerId }: CertificationsPanelProps) {
   const queryClient = useQueryClient();
