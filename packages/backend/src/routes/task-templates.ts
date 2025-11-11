@@ -31,7 +31,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: templates,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -54,7 +54,7 @@ router.get('/:id', async (req: AuthRequest, res, next) => {
       success: true,
       data: template,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -76,7 +76,7 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
       success: true,
       data: template,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -104,7 +104,7 @@ router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res
       success: true,
       data: template,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -127,7 +127,7 @@ router.delete('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, 
       success: true,
       message: 'Task template deleted successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -200,7 +200,7 @@ router.post('/:id/create-schedule', requireRole('admin', 'manager'), async (req:
       data: schedule,
       message: 'Schedule created from template successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
