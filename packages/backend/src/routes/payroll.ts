@@ -1,6 +1,6 @@
 // Payroll routes
 
-import express from 'express';
+import express, { type Router } from 'express';
 import { z } from 'zod';
 import {
   calculatePayroll,
@@ -13,7 +13,7 @@ import {
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // All routes require authentication and manager/admin role
 router.use(authenticateToken);

@@ -147,7 +147,7 @@ async function fetchWithCache<T>(
 
     if (cached) {
       logger.debug({ cacheKey }, 'Cache hit for weather data');
-      return JSON.parse(cached) as T;
+      return JSON.parse(cached.toString()) as T;
     }
 
     logger.debug({ cacheKey }, 'Cache miss for weather data');

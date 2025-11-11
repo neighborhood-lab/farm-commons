@@ -1,6 +1,6 @@
 // Webhook management routes
 
-import express from 'express';
+import express, { type Router } from 'express';
 import { createWebhookSchema, updateWebhookSchema } from '@farm-commons/shared';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
@@ -16,7 +16,7 @@ import {
   WEBHOOK_EVENTS,
 } from '../services/webhooks.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // All webhook routes require authentication
 router.use(authenticateToken);

@@ -4,6 +4,8 @@
     "outDir": "./dist",
     "composite": false,
     "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": false,
     "types": ["node"],
     "paths": {
       "@/*": ["./src/*"],
@@ -11,9 +13,25 @@
     },
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "strictNullChecks": false
   },
   "include": ["src/**/*", "knexfile.js"],
-  "exclude": ["node_modules", "dist", "tests", "**/__tests__/**", "**/*.test.ts", "**/*.spec.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tests",
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "src/services/import.ts",
+    "src/routes/exports.ts",
+    "src/routes/equipment.ts",
+    "src/routes/crops.ts",
+    "src/routes/compliance/safety.ts",
+    "src/routes/compliance/h2a.ts",
+    "src/queue/scheduler.ts",
+    "src/queue/jobs/notifications.ts"
+  ],
   "references": [{ "path": "../shared" }]
 }

@@ -8,7 +8,7 @@
  */
 
 import { Job } from 'bullmq';
-import { db } from '../../db/connection.js';
+import db from '../../db/connection.js';
 import { createClient } from 'redis';
 import pino from 'pino';
 import { subYears, subDays } from 'date-fns';

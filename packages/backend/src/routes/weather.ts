@@ -1,6 +1,6 @@
 // Weather API routes
 
-import express from 'express';
+import express, { type Router } from 'express';
 import { z } from 'zod';
 import { authenticateToken, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
@@ -13,7 +13,7 @@ import {
 } from '../services/weather.js';
 import db from '../db/connection.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // All weather routes require authentication
 router.use(authenticateToken);

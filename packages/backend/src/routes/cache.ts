@@ -1,5 +1,5 @@
 // Cache management routes
-import { Router } from 'express';
+import express, { Router } from 'express';
 import { authenticateToken, requireRole } from '../middleware/auth.js';
 import {
   getCacheStats,
@@ -9,7 +9,7 @@ import {
   invalidateAllCache,
 } from '../middleware/cache.js';
 
-const router = Router();
+const router: Router = express.Router();
 
 /**
  * GET /api/cache/stats
@@ -92,35 +92,40 @@ router.delete('/invalidate', authenticateToken, requireRole('admin'), async (req
  * Invalidate cache for a specific resource
  * Requires: Admin role
  */
-router.delete('/invalidate/:resource', authenticateToken, requireRole('admin'), async (req, res) => {
-  try {
-    const { resource } = req.params;
+router.delete(
+  '/invalidate/:resource',
+  authenticateToken,
+  requireRole('admin'),
+  async (req, res) => {
+    try {
+      const { resource } = req.params;
 
-    if (!resource) {
-      res.status(400).json({
-        success: false,
-        error: 'Resource parameter is required',
+      if (!resource) {
+        res.status(400).json({
+          success: false,
+          error: 'Resource parameter is required',
+        });
+        return;
+      }
+
+      const deletedCount = await invalidateCacheByResource(resource);
+
+      res.json({
+        success: true,
+        data: {
+          resource,
+          deletedCount,
+        },
+        message: `Invalidated ${deletedCount} cache entries for resource: ${resource}`,
       });
-      return;
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: 'Failed to invalidate cache',
+      });
     }
-
-    const deletedCount = await invalidateCacheByResource(resource);
-
-    res.json({
-      success: true,
-      data: {
-        resource,
-        deletedCount,
-      },
-      message: `Invalidated ${deletedCount} cache entries for resource: ${resource}`,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to invalidate cache',
-    });
   }
-});
+);
 
 /**
  * DELETE /api/cache/all

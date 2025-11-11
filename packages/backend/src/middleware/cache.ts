@@ -1,6 +1,6 @@
 // API Response Caching Middleware
 import type { Request, Response, NextFunction } from 'express';
-import { redisClient } from '../lib/redis.js';
+import redisClient from '../lib/redis.js';
 import pino from 'pino';
 
 const logger = pino({

@@ -1,12 +1,12 @@
 // Field management routes
 
-import express from 'express';
+import express, { type Router } from 'express';
 import { createFieldSchema, updateFieldSchema, paginationSchema } from '@farm-commons/shared';
 import db from '../db/connection.js';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // All field routes require authentication
 router.use(authenticateToken);

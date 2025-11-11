@@ -5,7 +5,7 @@ import type { AuthRequest } from './auth.js';
 import db from '../db/connection.js';
 
 export interface AuditLogEntry {
-  farmId?: string;
+  farm_id?: string;
   userId?: string;
   action: string;
   resourceType?: string;
@@ -21,7 +21,7 @@ export interface AuditLogEntry {
 export async function logAuditEvent(entry: AuditLogEntry): Promise<void> {
   try {
     await db('audit_logs').insert({
-      farm_id: entry.farmId,
+      farm_id: entry.farm_id,
       user_id: entry.userId,
       action: entry.action,
       resource_type: entry.resourceType,
@@ -69,7 +69,7 @@ export function auditLog(action: string, resourceType?: string) {
 
         // Prepare audit log entry
         const entry: AuditLogEntry = {
-          farmId: req.user?.farmId,
+          farm_id: req.user?.farm_id,
           userId: req.user?.id,
           action,
           resourceType,
@@ -128,7 +128,7 @@ export async function logAuthEvent(
 ): Promise<void> {
   const entry: AuditLogEntry = {
     userId,
-    farmId: req.user?.farmId,
+    farm_id: req.user?.farm_id,
     action,
     resourceType: 'auth',
     ipAddress: getClientIp(req),
@@ -157,7 +157,7 @@ export async function logDataAccess(
 
   const entry: AuditLogEntry = {
     userId: req.user?.id,
-    farmId: req.user?.farmId,
+    farm_id: req.user?.farm_id,
     action: `${accessType}_${resourceType}`,
     resourceType,
     resourceId: accessType === 'read' ? resourceId : undefined,

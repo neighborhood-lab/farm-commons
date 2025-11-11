@@ -69,11 +69,11 @@ export async function importWorkers(
   // Parse CSV
   const parsed = parseCSV<Record<string, string>>(csvContent);
 
-  if (parsed.errors.length > 0) {
+  if (parsed.issues.length > 0) {
     return {
       success: false,
       imported: 0,
-      errors: parsed.errors.map((err, idx) => ({
+      errors: parsed.issues.map((err, idx) => ({
         row: err.row ?? idx,
         message: `CSV parsing error: ${err.message}`,
       })),
@@ -123,7 +123,7 @@ export async function importWorkers(
       }
     } catch (error) {
       const errorMessage = error instanceof z.ZodError
-        ? error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')
+        ? error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')
         : error instanceof Error
         ? error.message
         : 'Unknown validation error';
@@ -209,11 +209,11 @@ export async function importSchedules(
   // Parse CSV
   const parsed = parseCSV<Record<string, string>>(csvContent);
 
-  if (parsed.errors.length > 0) {
+  if (parsed.issues.length > 0) {
     return {
       success: false,
       imported: 0,
-      errors: parsed.errors.map((err, idx) => ({
+      errors: parsed.issues.map((err, idx) => ({
         row: err.row ?? idx,
         message: `CSV parsing error: ${err.message}`,
       })),
@@ -311,7 +311,7 @@ export async function importSchedules(
       });
     } catch (error) {
       const errorMessage = error instanceof z.ZodError
-        ? error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')
+        ? error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')
         : error instanceof Error
         ? error.message
         : 'Unknown validation error';
