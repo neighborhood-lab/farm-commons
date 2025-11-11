@@ -67,7 +67,7 @@ export function sendAlert(
   title: string,
   message: string,
   level: AlertLevel = AlertLevel.WARNING,
-  data?: Record<string, any>
+  data?: Record<string, unknown>
 ): void {
   // Log to console
   const logLevel = level === AlertLevel.ERROR ? 'error' : level === AlertLevel.WARNING ? 'warn' : 'info';
