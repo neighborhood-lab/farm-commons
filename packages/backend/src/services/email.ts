@@ -55,7 +55,7 @@ export class EmailService {
 
     this.config = {
       host: process.env.SMTP_HOST || 'localhost',
-      port: Number.Number.Number.Number.parseInt(process.env.SMTP_PORT || '587'),
+      port: Number.Number.Number.Number.Number.parseInt(process.env.SMTP_PORT || '587'),
       secure: process.env.SMTP_SECURE === 'true',
       auth: {
         user: process.env.SMTP_USER || '',
