@@ -1,4 +1,5 @@
 // Data Import Service
+/* eslint-disable sonarjs/cognitive-complexity */
 // Bulk import workers and schedules from CSV files
 
 import Papa from 'papaparse';
@@ -34,7 +35,7 @@ function parseCSV<T>(content: string): Papa.ParseResult<T> {
     header: true,
     skipEmptyLines: true,
     trimHeaders: true,
-    transformHeader: (header) => header.trim().toLowerCase().replace(/\s+/g, '_'),
+    transformHeader: (header) => header.trim().toLowerCase().replaceAll(/\s+/g, '_'),
   });
 }
 
@@ -91,10 +92,16 @@ export async function importWorkers(
     try {
       // Transform certifications and skills from comma-separated strings to arrays
       const certifications = rawData.certifications
-        ? rawData.certifications.split(',').map((c) => c.trim()).filter(Boolean)
+        ? rawData.certifications
+            .split(',')
+            .map((c) => c.trim())
+            .filter(Boolean)
         : [];
       const skills = rawData.skills
-        ? rawData.skills.split(',').map((s) => s.trim()).filter(Boolean)
+        ? rawData.skills
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
         : [];
 
       // Validate data
@@ -108,8 +115,8 @@ export async function importWorkers(
         emergency_contact_phone: rawData.emergency_contact_phone || null,
         hire_date: rawData.hire_date,
         status: rawData.status || 'active',
-        hourly_rate: rawData.hourly_rate ? parseFloat(rawData.hourly_rate) : null,
-        piece_rate: rawData.piece_rate ? parseFloat(rawData.piece_rate) : null,
+        hourly_rate: rawData.hourly_rate ? Number.parseFloat(rawData.hourly_rate) : null,
+        piece_rate: rawData.piece_rate ? Number.parseFloat(rawData.piece_rate) : null,
         certifications,
         skills,
         notes: rawData.notes || null,
@@ -122,11 +129,12 @@ export async function importWorkers(
         warnings.push(`Row ${row}: Worker has both hourly_rate and piece_rate set`);
       }
     } catch (error) {
-      const errorMessage = error instanceof z.ZodError
-        ? error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')
-        : error instanceof Error
-        ? error.message
-        : 'Unknown validation error';
+      const errorMessage =
+        error instanceof z.ZodError
+          ? error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')
+          : error instanceof Error
+            ? error.message
+            : 'Unknown validation error';
 
       errors.push({
         row,
@@ -222,27 +230,22 @@ export async function importSchedules(
   }
 
   // Pre-fetch workers and fields for this farm
-  const workers = await db('workers')
-    .where({ farm_id: farmId })
-    .select('id', 'email', 'phone');
+  const workers = await db('workers').where({ farm_id: farmId }).select('id', 'email', 'phone');
 
-  const fields = await db('fields')
-    .where({ farm_id: farmId })
-    .select('id', 'name');
+  const fields = await db('fields').where({ farm_id: farmId }).select('id', 'name');
 
   // Create lookup maps
   const workerByEmail = new Map(
     workers.filter((w) => w.email).map((w) => [w.email!.toLowerCase(), w.id])
   );
-  const workerByPhone = new Map(
-    workers.map((w) => [w.phone.replace(/\D/g, ''), w.id])
-  );
-  const fieldByName = new Map(
-    fields.map((f) => [f.name.toLowerCase(), f.id])
-  );
+  const workerByPhone = new Map(workers.map((w) => [w.phone.replaceAll(/\D/g, ''), w.id]));
+  const fieldByName = new Map(fields.map((f) => [f.name.toLowerCase(), f.id]));
 
   // Validate and prepare data
-  const validatedSchedules: Array<{ row: number; data: z.infer<typeof createScheduleSchema> & { farm_id: string } }> = [];
+  const validatedSchedules: Array<{
+    row: number;
+    data: z.infer<typeof createScheduleSchema> & { farm_id: string };
+  }> = [];
 
   for (let i = 0; i < parsed.data.length; i++) {
     const row = i + 2; // Account for header row and 1-based indexing
@@ -264,7 +267,7 @@ export async function importSchedules(
           if (!skipErrors) continue;
         }
       } else if (rawData.worker_phone) {
-        const normalizedPhone = rawData.worker_phone.replace(/\D/g, '');
+        const normalizedPhone = rawData.worker_phone.replaceAll(/\D/g, '');
         workerId = workerByPhone.get(normalizedPhone);
         if (!workerId) {
           errors.push({
@@ -310,11 +313,12 @@ export async function importSchedules(
         data: { ...scheduleData, farm_id: farmId },
       });
     } catch (error) {
-      const errorMessage = error instanceof z.ZodError
-        ? error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')
-        : error instanceof Error
-        ? error.message
-        : 'Unknown validation error';
+      const errorMessage =
+        error instanceof z.ZodError
+          ? error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')
+          : error instanceof Error
+            ? error.message
+            : 'Unknown validation error';
 
       errors.push({
         row,

@@ -11,58 +11,68 @@ describe('Equipment Integration Tests', () => {
 
   beforeEach(async () => {
     // Create test farm
-    const [farm] = await db('farms').insert({
-      name: 'Test Farm',
-      location: 'Test Location',
-      size_acres: 100,
-      organic_certified: true,
-    }).returning('*');
+    const [farm] = await db('farms')
+      .insert({
+        name: 'Test Farm',
+        location: 'Test Location',
+        size_acres: 100,
+        organic_certified: true,
+      })
+      .returning('*');
     farmId = farm.id;
 
     // Create test user
-    const [user] = await db('users').insert({
-      email: 'manager@test.com',
-      password_hash: 'hashed_password',
-      role: 'manager',
-      farm_id: farmId,
-    }).returning('*');
+    const [user] = await db('users')
+      .insert({
+        email: 'manager@test.com',
+        password_hash: 'hashed_password',
+        role: 'manager',
+        farm_id: farmId,
+      })
+      .returning('*');
     userId = user.id;
 
     // Create test worker
-    const [worker] = await db('workers').insert({
-      farm_id: farmId,
-      first_name: 'John',
-      last_name: 'Doe',
-      phone: '1234567890',
-      hire_date: new Date('2024-01-01'),
-      status: 'active',
-    }).returning('*');
+    const [worker] = await db('workers')
+      .insert({
+        farm_id: farmId,
+        first_name: 'John',
+        last_name: 'Doe',
+        phone: '1234567890',
+        hire_date: new Date('2024-01-01'),
+        status: 'active',
+      })
+      .returning('*');
     workerId = worker.id;
 
     // Create test field
-    const [field] = await db('fields').insert({
-      farm_id: farmId,
-      name: 'Test Field',
-      size_acres: 10,
-    }).returning('*');
+    const [field] = await db('fields')
+      .insert({
+        farm_id: farmId,
+        name: 'Test Field',
+        size_acres: 10,
+      })
+      .returning('*');
     fieldId = field.id;
   });
 
   describe('Equipment CRUD Operations', () => {
     it('should create equipment', async () => {
-      const equipment = await db('equipment').insert({
-        farm_id: farmId,
-        name: 'Tractor',
-        type: 'tractor',
-        manufacturer: 'John Deere',
-        model: '5075E',
-        serial_number: 'JD123456',
-        year: 2020,
-        purchase_price: 45000,
-        purchase_date: new Date('2020-03-15'),
-        status: 'available',
-        notes: 'Primary tractor',
-      }).returning('*');
+      const equipment = await db('equipment')
+        .insert({
+          farm_id: farmId,
+          name: 'Tractor',
+          type: 'tractor',
+          manufacturer: 'John Deere',
+          model: '5075E',
+          serial_number: 'JD123456',
+          year: 2020,
+          purchase_price: 45_000,
+          purchase_date: new Date('2020-03-15'),
+          status: 'available',
+          notes: 'Primary tractor',
+        })
+        .returning('*');
 
       expect(equipment[0]).toMatchObject({
         name: 'Tractor',
@@ -98,9 +108,7 @@ describe('Equipment Integration Tests', () => {
         },
       ]);
 
-      const equipment = await db('equipment')
-        .where({ farm_id: farmId })
-        .orderBy('name', 'asc');
+      const equipment = await db('equipment').where({ farm_id: farmId }).orderBy('name', 'asc');
 
       expect(equipment).toHaveLength(3);
       expect(equipment[0].name).toBe('Harvester');
@@ -116,8 +124,10 @@ describe('Equipment Integration Tests', () => {
         { farm_id: farmId, name: 'Tractor 3', type: 'tractor', status: 'available' },
       ]);
 
-      const availableEquipment = await db('equipment')
-        .where({ farm_id: farmId, status: 'available' });
+      const availableEquipment = await db('equipment').where({
+        farm_id: farmId,
+        status: 'available',
+      });
 
       expect(availableEquipment).toHaveLength(2);
     });
@@ -129,23 +139,22 @@ describe('Equipment Integration Tests', () => {
         { farm_id: farmId, name: 'Another Tractor', type: 'tractor', status: 'available' },
       ]);
 
-      const tractors = await db('equipment')
-        .where({ farm_id: farmId, type: 'tractor' });
+      const tractors = await db('equipment').where({ farm_id: farmId, type: 'tractor' });
 
       expect(tractors).toHaveLength(2);
     });
 
     it('should get single equipment with details', async () => {
-      const [equipment] = await db('equipment').insert({
-        farm_id: farmId,
-        name: 'Tractor',
-        type: 'tractor',
-        status: 'available',
-      }).returning('*');
+      const [equipment] = await db('equipment')
+        .insert({
+          farm_id: farmId,
+          name: 'Tractor',
+          type: 'tractor',
+          status: 'available',
+        })
+        .returning('*');
 
-      const retrieved = await db('equipment')
-        .where({ id: equipment.id, farm_id: farmId })
-        .first();
+      const retrieved = await db('equipment').where({ id: equipment.id, farm_id: farmId }).first();
 
       expect(retrieved).toMatchObject({
         id: equipment.id,
@@ -155,12 +164,14 @@ describe('Equipment Integration Tests', () => {
     });
 
     it('should update equipment', async () => {
-      const [equipment] = await db('equipment').insert({
-        farm_id: farmId,
-        name: 'Tractor',
-        type: 'tractor',
-        status: 'available',
-      }).returning('*');
+      const [equipment] = await db('equipment')
+        .insert({
+          farm_id: farmId,
+          name: 'Tractor',
+          type: 'tractor',
+          status: 'available',
+        })
+        .returning('*');
 
       const [updated] = await db('equipment')
         .where({ id: equipment.id })
@@ -176,12 +187,14 @@ describe('Equipment Integration Tests', () => {
     });
 
     it('should soft delete equipment by setting status to retired', async () => {
-      const [equipment] = await db('equipment').insert({
-        farm_id: farmId,
-        name: 'Old Tractor',
-        type: 'tractor',
-        status: 'available',
-      }).returning('*');
+      const [equipment] = await db('equipment')
+        .insert({
+          farm_id: farmId,
+          name: 'Old Tractor',
+          type: 'tractor',
+          status: 'available',
+        })
+        .returning('*');
 
       const [retired] = await db('equipment')
         .where({ id: equipment.id })
@@ -192,12 +205,14 @@ describe('Equipment Integration Tests', () => {
     });
 
     it('should not delete equipment with active assignments', async () => {
-      const [equipment] = await db('equipment').insert({
-        farm_id: farmId,
-        name: 'Tractor',
-        type: 'tractor',
-        status: 'in_use',
-      }).returning('*');
+      const [equipment] = await db('equipment')
+        .insert({
+          farm_id: farmId,
+          name: 'Tractor',
+          type: 'tractor',
+          status: 'in_use',
+        })
+        .returning('*');
 
       await db('equipment_assignments').insert({
         equipment_id: equipment.id,
@@ -219,25 +234,29 @@ describe('Equipment Integration Tests', () => {
     let equipmentId: string;
 
     beforeEach(async () => {
-      const [equipment] = await db('equipment').insert({
-        farm_id: farmId,
-        name: 'Tractor',
-        type: 'tractor',
-        status: 'available',
-      }).returning('*');
+      const [equipment] = await db('equipment')
+        .insert({
+          farm_id: farmId,
+          name: 'Tractor',
+          type: 'tractor',
+          status: 'available',
+        })
+        .returning('*');
       equipmentId = equipment.id;
     });
 
     it('should create maintenance log', async () => {
-      const [log] = await db('equipment_maintenance_logs').insert({
-        equipment_id: equipmentId,
-        maintenance_date: new Date('2024-06-15'),
-        maintenance_type: 'routine',
-        description: 'Oil change and filter replacement',
-        cost: 150.10,
-        performed_by: workerId,
-        next_maintenance_date: new Date('2024-12-15'),
-      }).returning('*');
+      const [log] = await db('equipment_maintenance_logs')
+        .insert({
+          equipment_id: equipmentId,
+          maintenance_date: new Date('2024-06-15'),
+          maintenance_type: 'routine',
+          description: 'Oil change and filter replacement',
+          cost: 150.1,
+          performed_by: workerId,
+          next_maintenance_date: new Date('2024-12-15'),
+        })
+        .returning('*');
 
       expect(log).toMatchObject({
         equipment_id: equipmentId,
@@ -273,13 +292,15 @@ describe('Equipment Integration Tests', () => {
     });
 
     it('should join maintenance logs with worker information', async () => {
-      const [log] = await db('equipment_maintenance_logs').insert({
-        equipment_id: equipmentId,
-        maintenance_date: new Date('2024-06-15'),
-        maintenance_type: 'routine',
-        description: 'Oil change',
-        performed_by: workerId,
-      }).returning('*');
+      const [log] = await db('equipment_maintenance_logs')
+        .insert({
+          equipment_id: equipmentId,
+          maintenance_date: new Date('2024-06-15'),
+          maintenance_type: 'routine',
+          description: 'Oil change',
+          performed_by: workerId,
+        })
+        .returning('*');
 
       const logWithWorker = await db('equipment_maintenance_logs')
         .where({ 'equipment_maintenance_logs.id': log.id })
@@ -294,17 +315,19 @@ describe('Equipment Integration Tests', () => {
     });
 
     it('should update maintenance log', async () => {
-      const [log] = await db('equipment_maintenance_logs').insert({
-        equipment_id: equipmentId,
-        maintenance_date: new Date('2024-06-15'),
-        maintenance_type: 'routine',
-        description: 'Oil change',
-      }).returning('*');
+      const [log] = await db('equipment_maintenance_logs')
+        .insert({
+          equipment_id: equipmentId,
+          maintenance_date: new Date('2024-06-15'),
+          maintenance_type: 'routine',
+          description: 'Oil change',
+        })
+        .returning('*');
 
       const [updated] = await db('equipment_maintenance_logs')
         .where({ id: log.id })
         .update({
-          cost: 200.10,
+          cost: 200.1,
           notes: 'Found additional issues',
           updated_at: new Date(),
         })
@@ -315,20 +338,18 @@ describe('Equipment Integration Tests', () => {
     });
 
     it('should delete maintenance log', async () => {
-      const [log] = await db('equipment_maintenance_logs').insert({
-        equipment_id: equipmentId,
-        maintenance_date: new Date('2024-06-15'),
-        maintenance_type: 'routine',
-        description: 'Oil change',
-      }).returning('*');
+      const [log] = await db('equipment_maintenance_logs')
+        .insert({
+          equipment_id: equipmentId,
+          maintenance_date: new Date('2024-06-15'),
+          maintenance_type: 'routine',
+          description: 'Oil change',
+        })
+        .returning('*');
 
-      await db('equipment_maintenance_logs')
-        .where({ id: log.id })
-        .delete();
+      await db('equipment_maintenance_logs').where({ id: log.id }).delete();
 
-      const deleted = await db('equipment_maintenance_logs')
-        .where({ id: log.id })
-        .first();
+      const deleted = await db('equipment_maintenance_logs').where({ id: log.id }).first();
 
       expect(deleted).toBeUndefined();
     });
@@ -383,22 +404,26 @@ describe('Equipment Integration Tests', () => {
     let equipmentId: string;
 
     beforeEach(async () => {
-      const [equipment] = await db('equipment').insert({
-        farm_id: farmId,
-        name: 'Tractor',
-        type: 'tractor',
-        status: 'available',
-      }).returning('*');
+      const [equipment] = await db('equipment')
+        .insert({
+          farm_id: farmId,
+          name: 'Tractor',
+          type: 'tractor',
+          status: 'available',
+        })
+        .returning('*');
       equipmentId = equipment.id;
     });
 
     it('should assign equipment to worker', async () => {
-      const [assignment] = await db('equipment_assignments').insert({
-        equipment_id: equipmentId,
-        worker_id: workerId,
-        assigned_at: new Date(),
-        purpose: 'Field plowing',
-      }).returning('*');
+      const [assignment] = await db('equipment_assignments')
+        .insert({
+          equipment_id: equipmentId,
+          worker_id: workerId,
+          assigned_at: new Date(),
+          purpose: 'Field plowing',
+        })
+        .returning('*');
 
       expect(assignment).toMatchObject({
         equipment_id: equipmentId,
@@ -409,12 +434,14 @@ describe('Equipment Integration Tests', () => {
     });
 
     it('should assign equipment to field', async () => {
-      const [assignment] = await db('equipment_assignments').insert({
-        equipment_id: equipmentId,
-        field_id: fieldId,
-        assigned_at: new Date(),
-        purpose: 'Irrigation setup',
-      }).returning('*');
+      const [assignment] = await db('equipment_assignments')
+        .insert({
+          equipment_id: equipmentId,
+          field_id: fieldId,
+          assigned_at: new Date(),
+          purpose: 'Irrigation setup',
+        })
+        .returning('*');
 
       expect(assignment).toMatchObject({
         equipment_id: equipmentId,
@@ -471,11 +498,13 @@ describe('Equipment Integration Tests', () => {
     });
 
     it('should return equipment from assignment', async () => {
-      const [assignment] = await db('equipment_assignments').insert({
-        equipment_id: equipmentId,
-        worker_id: workerId,
-        assigned_at: new Date(),
-      }).returning('*');
+      const [assignment] = await db('equipment_assignments')
+        .insert({
+          equipment_id: equipmentId,
+          worker_id: workerId,
+          assigned_at: new Date(),
+        })
+        .returning('*');
 
       const [returned] = await db('equipment_assignments')
         .where({ id: assignment.id })
@@ -501,19 +530,19 @@ describe('Equipment Integration Tests', () => {
         .where({ id: equipmentId })
         .update({ status: 'in_use', updated_at: new Date() });
 
-      const equipment = await db('equipment')
-        .where({ id: equipmentId })
-        .first();
+      const equipment = await db('equipment').where({ id: equipmentId }).first();
 
       expect(equipment?.status).toBe('in_use');
     });
 
     it('should update equipment status to available when returned', async () => {
-      const [assignment] = await db('equipment_assignments').insert({
-        equipment_id: equipmentId,
-        worker_id: workerId,
-        assigned_at: new Date(),
-      }).returning('*');
+      const [assignment] = await db('equipment_assignments')
+        .insert({
+          equipment_id: equipmentId,
+          worker_id: workerId,
+          assigned_at: new Date(),
+        })
+        .returning('*');
 
       await db('equipment')
         .where({ id: equipmentId })
@@ -535,20 +564,20 @@ describe('Equipment Integration Tests', () => {
           .update({ status: 'available', updated_at: new Date() });
       }
 
-      const equipment = await db('equipment')
-        .where({ id: equipmentId })
-        .first();
+      const equipment = await db('equipment').where({ id: equipmentId }).first();
 
       expect(equipment?.status).toBe('available');
     });
 
     it('should join assignments with worker and field information', async () => {
-      const [assignment] = await db('equipment_assignments').insert({
-        equipment_id: equipmentId,
-        worker_id: workerId,
-        field_id: fieldId,
-        assigned_at: new Date(),
-      }).returning('*');
+      const [assignment] = await db('equipment_assignments')
+        .insert({
+          equipment_id: equipmentId,
+          worker_id: workerId,
+          field_id: fieldId,
+          assigned_at: new Date(),
+        })
+        .returning('*');
 
       const assignmentWithDetails = await db('equipment_assignments')
         .where({ 'equipment_assignments.id': assignment.id })

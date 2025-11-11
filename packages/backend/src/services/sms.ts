@@ -64,11 +64,9 @@ const templatesEN = {
   schedule_change: (data: ScheduleChangeNotification): string => {
     let message = `🚜 Farm Commons Schedule Update\n\n`;
     message += `Hello ${data.workerName},\n\n`;
-    if (data.change) {
-      message += `Your schedule has been changed: ${data.change}\n\n`;
-    } else {
-      message += `You have a new schedule assignment:\n\n`;
-    }
+    message += data.change
+      ? `Your schedule has been changed: ${data.change}\n\n`
+      : `You have a new schedule assignment:\n\n`;
     message += `📅 Date: ${data.date}\n`;
     message += `🕐 Time: ${data.time}\n`;
     message += `📋 Task: ${data.task}\n`;
@@ -121,11 +119,9 @@ const templatesES = {
   schedule_change: (data: ScheduleChangeNotification): string => {
     let message = `🚜 Farm Commons - Actualización de Horario\n\n`;
     message += `Hola ${data.workerName},\n\n`;
-    if (data.change) {
-      message += `Tu horario ha sido modificado: ${data.change}\n\n`;
-    } else {
-      message += `Tienes una nueva asignación de horario:\n\n`;
-    }
+    message += data.change
+      ? `Tu horario ha sido modificado: ${data.change}\n\n`
+      : `Tienes una nueva asignación de horario:\n\n`;
     message += `📅 Fecha: ${data.date}\n`;
     message += `🕐 Hora: ${data.time}\n`;
     message += `📋 Tarea: ${data.task}\n`;
@@ -179,23 +175,25 @@ function getTemplates(language: Language = 'en') {
 }
 
 // Format notification message based on type and language
-export function formatMessage(
-  data: NotificationData,
-  language: Language = 'en'
-): string {
+export function formatMessage(data: NotificationData, language: Language = 'en'): string {
   const templates = getTemplates(language);
 
   switch (data.type) {
-    case 'schedule_change':
+    case 'schedule_change': {
       return templates.schedule_change(data);
-    case 'emergency':
+    }
+    case 'emergency': {
       return templates.emergency(data);
-    case 'clock_in':
+    }
+    case 'clock_in': {
       return templates.clock_in(data);
-    case 'clock_out':
+    }
+    case 'clock_out': {
       return templates.clock_out(data);
-    default:
+    }
+    default: {
       throw new Error(`Unknown notification type`);
+    }
   }
 }
 
@@ -217,7 +215,7 @@ export async function sendSMS(options: SendSMSOptions): Promise<SMSResult> {
   const { to, data, language = 'en' } = options;
 
   // Validate phone number format (basic validation)
-  if (!to || !to.match(/^\+?[1-9]\d{1,14}$/)) {
+  if (!to || !/^\+?[1-9]\d{1,14}$/.test(to)) {
     logger.error({ phone: to }, 'Invalid phone number format');
     return {
       success: false,
@@ -271,8 +269,7 @@ export async function sendSMS(options: SendSMSOptions): Promise<SMSResult> {
       messageId: result.sid,
     };
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error(
       {
         error: errorMessage,
@@ -362,15 +359,10 @@ export interface BulkSMSOptions {
   data: NotificationData;
 }
 
-export async function sendBulkSMS(
-  options: BulkSMSOptions
-): Promise<SMSResult[]> {
+export async function sendBulkSMS(options: BulkSMSOptions): Promise<SMSResult[]> {
   const { recipients, data } = options;
 
-  logger.info(
-    { count: recipients.length, type: data.type },
-    'Sending bulk SMS notifications'
-  );
+  logger.info({ count: recipients.length, type: data.type }, 'Sending bulk SMS notifications');
 
   // Send all messages in parallel
   const promises = recipients.map((recipient) =>
@@ -384,9 +376,7 @@ export async function sendBulkSMS(
   const results = await Promise.allSettled(promises);
 
   return results.map((result) =>
-    result.status === 'fulfilled'
-      ? result.value
-      : { success: false, error: 'Promise rejected' }
+    result.status === 'fulfilled' ? result.value : { success: false, error: 'Promise rejected' }
   );
 }
 

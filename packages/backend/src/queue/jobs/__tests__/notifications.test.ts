@@ -39,7 +39,7 @@ describe('Notification Jobs', () => {
 
       const sendScheduleReminderSpy = vi
         .spyOn(emailService, 'sendScheduleReminder')
-        .mockResolvedValue(undefined);
+        .mockResolvedValue();
 
       // Simulate job processing
       await emailService.sendScheduleReminder({
@@ -98,7 +98,7 @@ describe('Notification Jobs', () => {
 
       const sendCertificationExpiryWarningSpy = vi
         .spyOn(emailService, 'sendCertificationExpiryWarning')
-        .mockResolvedValue(undefined);
+        .mockResolvedValue();
 
       await emailService.sendCertificationExpiryWarning({
         to: mockJobData.workerEmail,
@@ -130,7 +130,7 @@ describe('Notification Jobs', () => {
 
       const sendCertificationExpiryWarningSpy = vi
         .spyOn(emailService, 'sendCertificationExpiryWarning')
-        .mockResolvedValue(undefined);
+        .mockResolvedValue();
 
       await emailService.sendCertificationExpiryWarning({
         to: mockJobData.workerEmail,
@@ -161,7 +161,7 @@ describe('Notification Jobs', () => {
 
       const sendUnverifiedTimeEntryReminderSpy = vi
         .spyOn(emailService, 'sendUnverifiedTimeEntryReminder')
-        .mockResolvedValue(undefined);
+        .mockResolvedValue();
 
       await emailService.sendUnverifiedTimeEntryReminder({
         to: mockJobData.workerEmail,
@@ -271,10 +271,7 @@ describe('Notification Jobs', () => {
           'workers.email'
         )
         .join('workers', 'certifications.worker_id', 'workers.id')
-        .whereBetween('certifications.expiry_date', [
-          today.toISOString(),
-          in30Days.toISOString(),
-        ])
+        .whereBetween('certifications.expiry_date', [today.toISOString(), in30Days.toISOString()])
         .whereNotNull('workers.email')
         .where('workers.email', '!=', '');
 
@@ -355,7 +352,7 @@ describe('Notification Jobs', () => {
           if (attemptCount < 3) {
             throw new Error('Temporary failure');
           }
-          return undefined;
+          return;
         });
 
       // First attempt - fails

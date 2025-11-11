@@ -59,7 +59,7 @@ describe('Weather Routes', () => {
   describe('GET /api/weather/current', () => {
     it('should return current weather for valid coordinates', async () => {
       const mockWeather = {
-        dt: 1699632000,
+        dt: 1_699_632_000,
         temp: 72.5,
         humidity: 65,
         weather: [{ id: 800, main: 'Clear', description: 'clear sky', icon: '01d' }],
@@ -86,9 +86,7 @@ describe('Weather Routes', () => {
     });
 
     it('should return 400 for missing coordinates', async () => {
-      const response = await request(app)
-        .get('/api/weather/current')
-        .query({ lat: 40.7128 });
+      const response = await request(app).get('/api/weather/current').query({ lat: 40.7128 });
 
       expect(response.status).toBe(400);
     });
@@ -106,8 +104,8 @@ describe('Weather Routes', () => {
 
   describe('GET /api/weather/forecast', () => {
     it('should return 7-day forecast by default', async () => {
-      const mockForecast = Array(7).fill({
-        dt: 1699632000,
+      const mockForecast = Array.from({ length: 7 }).fill({
+        dt: 1_699_632_000,
         temp: { day: 72.5, min: 58.3, max: 75.2 },
         weather: [{ id: 801, main: 'Clouds', description: 'few clouds', icon: '02d' }],
       });
@@ -125,8 +123,8 @@ describe('Weather Routes', () => {
     });
 
     it('should respect custom days parameter', async () => {
-      const mockForecast = Array(3).fill({
-        dt: 1699632000,
+      const mockForecast = Array.from({ length: 3 }).fill({
+        dt: 1_699_632_000,
         temp: { day: 72.5 },
       });
 
@@ -148,8 +146,8 @@ describe('Weather Routes', () => {
         {
           sender_name: 'NWS',
           event: 'Winter Storm Warning',
-          start: 1699632000,
-          end: 1699675200,
+          start: 1_699_632_000,
+          end: 1_699_675_200,
           description: 'Heavy snow expected',
           tags: ['Snow'],
         },
@@ -182,8 +180,8 @@ describe('Weather Routes', () => {
   describe('GET /api/weather/complete', () => {
     it('should return complete weather data', async () => {
       const mockComplete = {
-        current: { dt: 1699632000, temp: 72.5 },
-        forecast: Array(7).fill({ dt: 1699632000, temp: { day: 72.5 } }),
+        current: { dt: 1_699_632_000, temp: 72.5 },
+        forecast: Array.from({ length: 7 }).fill({ dt: 1_699_632_000, temp: { day: 72.5 } }),
         alerts: [],
       };
 
@@ -204,15 +202,14 @@ describe('Weather Routes', () => {
   describe('GET /api/weather/field/:fieldId/current', () => {
     it('should return weather for field coordinates', async () => {
       const mockWeather = {
-        dt: 1699632000,
+        dt: 1_699_632_000,
         temp: 72.5,
         weather: [{ id: 800, main: 'Clear', description: 'clear sky', icon: '01d' }],
       };
 
       vi.mocked(weatherService.getCurrentWeather).mockResolvedValue(mockWeather as any);
 
-      const response = await request(app)
-        .get('/api/weather/field/field-123/current');
+      const response = await request(app).get('/api/weather/field/field-123/current');
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -224,12 +221,14 @@ describe('Weather Routes', () => {
 
   describe('GET /api/weather/field/:fieldId/forecast', () => {
     it('should return forecast for field coordinates', async () => {
-      const mockForecast = Array(7).fill({ dt: 1699632000, temp: { day: 72.5 } });
+      const mockForecast = Array.from({ length: 7 }).fill({
+        dt: 1_699_632_000,
+        temp: { day: 72.5 },
+      });
 
       vi.mocked(weatherService.getWeatherForecast).mockResolvedValue(mockForecast as any);
 
-      const response = await request(app)
-        .get('/api/weather/field/field-123/forecast');
+      const response = await request(app).get('/api/weather/field/field-123/forecast');
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -238,7 +237,10 @@ describe('Weather Routes', () => {
     });
 
     it('should respect days parameter for field forecast', async () => {
-      const mockForecast = Array(3).fill({ dt: 1699632000, temp: { day: 72.5 } });
+      const mockForecast = Array.from({ length: 3 }).fill({
+        dt: 1_699_632_000,
+        temp: { day: 72.5 },
+      });
 
       vi.mocked(weatherService.getWeatherForecast).mockResolvedValue(mockForecast as any);
 
@@ -255,15 +257,14 @@ describe('Weather Routes', () => {
   describe('GET /api/weather/field/:fieldId/complete', () => {
     it('should return complete weather for field', async () => {
       const mockComplete = {
-        current: { dt: 1699632000, temp: 72.5 },
-        forecast: Array(7).fill({ dt: 1699632000 }),
+        current: { dt: 1_699_632_000, temp: 72.5 },
+        forecast: Array.from({ length: 7 }).fill({ dt: 1_699_632_000 }),
         alerts: [],
       };
 
       vi.mocked(weatherService.getCompleteWeather).mockResolvedValue(mockComplete as any);
 
-      const response = await request(app)
-        .get('/api/weather/field/field-123/complete');
+      const response = await request(app).get('/api/weather/field/field-123/complete');
 
       expect(response.status).toBe(200);
       expect(response.body.data.fieldId).toBe('field-123');

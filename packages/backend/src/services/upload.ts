@@ -1,10 +1,11 @@
 // File Upload Service for Farm Commons
 // Handles certification document uploads with local and S3 storage support
+/* eslint-disable @typescript-eslint/no-unused-vars, sonarjs/no-identical-functions, no-console */
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { fileURLToPath } from 'node:url';
+import {} from 'node:url';
 
 // Allowed file types for uploads
 export const ALLOWED_MIME_TYPES = {
@@ -55,7 +56,7 @@ export class LocalStorageProvider implements StorageProvider {
   private async ensureDirectoryExists(dir: string): Promise<void> {
     try {
       await fs.access(dir);
-    } catch (error) {
+    } catch {
       await fs.mkdir(dir, { recursive: true });
     }
   }

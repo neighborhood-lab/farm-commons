@@ -32,7 +32,7 @@ describe('Task Checklist System', () => {
       });
     } catch (error) {
       // Migrations might already be run, continue
-      // eslint-disable-next-line no-console
+
       console.log('Migration setup:', error);
     }
   });
@@ -429,7 +429,7 @@ describe('Task Checklist System', () => {
       [{ id: userId }] = await testDb('users')
         .insert({
           email: 'test@example.com',
-          // eslint-disable-next-line sonarjs/no-hardcoded-passwords
+
           password_hash: 'hash',
           role: 'manager',
           farm_id: farmId,

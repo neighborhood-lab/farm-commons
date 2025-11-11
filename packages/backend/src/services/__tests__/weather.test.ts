@@ -45,11 +45,11 @@ describe('Weather Service', () => {
       lat: 40.7128,
       lon: -74.106,
       timezone: 'America/New_York',
-      timezone_offset: -18000,
+      timezone_offset: -18_000,
       current: {
-        dt: 1699632000,
-        sunrise: 1699616400,
-        sunset: 1699653600,
+        dt: 1_699_632_000,
+        sunrise: 1_699_616_400,
+        sunset: 1_699_653_600,
         temp: 72.5,
         feels_like: 70.2,
         pressure: 1013,
@@ -57,7 +57,7 @@ describe('Weather Service', () => {
         dew_point: 58.3,
         uvi: 3.5,
         clouds: 20,
-        visibility: 10000,
+        visibility: 10_000,
         wind_speed: 8.5,
         wind_deg: 180,
         weather: [
@@ -72,7 +72,7 @@ describe('Weather Service', () => {
     };
 
     it('should fetch current weather from API when cache is empty', async () => {
-      mockRedis.connect.mockResolvedValue(undefined);
+      mockRedis.connect.mockResolvedValue();
       mockRedis.get.mockResolvedValue(null);
       mockRedis.setEx.mockResolvedValue('OK');
       mockFetch.mockResolvedValueOnce({
@@ -85,25 +85,17 @@ describe('Weather Service', () => {
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('api.openweathermap.org/data/3.1/onecall')
       );
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('lat=40.7128')
-      );
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('lon=-74.106')
-      );
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('appid=test-api-key')
-      );
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('units=imperial')
-      );
+      expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('lat=40.7128'));
+      expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('lon=-74.106'));
+      expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('appid=test-api-key'));
+      expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('units=imperial'));
       expect(result).toEqual(mockCurrentWeather.current);
       expect(mockRedis.setEx).toHaveBeenCalled();
     });
 
     it('should return cached data when available', async () => {
       const cachedData = JSON.stringify(mockCurrentWeather);
-      mockRedis.connect.mockResolvedValue(undefined);
+      mockRedis.connect.mockResolvedValue();
       mockRedis.get.mockResolvedValue(cachedData);
 
       const result = await weatherService.getCurrentWeather(40.7128, -74.106);
@@ -114,16 +106,16 @@ describe('Weather Service', () => {
 
     it('should throw error when API key is missing', async () => {
       delete process.env.OPENWEATHER_API_KEY;
-      mockRedis.connect.mockResolvedValue(undefined);
+      mockRedis.connect.mockResolvedValue();
       mockRedis.get.mockResolvedValue(null);
 
-      await expect(
-        weatherService.getCurrentWeather(40.7128, -74.106)
-      ).rejects.toThrow('OPENWEATHER_API_KEY is not configured');
+      await expect(weatherService.getCurrentWeather(40.7128, -74.106)).rejects.toThrow(
+        'OPENWEATHER_API_KEY is not configured'
+      );
     });
 
     it('should handle API errors gracefully', async () => {
-      mockRedis.connect.mockResolvedValue(undefined);
+      mockRedis.connect.mockResolvedValue();
       mockRedis.get.mockResolvedValue(null);
       mockFetch.mockResolvedValueOnce({
         ok: false,
@@ -132,9 +124,9 @@ describe('Weather Service', () => {
         text: async () => 'Invalid API key',
       });
 
-      await expect(
-        weatherService.getCurrentWeather(40.7128, -74.106)
-      ).rejects.toThrow('OpenWeatherMap API error');
+      await expect(weatherService.getCurrentWeather(40.7128, -74.106)).rejects.toThrow(
+        'OpenWeatherMap API error'
+      );
     });
 
     it('should fetch data directly when cache fails', async () => {
@@ -155,14 +147,14 @@ describe('Weather Service', () => {
       lat: 40.7128,
       lon: -74.106,
       timezone: 'America/New_York',
-      timezone_offset: -18000,
+      timezone_offset: -18_000,
       daily: [
         {
-          dt: 1699632000,
-          sunrise: 1699616400,
-          sunset: 1699653600,
-          moonrise: 1699620000,
-          moonset: 1699657200,
+          dt: 1_699_632_000,
+          sunrise: 1_699_616_400,
+          sunset: 1_699_653_600,
+          moonrise: 1_699_620_000,
+          moonset: 1_699_657_200,
           moon_phase: 0.25,
           summary: 'Partly cloudy',
           temp: {
@@ -200,14 +192,14 @@ describe('Weather Service', () => {
     };
 
     it('should fetch 7-day forecast by default', async () => {
-      mockRedis.connect.mockResolvedValue(undefined);
+      mockRedis.connect.mockResolvedValue();
       mockRedis.get.mockResolvedValue(null);
       mockRedis.setEx.mockResolvedValue('OK');
 
       // Create 8 days of data to test the slicing
       const eightDayForecast = {
         ...mockForecastData,
-        daily: Array(8).fill(mockForecastData.daily![0]),
+        daily: Array.from({ length: 8 }).fill(mockForecastData.daily![0]),
       };
 
       mockFetch.mockResolvedValueOnce({
@@ -224,13 +216,13 @@ describe('Weather Service', () => {
     });
 
     it('should respect custom days parameter', async () => {
-      mockRedis.connect.mockResolvedValue(undefined);
+      mockRedis.connect.mockResolvedValue();
       mockRedis.get.mockResolvedValue(null);
       mockRedis.setEx.mockResolvedValue('OK');
 
       const fiveDayForecast = {
         ...mockForecastData,
-        daily: Array(5).fill(mockForecastData.daily![0]),
+        daily: Array.from({ length: 5 }).fill(mockForecastData.daily![0]),
       };
 
       mockFetch.mockResolvedValueOnce({
@@ -244,13 +236,13 @@ describe('Weather Service', () => {
     });
 
     it('should limit forecast to maximum 8 days', async () => {
-      mockRedis.connect.mockResolvedValue(undefined);
+      mockRedis.connect.mockResolvedValue();
       mockRedis.get.mockResolvedValue(null);
       mockRedis.setEx.mockResolvedValue('OK');
 
       const eightDayForecast = {
         ...mockForecastData,
-        daily: Array(10).fill(mockForecastData.daily![0]),
+        daily: Array.from({ length: 10 }).fill(mockForecastData.daily![0]),
       };
 
       mockFetch.mockResolvedValueOnce({
@@ -269,13 +261,13 @@ describe('Weather Service', () => {
       lat: 40.7128,
       lon: -74.106,
       timezone: 'America/New_York',
-      timezone_offset: -18000,
+      timezone_offset: -18_000,
       alerts: [
         {
           sender_name: 'NWS New York',
           event: 'Winter Storm Warning',
-          start: 1699632000,
-          end: 1699675200,
+          start: 1_699_632_000,
+          end: 1_699_675_200,
           description: 'Heavy snow expected. Total snow accumulations of 6 to 10 inches.',
           tags: ['Snow', 'Winter weather'],
         },
@@ -283,7 +275,7 @@ describe('Weather Service', () => {
     };
 
     it('should fetch weather alerts', async () => {
-      mockRedis.connect.mockResolvedValue(undefined);
+      mockRedis.connect.mockResolvedValue();
       mockRedis.get.mockResolvedValue(null);
       mockRedis.setEx.mockResolvedValue('OK');
       mockFetch.mockResolvedValueOnce({
@@ -301,7 +293,7 @@ describe('Weather Service', () => {
     });
 
     it('should return empty array when no alerts', async () => {
-      mockRedis.connect.mockResolvedValue(undefined);
+      mockRedis.connect.mockResolvedValue();
       mockRedis.get.mockResolvedValue(null);
       mockRedis.setEx.mockResolvedValue('OK');
       mockFetch.mockResolvedValueOnce({
@@ -310,7 +302,7 @@ describe('Weather Service', () => {
           lat: 40.7128,
           lon: -74.106,
           timezone: 'America/New_York',
-          timezone_offset: -18000,
+          timezone_offset: -18_000,
         }),
       });
 
@@ -325,11 +317,11 @@ describe('Weather Service', () => {
       lat: 40.7128,
       lon: -74.106,
       timezone: 'America/New_York',
-      timezone_offset: -18000,
+      timezone_offset: -18_000,
       current: {
-        dt: 1699632000,
-        sunrise: 1699616400,
-        sunset: 1699653600,
+        dt: 1_699_632_000,
+        sunrise: 1_699_616_400,
+        sunset: 1_699_653_600,
         temp: 72.5,
         feels_like: 70.2,
         pressure: 1013,
@@ -337,7 +329,7 @@ describe('Weather Service', () => {
         dew_point: 58.3,
         uvi: 3.5,
         clouds: 20,
-        visibility: 10000,
+        visibility: 10_000,
         wind_speed: 8.5,
         wind_deg: 180,
         weather: [
@@ -349,12 +341,12 @@ describe('Weather Service', () => {
           },
         ],
       },
-      daily: Array(7).fill({
-        dt: 1699632000,
-        sunrise: 1699616400,
-        sunset: 1699653600,
-        moonrise: 1699620000,
-        moonset: 1699657200,
+      daily: Array.from({ length: 7 }).fill({
+        dt: 1_699_632_000,
+        sunrise: 1_699_616_400,
+        sunset: 1_699_653_600,
+        moonrise: 1_699_620_000,
+        moonset: 1_699_657_200,
         moon_phase: 0.25,
         summary: 'Partly cloudy',
         temp: { day: 72.5, min: 58.3, max: 75.2, night: 62.1, eve: 68.4, morn: 60.5 },
@@ -373,7 +365,7 @@ describe('Weather Service', () => {
     };
 
     it('should fetch complete weather data', async () => {
-      mockRedis.connect.mockResolvedValue(undefined);
+      mockRedis.connect.mockResolvedValue();
       mockRedis.get.mockResolvedValue(null);
       mockRedis.setEx.mockResolvedValue('OK');
       mockFetch.mockResolvedValueOnce({
@@ -386,15 +378,13 @@ describe('Weather Service', () => {
       expect(result.current).toBeDefined();
       expect(result.forecast).toHaveLength(7);
       expect(result.alerts).toEqual([]);
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('exclude=minutely%2Chourly')
-      );
+      expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('exclude=minutely%2Chourly'));
     });
   });
 
   describe('clearWeatherCache', () => {
     it('should clear all cache keys for coordinates', async () => {
-      mockRedis.connect.mockResolvedValue(undefined);
+      mockRedis.connect.mockResolvedValue();
       mockRedis.del.mockResolvedValue(1);
 
       await weatherService.clearWeatherCache(40.7128, -74.106);
@@ -403,19 +393,17 @@ describe('Weather Service', () => {
     });
 
     it('should handle cache clear errors gracefully', async () => {
-      mockRedis.connect.mockResolvedValue(undefined);
+      mockRedis.connect.mockResolvedValue();
       mockRedis.del.mockRejectedValue(new Error('Redis error'));
 
       // Should not throw
-      await expect(
-        weatherService.clearWeatherCache(40.7128, -74.106)
-      ).resolves.toBeUndefined();
+      await expect(weatherService.clearWeatherCache(40.7128, -74.106)).resolves.toBeUndefined();
     });
   });
 
   describe('closeWeatherService', () => {
     it('should close Redis connection', async () => {
-      mockRedis.connect.mockResolvedValue(undefined);
+      mockRedis.connect.mockResolvedValue();
       mockRedis.quit.mockResolvedValue('OK');
 
       // First connect by calling a function that uses Redis

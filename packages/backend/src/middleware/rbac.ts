@@ -5,7 +5,6 @@ import type { Response, NextFunction } from 'express';
 import type { UserRole } from '@farm-commons/shared';
 import type { AuthRequest } from './auth.js';
 import db from '../db/connection.js';
-import { AppError } from './errorHandler.js';
 
 // Permission types
 export enum Permission {

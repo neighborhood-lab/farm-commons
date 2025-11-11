@@ -62,7 +62,7 @@ describe('Rate Limiting Middleware', () => {
       const response = await request(app).post('/test-auth').send({});
       expect(response.status).toBe(429);
       expect(response.body.error).toContain('Too many');
-    }, 10000); // Increase timeout for this test
+    }, 10_000); // Increase timeout for this test
   });
 
   describe('Password Reset Rate Limiter', () => {
@@ -91,7 +91,7 @@ describe('Rate Limiting Middleware', () => {
       // Next request should be rate limited
       const response = await request(app).post('/test-password-reset').send({});
       expect(response.status).toBe(429);
-    }, 10000);
+    }, 10_000);
   });
 
   describe('Read-Only Rate Limiter', () => {
@@ -109,9 +109,9 @@ describe('Rate Limiting Middleware', () => {
         Array.from({ length: 10 }, () => request(app).get('/test-read'))
       );
 
-      responses.forEach((response) => {
+      for (const response of responses) {
         expect(response.status).toBe(200);
-      });
+      }
     });
 
     it('should include rate limit headers', async () => {
@@ -195,9 +195,9 @@ describe('Rate Limiting Middleware', () => {
         Array.from({ length: 20 }, () => request(app).get('/health'))
       );
 
-      responses.forEach((response) => {
+      for (const response of responses) {
         expect(response.status).toBe(200);
-      });
+      }
     });
 
     it('should have high rate limits', async () => {
@@ -254,15 +254,11 @@ describe('Rate Limiting Middleware', () => {
     });
 
     it('should use user-based key for authenticated requests', async () => {
-      const response1 = await request(app)
-        .get('/test-key')
-        .set('x-test-user', 'user-123');
+      const response1 = await request(app).get('/test-key').set('x-test-user', 'user-123');
 
       expect(response1.status).toBe(200);
 
-      const response2 = await request(app)
-        .get('/test-key')
-        .set('x-test-user', 'user-123');
+      const response2 = await request(app).get('/test-key').set('x-test-user', 'user-123');
 
       const remaining1 = Number.parseInt(response1.headers['ratelimit-remaining'] || '0');
       const remaining2 = Number.parseInt(response2.headers['ratelimit-remaining'] || '0');
@@ -273,23 +269,17 @@ describe('Rate Limiting Middleware', () => {
 
     it('should use different keys for different users', async () => {
       // Make a request for user 123
-      const response1 = await request(app)
-        .get('/test-key')
-        .set('x-test-user', 'user-123-unique');
+      const response1 = await request(app).get('/test-key').set('x-test-user', 'user-123-unique');
 
       const remaining1 = Number.parseInt(response1.headers['ratelimit-remaining'] || '0');
 
       // Make another request for user 123 to consume their limit
-      const response1b = await request(app)
-        .get('/test-key')
-        .set('x-test-user', 'user-123-unique');
+      const response1b = await request(app).get('/test-key').set('x-test-user', 'user-123-unique');
 
       const remaining1b = Number.parseInt(response1b.headers['ratelimit-remaining'] || '0');
 
       // Make a request for user 456 (should have fresh limit)
-      const response2 = await request(app)
-        .get('/test-key')
-        .set('x-test-user', 'user-456-unique');
+      const response2 = await request(app).get('/test-key').set('x-test-user', 'user-456-unique');
 
       const remaining2 = Number.parseInt(response2.headers['ratelimit-remaining'] || '0');
 
@@ -322,7 +312,7 @@ describe('Rate Limiting Middleware', () => {
 
       const response = await request(app).post('/test-limit').send({});
       expect(response.status).toBe(429);
-    }, 15000);
+    }, 15_000);
 
     it('should return error message in response body', async () => {
       const limit = Number.parseInt(process.env.STRICT_RATE_LIMIT_MAX || '10');
@@ -335,6 +325,6 @@ describe('Rate Limiting Middleware', () => {
       const response = await request(app).post('/test-limit').send({});
       expect(response.body).toHaveProperty('error');
       expect(response.body.success).toBe(false);
-    }, 15000);
+    }, 15_000);
   });
 });

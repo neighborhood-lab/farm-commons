@@ -26,19 +26,17 @@ router.get('/', async (req: AuthRequest, res, next) => {
         .limit(per_page)
         .offset(offset)
         .select('*'),
-      db('fields')
-        .where({ farm_id: farmId })
-        .count('* as count'),
+      db('fields').where({ farm_id: farmId }).count('* as count'),
     ]);
 
     res.json({
       success: true,
       data: {
         data: fields,
-        total: parseInt(count as string),
+        total: Number.parseInt(count as string),
         page,
         per_page,
-        total_pages: Math.ceil(parseInt(count as string) / per_page),
+        total_pages: Math.ceil(Number.parseInt(count as string) / per_page),
       },
     });
   } catch (error) {
@@ -53,9 +51,7 @@ router.get('/:id', async (req: AuthRequest, res, next) => {
     const farmId = req.user?.farm_id;
 
     // Get field details
-    const field = await db('fields')
-      .where({ id, farm_id: farmId })
-      .first();
+    const field = await db('fields').where({ id, farm_id: farmId }).first();
 
     if (!field) {
       throw new AppError('Field not found', 404);
@@ -91,9 +87,7 @@ router.get('/:id/schedules', async (req: AuthRequest, res, next) => {
     const farmId = req.user?.farm_id;
 
     // Verify field exists and belongs to farm
-    const field = await db('fields')
-      .where({ id, farm_id: farmId })
-      .first();
+    const field = await db('fields').where({ id, farm_id: farmId }).first();
 
     if (!field) {
       throw new AppError('Field not found', 404);
@@ -180,18 +174,12 @@ router.delete('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, 
 
     // Check if field has associated schedules or time entries
     const [schedulesCount, timeEntriesCount] = await Promise.all([
-      db('schedules')
-        .where({ field_id: id })
-        .count('* as count')
-        .first(),
-      db('time_entries')
-        .where({ field_id: id })
-        .count('* as count')
-        .first(),
+      db('schedules').where({ field_id: id }).count('* as count').first(),
+      db('time_entries').where({ field_id: id }).count('* as count').first(),
     ]);
 
-    const hasSchedules = parseInt(schedulesCount?.count as string || '0') > 0;
-    const hasTimeEntries = parseInt(timeEntriesCount?.count as string || '0') > 0;
+    const hasSchedules = Number.parseInt((schedulesCount?.count as string) || '0') > 0;
+    const hasTimeEntries = Number.parseInt((timeEntriesCount?.count as string) || '0') > 0;
 
     if (hasSchedules || hasTimeEntries) {
       throw new AppError(
@@ -200,9 +188,7 @@ router.delete('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, 
       );
     }
 
-    const deleted = await db('fields')
-      .where({ id, farm_id: farmId })
-      .delete();
+    const deleted = await db('fields').where({ id, farm_id: farmId }).delete();
 
     if (!deleted) {
       throw new AppError('Field not found', 404);

@@ -31,11 +31,11 @@ describe('Queue Configuration', () => {
 
     it('should have correct job retention settings', () => {
       expect(defaultJobOptions.removeOnComplete).toEqual({
-        age: 86400, // 24 hours
+        age: 86_400, // 24 hours
         count: 1000,
       });
       expect(defaultJobOptions.removeOnFail).toEqual({
-        age: 604800, // 7 days
+        age: 604_800, // 7 days
       });
     });
   });

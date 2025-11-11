@@ -38,7 +38,7 @@ describe('Equipment Assignments API', () => {
     const [user] = await db('users')
       .insert({
         email: 'manager@test.com',
-        // eslint-disable-next-line sonarjs/no-hardcoded-passwords
+
         password_hash: '$2b$10$abcdefghijklmnopqrstuv', // Test hash
         role: 'manager',
         farm_id: farmId,

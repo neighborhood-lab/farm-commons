@@ -1,4 +1,5 @@
 import type { Knex } from 'knex';
+/* eslint-disable sonarjs/cognitive-complexity */
 import bcrypt from 'bcrypt';
 
 export async function seed(knex: Knex): Promise<void> {
@@ -82,8 +83,8 @@ export async function seed(knex: Knex): Promise<void> {
       {
         farm_id: farm.id,
         name: 'East Field',
-        size_acres: 52.0,
-        location_gps: JSON.stringify({ lat: 36.6780, lng: -121.6540 }),
+        size_acres: 52,
+        location_gps: JSON.stringify({ lat: 36.678, lng: -121.654 }),
         current_crop: 'Broccoli',
         soil_type: 'Clay loam',
         notes: 'Crop rotation schedule - broccoli this season',
@@ -136,7 +137,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0102',
         hire_date: '2020-03-15',
         status: 'active',
-        hourly_rate: 22.50,
+        hourly_rate: 22.5,
         certifications: ['Forklift Operator', 'First Aid'],
         skills: ['Equipment Operation', 'Team Lead', 'Irrigation'],
         notes: 'Crew leader for field operations',
@@ -153,7 +154,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0104',
         hire_date: '2019-05-20',
         status: 'active',
-        hourly_rate: 23.00,
+        hourly_rate: 23,
         certifications: ['Pesticide Application', 'Tractor Operation'],
         skills: ['Pesticide Application', 'Greenhouse Management', 'Quality Control'],
         notes: 'Greenhouse supervisor',
@@ -171,7 +172,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0106',
         hire_date: '2021-01-10',
         status: 'active',
-        hourly_rate: 18.50,
+        hourly_rate: 18.5,
         certifications: [],
         skills: ['Harvesting', 'Planting', 'Weeding'],
         notes: 'Excellent harvester',
@@ -188,7 +189,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0108',
         hire_date: '2021-02-15',
         status: 'active',
-        hourly_rate: 18.00,
+        hourly_rate: 18,
         certifications: [],
         skills: ['Harvesting', 'Sorting', 'Packing'],
         notes: 'Works primarily in strawberry fields',
@@ -205,7 +206,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0110',
         hire_date: '2020-08-01',
         status: 'active',
-        hourly_rate: 19.50,
+        hourly_rate: 19.5,
         certifications: ['Tractor Operation'],
         skills: ['Tractor Operation', 'Plowing', 'Irrigation'],
         notes: 'Primary tractor operator',
@@ -222,7 +223,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0112',
         hire_date: '2021-03-20',
         status: 'active',
-        hourly_rate: 18.00,
+        hourly_rate: 18,
         certifications: [],
         skills: ['Greenhouse Work', 'Planting', 'Pruning'],
         notes: 'Greenhouse specialist',
@@ -239,7 +240,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0114',
         hire_date: '2020-11-05',
         status: 'active',
-        hourly_rate: 18.50,
+        hourly_rate: 18.5,
         certifications: [],
         skills: ['Harvesting', 'Equipment Maintenance', 'Irrigation'],
         notes: 'Very reliable worker',
@@ -256,7 +257,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0116',
         hire_date: '2021-04-12',
         status: 'active',
-        hourly_rate: 17.50,
+        hourly_rate: 17.5,
         certifications: [],
         skills: ['Harvesting', 'Weeding', 'Planting'],
         notes: '',
@@ -273,7 +274,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0118',
         hire_date: '2019-09-01',
         status: 'active',
-        hourly_rate: 20.00,
+        hourly_rate: 20,
         certifications: ['First Aid', 'Forklift Operator'],
         skills: ['Forklift Operation', 'Warehouse', 'Loading'],
         notes: 'Warehouse and logistics',
@@ -290,7 +291,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0120',
         hire_date: '2020-06-18',
         status: 'active',
-        hourly_rate: 18.00,
+        hourly_rate: 18,
         certifications: [],
         skills: ['Harvesting', 'Sorting', 'Quality Control'],
         notes: 'Quality control specialist',
@@ -308,7 +309,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0122',
         hire_date: '2024-04-01',
         status: 'seasonal',
-        hourly_rate: 17.00,
+        hourly_rate: 17,
         certifications: [],
         skills: ['Harvesting', 'Pruning'],
         notes: 'Seasonal worker - harvest season',
@@ -325,7 +326,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0124',
         hire_date: '2024-04-01',
         status: 'seasonal',
-        hourly_rate: 17.00,
+        hourly_rate: 17,
         certifications: [],
         skills: ['Harvesting', 'Packing'],
         notes: 'Seasonal worker - harvest season',
@@ -342,7 +343,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0126',
         hire_date: '2024-05-15',
         status: 'seasonal',
-        hourly_rate: 17.00,
+        hourly_rate: 17,
         certifications: [],
         skills: ['Harvesting', 'Weeding'],
         notes: 'Seasonal worker - harvest season',
@@ -359,7 +360,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0128',
         hire_date: '2024-05-15',
         status: 'seasonal',
-        hourly_rate: 17.00,
+        hourly_rate: 17,
         certifications: [],
         skills: ['Harvesting'],
         notes: 'Seasonal worker - harvest season',
@@ -377,7 +378,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0130',
         hire_date: '2023-02-10',
         status: 'active',
-        hourly_rate: 18.50,
+        hourly_rate: 18.5,
         certifications: [],
         skills: ['Equipment Maintenance', 'Repair', 'Welding'],
         notes: 'Part-time maintenance specialist',
@@ -396,7 +397,7 @@ export async function seed(knex: Knex): Promise<void> {
         hire_date: '2022-07-01',
         status: 'active',
         hourly_rate: null,
-        piece_rate: 2.50,
+        piece_rate: 2.5,
         certifications: [],
         skills: ['Harvesting', 'Fast Picker'],
         notes: 'Piece rate - per box of strawberries',
@@ -414,7 +415,7 @@ export async function seed(knex: Knex): Promise<void> {
         hire_date: '2022-07-01',
         status: 'active',
         hourly_rate: null,
-        piece_rate: 2.50,
+        piece_rate: 2.5,
         certifications: [],
         skills: ['Harvesting', 'Fast Picker'],
         notes: 'Piece rate - per box of strawberries',
@@ -432,7 +433,7 @@ export async function seed(knex: Knex): Promise<void> {
         hire_date: '2023-03-10',
         status: 'active',
         hourly_rate: null,
-        piece_rate: 2.50,
+        piece_rate: 2.5,
         certifications: [],
         skills: ['Harvesting'],
         notes: 'Piece rate - per box of strawberries',
@@ -450,7 +451,7 @@ export async function seed(knex: Knex): Promise<void> {
         emergency_contact_phone: '831-555-0138',
         hire_date: '2021-08-15',
         status: 'active',
-        hourly_rate: 21.00,
+        hourly_rate: 21,
         certifications: ['CDL Class B', 'Pesticide Application'],
         skills: ['Truck Driving', 'Equipment Operation', 'Pesticide Application'],
         notes: 'Primary truck driver and pesticide applicator',
@@ -587,35 +588,168 @@ export async function seed(knex: Knex): Promise<void> {
     // Field assignments for different workers
     const dailySchedules = [
       // Crew leaders
-      { worker: workers[0], field: fields[0], startTime: '06:00', endTime: '15:00', task: 'Supervise Field Operations', status: isPast ? 'completed' : isToday ? 'in_progress' : 'scheduled' },
-      { worker: workers[1], field: fields[4], startTime: '07:00', endTime: '16:00', task: 'Greenhouse Management', status: isPast ? 'completed' : 'scheduled' },
+      {
+        worker: workers[0],
+        field: fields[0],
+        startTime: '06:00',
+        endTime: '15:00',
+        task: 'Supervise Field Operations',
+        status: isPast ? 'completed' : isToday ? 'in_progress' : 'scheduled',
+      },
+      {
+        worker: workers[1],
+        field: fields[4],
+        startTime: '07:00',
+        endTime: '16:00',
+        task: 'Greenhouse Management',
+        status: isPast ? 'completed' : 'scheduled',
+      },
 
       // Full-time workers
-      { worker: workers[2], field: fields[0], startTime: '06:30', endTime: '15:30', task: 'Lettuce Harvesting', status: isPast ? 'completed' : 'scheduled' },
-      { worker: workers[3], field: fields[1], startTime: '06:30', endTime: '15:30', task: 'Strawberry Harvesting', status: isPast ? 'completed' : 'scheduled' },
-      { worker: workers[4], field: fields[2], startTime: '06:00', endTime: '15:00', task: 'Tractor Operations', status: isPast ? 'completed' : 'scheduled' },
-      { worker: workers[5], field: fields[4], startTime: '07:00', endTime: '16:00', task: 'Greenhouse Planting', status: isPast ? 'completed' : 'scheduled' },
-      { worker: workers[6], field: fields[0], startTime: '06:30', endTime: '15:30', task: 'Irrigation Setup', status: isPast ? 'completed' : 'scheduled' },
-      { worker: workers[7], field: fields[3], startTime: '06:30', endTime: '15:30', task: 'Carrot Weeding', status: isPast ? 'completed' : 'scheduled' },
-      { worker: workers[8], field: null, startTime: '07:00', endTime: '16:00', task: 'Warehouse Operations', status: isPast ? 'completed' : 'scheduled' },
-      { worker: workers[9], field: fields[1], startTime: '06:30', endTime: '15:30', task: 'Quality Control - Strawberries', status: isPast ? 'completed' : 'scheduled' },
+      {
+        worker: workers[2],
+        field: fields[0],
+        startTime: '06:30',
+        endTime: '15:30',
+        task: 'Lettuce Harvesting',
+        status: isPast ? 'completed' : 'scheduled',
+      },
+      {
+        worker: workers[3],
+        field: fields[1],
+        startTime: '06:30',
+        endTime: '15:30',
+        task: 'Strawberry Harvesting',
+        status: isPast ? 'completed' : 'scheduled',
+      },
+      {
+        worker: workers[4],
+        field: fields[2],
+        startTime: '06:00',
+        endTime: '15:00',
+        task: 'Tractor Operations',
+        status: isPast ? 'completed' : 'scheduled',
+      },
+      {
+        worker: workers[5],
+        field: fields[4],
+        startTime: '07:00',
+        endTime: '16:00',
+        task: 'Greenhouse Planting',
+        status: isPast ? 'completed' : 'scheduled',
+      },
+      {
+        worker: workers[6],
+        field: fields[0],
+        startTime: '06:30',
+        endTime: '15:30',
+        task: 'Irrigation Setup',
+        status: isPast ? 'completed' : 'scheduled',
+      },
+      {
+        worker: workers[7],
+        field: fields[3],
+        startTime: '06:30',
+        endTime: '15:30',
+        task: 'Carrot Weeding',
+        status: isPast ? 'completed' : 'scheduled',
+      },
+      {
+        worker: workers[8],
+        field: null,
+        startTime: '07:00',
+        endTime: '16:00',
+        task: 'Warehouse Operations',
+        status: isPast ? 'completed' : 'scheduled',
+      },
+      {
+        worker: workers[9],
+        field: fields[1],
+        startTime: '06:30',
+        endTime: '15:30',
+        task: 'Quality Control - Strawberries',
+        status: isPast ? 'completed' : 'scheduled',
+      },
 
       // Seasonal workers
-      { worker: workers[10], field: fields[1], startTime: '07:00', endTime: '15:00', task: 'Strawberry Harvesting', status: isPast ? 'completed' : 'scheduled' },
-      { worker: workers[11], field: fields[1], startTime: '07:00', endTime: '15:00', task: 'Strawberry Packing', status: isPast ? 'completed' : 'scheduled' },
-      { worker: workers[12], field: fields[2], startTime: '07:00', endTime: '15:00', task: 'Broccoli Harvesting', status: isPast ? 'completed' : 'scheduled' },
-      { worker: workers[13], field: fields[3], startTime: '07:00', endTime: '15:00', task: 'Carrot Harvesting', status: isPast ? 'completed' : 'scheduled' },
+      {
+        worker: workers[10],
+        field: fields[1],
+        startTime: '07:00',
+        endTime: '15:00',
+        task: 'Strawberry Harvesting',
+        status: isPast ? 'completed' : 'scheduled',
+      },
+      {
+        worker: workers[11],
+        field: fields[1],
+        startTime: '07:00',
+        endTime: '15:00',
+        task: 'Strawberry Packing',
+        status: isPast ? 'completed' : 'scheduled',
+      },
+      {
+        worker: workers[12],
+        field: fields[2],
+        startTime: '07:00',
+        endTime: '15:00',
+        task: 'Broccoli Harvesting',
+        status: isPast ? 'completed' : 'scheduled',
+      },
+      {
+        worker: workers[13],
+        field: fields[3],
+        startTime: '07:00',
+        endTime: '15:00',
+        task: 'Carrot Harvesting',
+        status: isPast ? 'completed' : 'scheduled',
+      },
 
       // Part-time maintenance
-      { worker: workers[14], field: null, startTime: '08:00', endTime: '12:00', task: 'Equipment Maintenance', status: isPast ? 'completed' : 'scheduled' },
+      {
+        worker: workers[14],
+        field: null,
+        startTime: '08:00',
+        endTime: '12:00',
+        task: 'Equipment Maintenance',
+        status: isPast ? 'completed' : 'scheduled',
+      },
 
       // Piece rate workers
-      { worker: workers[15], field: fields[1], startTime: '06:00', endTime: '14:00', task: 'Strawberry Harvesting (Piece Rate)', status: isPast ? 'completed' : 'scheduled' },
-      { worker: workers[16], field: fields[1], startTime: '06:00', endTime: '14:00', task: 'Strawberry Harvesting (Piece Rate)', status: isPast ? 'completed' : 'scheduled' },
-      { worker: workers[17], field: fields[1], startTime: '06:00', endTime: '14:00', task: 'Strawberry Harvesting (Piece Rate)', status: isPast ? 'completed' : 'scheduled' },
+      {
+        worker: workers[15],
+        field: fields[1],
+        startTime: '06:00',
+        endTime: '14:00',
+        task: 'Strawberry Harvesting (Piece Rate)',
+        status: isPast ? 'completed' : 'scheduled',
+      },
+      {
+        worker: workers[16],
+        field: fields[1],
+        startTime: '06:00',
+        endTime: '14:00',
+        task: 'Strawberry Harvesting (Piece Rate)',
+        status: isPast ? 'completed' : 'scheduled',
+      },
+      {
+        worker: workers[17],
+        field: fields[1],
+        startTime: '06:00',
+        endTime: '14:00',
+        task: 'Strawberry Harvesting (Piece Rate)',
+        status: isPast ? 'completed' : 'scheduled',
+      },
 
       // Truck driver
-      { worker: workers[18], field: null, startTime: '05:00', endTime: '14:00', task: 'Delivery Routes', status: isPast ? 'completed' : 'scheduled' },
+      {
+        worker: workers[18],
+        field: null,
+        startTime: '05:00',
+        endTime: '14:00',
+        task: 'Delivery Routes',
+        status: isPast ? 'completed' : 'scheduled',
+      },
     ];
 
     for (const schedule of dailySchedules) {
@@ -666,7 +800,7 @@ export async function seed(knex: Knex): Promise<void> {
       // Calculate total hours
       const breakMinutes = Math.random() > 0.5 ? 30 : 60; // 30 or 60 min break
       const totalMs = clockOut.getTime() - clockIn.getTime();
-      const totalHours = (totalMs / (1000 * 60 * 60)) - (breakMinutes / 60);
+      const totalHours = totalMs / (1000 * 60 * 60) - breakMinutes / 60;
 
       // Some entries are verified, some are not
       const isVerified = Math.random() > 0.3; // 70% verified
@@ -683,7 +817,7 @@ export async function seed(knex: Knex): Promise<void> {
         field_id: schedule.field_id,
         notes: null,
         verified_by: isVerified ? users[1].id : null, // Verified by manager
-        verified_at: isVerified ? new Date(clockOut.getTime() + 3600000).toISOString() : null, // Verified 1 hour after clock out
+        verified_at: isVerified ? new Date(clockOut.getTime() + 3_600_000).toISOString() : null, // Verified 1 hour after clock out
       });
     }
   }
@@ -694,7 +828,9 @@ export async function seed(knex: Knex): Promise<void> {
   console.log('\n✅ Demo data seeding completed successfully!');
   console.log('\n📊 Summary:');
   console.log(`   - Farm: ${farm.name}`);
-  console.log(`   - Users: ${users.length} (Login: admin@greenfarm.com / manager@greenfarm.com / worker emails - Password: demo123)`);
+  console.log(
+    `   - Users: ${users.length} (Login: admin@greenfarm.com / manager@greenfarm.com / worker emails - Password: demo123)`
+  );
   console.log(`   - Workers: ${workers.length}`);
   console.log(`   - Fields: ${fields.length}`);
   console.log(`   - Schedules: ${schedules.length}`);

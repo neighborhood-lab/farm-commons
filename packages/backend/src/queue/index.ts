@@ -84,9 +84,9 @@ export async function initializeQueues(): Promise<void> {
   logger.info('Initializing job queues...');
 
   // Create all queues
-  Object.values(QueueNames).forEach((name) => {
+  for (const name of Object.values(QueueNames)) {
     createQueue(name);
-  });
+  }
 
   logger.info({ queueCount: queues.size }, 'All queues initialized');
 }
@@ -203,9 +203,7 @@ export async function getQueueStats(name: QueueName) {
  * Get all queue statistics
  */
 export async function getAllQueueStats() {
-  const stats = await Promise.all(
-    Object.values(QueueNames).map((name) => getQueueStats(name))
-  );
+  const stats = await Promise.all(Object.values(QueueNames).map((name) => getQueueStats(name)));
   return stats;
 }
 
@@ -232,7 +230,7 @@ export async function resumeQueue(name: QueueName): Promise<void> {
  */
 export async function cleanQueue(
   name: QueueName,
-  grace: number = 86400000, // 24 hours in ms
+  grace: number = 86_400_000, // 24 hours in ms
   status: 'completed' | 'failed' = 'completed'
 ): Promise<void> {
   const queue = getQueue(name);

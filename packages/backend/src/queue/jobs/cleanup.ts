@@ -243,7 +243,7 @@ export async function aggregateHistoricalStats(job: Job): Promise<void> {
               date: stat.date,
               stat_type: 'daily_labor_hours',
               data: {
-                total_hours: parseFloat(stat.total_hours),
+                total_hours: Number.parseFloat(stat.total_hours),
                 worker_count: stat.worker_count,
                 entry_count: stat.entry_count,
               },

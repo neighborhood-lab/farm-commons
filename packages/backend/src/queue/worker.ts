@@ -17,7 +17,7 @@ import type {
 
 // Get current file path for ES module
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const _unused__dirname = dirname(__filename);
 
 // Logger
 const logger = pino({
@@ -33,23 +33,18 @@ const workers = new Map<QueueName, Worker>();
 /**
  * Process notification jobs
  */
-async function processNotificationJob(
-  job: TypedJob<NotificationJobData>
-): Promise<JobResult> {
+async function processNotificationJob(job: TypedJob<NotificationJobData>): Promise<JobResult> {
   logger.info({ jobId: job.id, data: job.data }, 'Processing notification job');
 
   try {
-    const { type, recipientId, subject, message } = job.data;
+    const { type, recipientId, subject, message: _message } = job.data;
 
     // Update progress
     await job.updateProgress(25);
 
     // TODO: Implement actual notification sending logic
     // This is a placeholder that will be implemented in task 0036
-    logger.info(
-      { type, recipientId, subject },
-      'Notification job processed (placeholder)'
-    );
+    logger.info({ type, recipientId, subject }, 'Notification job processed (placeholder)');
 
     await job.updateProgress(100);
 
@@ -70,9 +65,7 @@ async function processNotificationJob(
 /**
  * Process data cleanup jobs
  */
-async function processDataCleanupJob(
-  job: TypedJob<DataCleanupJobData>
-): Promise<JobResult> {
+async function processDataCleanupJob(job: TypedJob<DataCleanupJobData>): Promise<JobResult> {
   logger.info({ jobId: job.id, data: job.data }, 'Processing data cleanup job');
 
   try {
@@ -82,10 +75,7 @@ async function processDataCleanupJob(
 
     // TODO: Implement actual cleanup logic
     // This is a placeholder that will be implemented in task 0037
-    logger.info(
-      { type, olderThanDays, dryRun },
-      'Data cleanup job processed (placeholder)'
-    );
+    logger.info({ type, olderThanDays, dryRun }, 'Data cleanup job processed (placeholder)');
 
     await job.updateProgress(100);
 
@@ -106,9 +96,7 @@ async function processDataCleanupJob(
 /**
  * Process export jobs
  */
-async function processExportJob(
-  job: TypedJob<ExportJobData>
-): Promise<JobResult> {
+async function processExportJob(job: TypedJob<ExportJobData>): Promise<JobResult> {
   logger.info({ jobId: job.id, data: job.data }, 'Processing export job');
 
   try {
@@ -175,20 +163,25 @@ function createWorker(name: QueueName): Worker {
 
   // Assign the appropriate processor based on queue name
   switch (name) {
-    case QueueNames.NOTIFICATIONS:
+    case QueueNames.NOTIFICATIONS: {
       processor = processNotificationJob as (job: Job) => Promise<JobResult>;
       break;
-    case QueueNames.DATA_CLEANUP:
+    }
+    case QueueNames.DATA_CLEANUP: {
       processor = processDataCleanupJob as (job: Job) => Promise<JobResult>;
       break;
-    case QueueNames.EXPORTS:
+    }
+    case QueueNames.EXPORTS: {
       processor = processExportJob as (job: Job) => Promise<JobResult>;
       break;
-    case QueueNames.EMAILS:
+    }
+    case QueueNames.EMAILS: {
       processor = processEmailJob as (job: Job) => Promise<JobResult>;
       break;
-    default:
+    }
+    default: {
       throw new Error(`Unknown queue: ${name}`);
+    }
   }
 
   const worker = new Worker(name, processor, {
@@ -202,17 +195,11 @@ function createWorker(name: QueueName): Worker {
 
   // Worker event listeners
   worker.on('completed', (job, result) => {
-    logger.info(
-      { queue: name, jobId: job.id, result },
-      'Worker completed job'
-    );
+    logger.info({ queue: name, jobId: job.id, result }, 'Worker completed job');
   });
 
   worker.on('failed', (job, error) => {
-    logger.error(
-      { queue: name, jobId: job?.id, error: error.message },
-      'Worker failed job'
-    );
+    logger.error({ queue: name, jobId: job?.id, error: error.message }, 'Worker failed job');
   });
 
   worker.on('error', (error) => {
@@ -236,9 +223,9 @@ export async function startWorkers(): Promise<void> {
   logger.info('Starting job queue workers...');
 
   // Create workers for all queues
-  Object.values(QueueNames).forEach((name) => {
+  for (const name of Object.values(QueueNames)) {
     createWorker(name);
-  });
+  }
 
   logger.info({ workerCount: workers.size }, 'All workers started');
 }
@@ -281,9 +268,10 @@ export async function gracefulShutdown(): Promise<void> {
 }
 
 // Check if this file is being run directly (ES module version)
-const isMainModule = process.argv[1] === __filename ||
-                     process.argv[1]?.endsWith('queue/worker.ts') ||
-                     process.argv[1]?.endsWith('queue/worker.js');
+const isMainModule =
+  process.argv[1] === __filename ||
+  process.argv[1]?.endsWith('queue/worker.ts') ||
+  process.argv[1]?.endsWith('queue/worker.js');
 
 // Handle process termination
 if (isMainModule) {

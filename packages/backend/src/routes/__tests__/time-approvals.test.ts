@@ -33,7 +33,7 @@ describe('Time Entry Approval Workflow', () => {
       });
     } catch (error) {
       // Migrations might already be run, continue
-      // eslint-disable-next-line no-console
+
       console.log('Migration setup:', error);
     }
   });
@@ -62,7 +62,7 @@ describe('Time Entry Approval Workflow', () => {
     [{ id: managerId }] = await testDb('users')
       .insert({
         email: 'manager@test.com',
-        // eslint-disable-next-line sonarjs/no-hardcoded-passwords
+
         password_hash: 'hashed_password',
         role: 'manager',
         farm_id: farmId,

@@ -28,7 +28,7 @@ describe('Skills API', () => {
     const [user] = await db('users')
       .insert({
         email: 'manager@test.com',
-        // eslint-disable-next-line sonarjs/no-hardcoded-passwords
+
         password_hash: '$2b$10$test',
         role: 'manager',
         farm_id: farmId,

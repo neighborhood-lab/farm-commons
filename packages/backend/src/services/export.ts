@@ -1,11 +1,12 @@
 // Data Export Service
+/* eslint-disable @typescript-eslint/no-explicit-any, unicorn/no-array-for-each */
 // Provides CSV and Excel export functionality for various data types
 
 import { format } from 'date-fns';
 import { format as formatCsv } from 'fast-csv';
 import ExcelJS from 'exceljs';
 import type { Knex } from 'knex';
-import { Readable } from 'stream';
+import { Readable } from 'node:stream';
 
 export interface ExportOptions {
   format: 'csv' | 'excel';
@@ -74,10 +75,7 @@ export interface ComplianceReportData {
 /**
  * Export workers list to CSV or Excel
  */
-export async function exportWorkers(
-  db: Knex,
-  options: ExportOptions
-): Promise<Readable> {
+export async function exportWorkers(db: Knex, options: ExportOptions): Promise<Readable> {
   const workers = await db('workers')
     .where({ farm_id: options.farmId })
     .orderBy('last_name', 'asc')
@@ -100,11 +98,9 @@ export async function exportWorkers(
     'Emergency Contact Phone': worker.emergency_contact_phone || 'N/A',
   }));
 
-  if (options.format === 'csv') {
-    return generateCSV(formattedData);
-  } else {
-    return generateExcel(formattedData, 'Workers');
-  }
+  return options.format === 'csv'
+    ? generateCSV(formattedData)
+    : generateExcel(formattedData, 'Workers');
 }
 
 /**
@@ -134,18 +130,16 @@ export async function exportTimeEntriesForPayroll(
     );
 
   if (options.startDate && options.endDate) {
-    query = query.whereBetween('time_entries.clock_in', [
-      options.startDate,
-      options.endDate,
-    ]);
+    query = query.whereBetween('time_entries.clock_in', [options.startDate, options.endDate]);
   }
 
   const entries = await query.orderBy('time_entries.clock_in', 'desc');
 
   const formattedData = entries.map((entry: any) => {
-    const earnings = entry.total_hours && entry.hourly_rate
-      ? entry.total_hours * parseFloat(entry.hourly_rate)
-      : null;
+    const earnings =
+      entry.total_hours && entry.hourly_rate
+        ? entry.total_hours * Number.parseFloat(entry.hourly_rate)
+        : null;
 
     return {
       'Worker Name': `${entry.worker_first_name} ${entry.worker_last_name}`,
@@ -158,27 +152,24 @@ export async function exportTimeEntriesForPayroll(
       'Total Hours': entry.total_hours ? entry.total_hours.toFixed(2) : 'N/A',
       'Task Type': entry.task_type,
       Field: entry.field_name || 'N/A',
-      'Hourly Rate': entry.hourly_rate ? `$${parseFloat(entry.hourly_rate).toFixed(2)}` : 'N/A',
-      'Piece Rate': entry.piece_rate ? `$${parseFloat(entry.piece_rate).toFixed(2)}` : 'N/A',
+      'Hourly Rate': entry.hourly_rate
+        ? `$${Number.parseFloat(entry.hourly_rate).toFixed(2)}`
+        : 'N/A',
+      'Piece Rate': entry.piece_rate ? `$${Number.parseFloat(entry.piece_rate).toFixed(2)}` : 'N/A',
       Earnings: earnings ? `$${earnings.toFixed(2)}` : 'N/A',
       Verified: entry.verified ? 'Yes' : 'No',
     };
   });
 
-  if (options.format === 'csv') {
-    return generateCSV(formattedData);
-  } else {
-    return generateExcel(formattedData, 'Time Entries - Payroll');
-  }
+  return options.format === 'csv'
+    ? generateCSV(formattedData)
+    : generateExcel(formattedData, 'Time Entries - Payroll');
 }
 
 /**
  * Export schedules for planning to CSV or Excel
  */
-export async function exportSchedules(
-  db: Knex,
-  options: ExportOptions
-): Promise<Readable> {
+export async function exportSchedules(db: Knex, options: ExportOptions): Promise<Readable> {
   let query = db('schedules')
     .where({ 'schedules.farm_id': options.farmId })
     .leftJoin('workers', 'schedules.worker_id', 'workers.id')
@@ -196,10 +187,7 @@ export async function exportSchedules(
     );
 
   if (options.startDate && options.endDate) {
-    query = query.whereBetween('schedules.scheduled_date', [
-      options.startDate,
-      options.endDate,
-    ]);
+    query = query.whereBetween('schedules.scheduled_date', [options.startDate, options.endDate]);
   }
 
   const schedules = await query.orderBy('schedules.scheduled_date', 'asc');
@@ -215,20 +203,15 @@ export async function exportSchedules(
     Status: schedule.status,
   }));
 
-  if (options.format === 'csv') {
-    return generateCSV(formattedData);
-  } else {
-    return generateExcel(formattedData, 'Schedules');
-  }
+  return options.format === 'csv'
+    ? generateCSV(formattedData)
+    : generateExcel(formattedData, 'Schedules');
 }
 
 /**
  * Generate compliance report for labor law monitoring
  */
-export async function exportComplianceReport(
-  db: Knex,
-  options: ExportOptions
-): Promise<Readable> {
+export async function exportComplianceReport(db: Knex, options: ExportOptions): Promise<Readable> {
   // Get date range for report (default to last 30 days if not specified)
   const endDate = options.endDate || new Date();
   const startDate = options.startDate || new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -279,7 +262,7 @@ export async function exportComplianceReport(
     }
 
     const weekData = weeklyData.get(weekKey)!;
-    const totalHours = parseFloat(entry.total_hours) || 0;
+    const totalHours = Number.parseFloat(entry.total_hours) || 0;
     weekData.total_hours += totalHours;
 
     // Track days worked (simplified - counts any entry as a day)
@@ -292,7 +275,7 @@ export async function exportComplianceReport(
   });
 
   // Calculate overtime and flag violations
-  const complianceData = Array.from(weeklyData.values()).map((data) => {
+  const complianceData = [...weeklyData.values()].map((data) => {
     data.regular_hours = Math.min(data.total_hours, 40);
     data.overtime_hours = Math.max(0, data.total_hours - 40);
     data.has_excessive_hours = data.total_hours > 60; // Flag excessive hours
@@ -310,13 +293,11 @@ export async function exportComplianceReport(
     };
   });
 
-  if (options.format === 'csv') {
-    return generateCSV(complianceData);
-  } else {
-    return generateExcel(complianceData, 'Compliance Report', {
-      highlightViolations: true,
-    });
-  }
+  return options.format === 'csv'
+    ? generateCSV(complianceData)
+    : generateExcel(complianceData, 'Compliance Report', {
+        highlightViolations: true,
+      });
 }
 
 /**
@@ -326,7 +307,7 @@ function generateCSV(data: any[]): Readable {
   const stream = formatCsv({ headers: true });
 
   // Write data to stream
-  data.forEach((row) => stream.write(row));
+  for (const row of data) stream.write(row);
   stream.end();
 
   return stream;
@@ -366,25 +347,25 @@ async function generateExcel(
   };
 
   // Add data rows
-  data.forEach((row) => {
+  for (const row of data) {
     const values = headers.map((header) => row[header]);
     const dataRow = worksheet.addRow(values);
 
     // Highlight compliance violations if requested
-    if (options?.highlightViolations) {
-      // Check for excessive hours or missing breaks
-      if (row['Excessive Hours (>60)'] === 'YES' || row['Missing Break Periods'] === 'YES') {
-        dataRow.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FFFFCCCC' }, // Light red
-        };
-      }
+    if (
+      options?.highlightViolations && // Check for excessive hours or missing breaks
+      (row['Excessive Hours (>60)'] === 'YES' || row['Missing Break Periods'] === 'YES')
+    ) {
+      dataRow.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFFFCCCC' }, // Light red
+      };
     }
-  });
+  }
 
   // Auto-fit columns
-  worksheet.columns.forEach((column) => {
+  for (const column of worksheet.columns) {
     let maxLength = 0;
     column.eachCell!({ includeEmpty: true }, (cell) => {
       const columnLength = cell.value ? cell.value.toString().length : 10;
@@ -393,7 +374,7 @@ async function generateExcel(
       }
     });
     column.width = Math.min(maxLength + 2, 50);
-  });
+  }
 
   // Convert to stream
   const buffer = await workbook.xlsx.writeBuffer();

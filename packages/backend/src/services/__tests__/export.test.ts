@@ -1,7 +1,7 @@
 // Export Service Tests
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { Readable } from 'stream';
+import { Readable } from 'node:stream';
 import knex, { Knex } from 'knex';
 import {
   exportWorkers,
@@ -111,7 +111,7 @@ describe('Export Service', () => {
           preferred_language: 'en',
           hire_date: new Date('2023-01-15'),
           status: 'active',
-          hourly_rate: 15.50,
+          hourly_rate: 15.5,
           piece_rate: null,
           certifications: JSON.stringify(['Organic Certification']),
           skills: JSON.stringify(['Harvesting', 'Planting']),
@@ -128,7 +128,7 @@ describe('Export Service', () => {
           preferred_language: 'es',
           hire_date: new Date('2023-02-01'),
           status: 'active',
-          hourly_rate: 16.10,
+          hourly_rate: 16.1,
           piece_rate: null,
           certifications: JSON.stringify([]),
           skills: JSON.stringify(['Irrigation']),
@@ -177,7 +177,7 @@ describe('Export Service', () => {
         preferred_language: 'en',
         hire_date: new Date('2023-01-15'),
         status: 'active',
-        hourly_rate: 15.50,
+        hourly_rate: 15.5,
         piece_rate: null,
         certifications: JSON.stringify([]),
         skills: JSON.stringify([]),
@@ -209,7 +209,7 @@ describe('Export Service', () => {
         preferred_language: 'en',
         hire_date: new Date('2023-01-15'),
         status: 'active',
-        hourly_rate: 20.10,
+        hourly_rate: 20.1,
         piece_rate: null,
         certifications: JSON.stringify([]),
         skills: JSON.stringify([]),
@@ -321,7 +321,7 @@ describe('Export Service', () => {
         preferred_language: 'en',
         hire_date: new Date('2023-01-15'),
         status: 'active',
-        hourly_rate: 20.10,
+        hourly_rate: 20.1,
         piece_rate: null,
         certifications: JSON.stringify([]),
         skills: JSON.stringify([]),
@@ -383,7 +383,7 @@ describe('Export Service', () => {
         preferred_language: 'en',
         hire_date: new Date('2023-01-15'),
         status: 'active',
-        hourly_rate: 20.10,
+        hourly_rate: 20.1,
         piece_rate: null,
         certifications: JSON.stringify([]),
         skills: JSON.stringify([]),

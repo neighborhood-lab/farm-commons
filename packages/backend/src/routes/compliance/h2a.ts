@@ -1,4 +1,5 @@
 // H-2A Visa Tracking and Compliance Routes
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import express from 'express';
 import {
@@ -40,7 +41,7 @@ router.get('/visas', async (req: AuthRequest, res, next) => {
           'h2a_visas.*',
           'workers.first_name',
           'workers.last_name',
-          db.raw('CONCAT(workers.first_name, \' \', workers.last_name) as worker_name')
+          db.raw("CONCAT(workers.first_name, ' ', workers.last_name) as worker_name")
         )
         .orderBy('h2a_visas.end_date', 'asc')
         .limit(per_page)
@@ -83,7 +84,7 @@ router.get('/visas/expiring', async (req: AuthRequest, res, next) => {
         'h2a_visas.*',
         'workers.first_name',
         'workers.last_name',
-        db.raw('CONCAT(workers.first_name, \' \', workers.last_name) as worker_name'),
+        db.raw("CONCAT(workers.first_name, ' ', workers.last_name) as worker_name"),
         db.raw('(h2a_visas.end_date - CURRENT_DATE) as days_until_expiration')
       )
       .orderBy('h2a_visas.end_date', 'asc');
@@ -111,7 +112,7 @@ router.get('/visas/:id', async (req: AuthRequest, res, next) => {
         'h2a_visas.*',
         'workers.first_name',
         'workers.last_name',
-        db.raw('CONCAT(workers.first_name, \' \', workers.last_name) as worker_name')
+        db.raw("CONCAT(workers.first_name, ' ', workers.last_name) as worker_name")
       )
       .first();
 
@@ -120,9 +121,7 @@ router.get('/visas/:id', async (req: AuthRequest, res, next) => {
     }
 
     // Get related housing records
-    const housing = await db('h2a_housing')
-      .where('h2a_visa_id', id)
-      .orderBy('start_date', 'desc');
+    const housing = await db('h2a_housing').where('h2a_visa_id', id).orderBy('start_date', 'desc');
 
     // Get transportation records
     const transportation = await db('h2a_transportation')
@@ -155,17 +154,13 @@ router.post('/visas', requireRole('admin', 'manager'), async (req: AuthRequest, 
     const farmId = req.user?.farm_id;
 
     // Verify worker belongs to farm
-    const worker = await db('workers')
-      .where({ id: data.worker_id, farm_id: farmId })
-      .first();
+    const worker = await db('workers').where({ id: data.worker_id, farm_id: farmId }).first();
 
     if (!worker) {
       throw new AppError('Worker not found or does not belong to your farm', 404);
     }
 
-    const [visa] = await db('h2a_visas')
-      .insert(data)
-      .returning('*');
+    const [visa] = await db('h2a_visas').insert(data).returning('*');
 
     res.status(201).json({
       success: true,
@@ -294,9 +289,7 @@ router.post('/housing', requireRole('admin', 'manager'), async (req: AuthRequest
       throw new AppError('H-2A visa record not found', 404);
     }
 
-    const [housing] = await db('h2a_housing')
-      .insert(data)
-      .returning('*');
+    const [housing] = await db('h2a_housing').insert(data).returning('*');
 
     res.status(201).json({
       success: true,
@@ -410,72 +403,78 @@ router.get('/visas/:visaId/transportation', async (req: AuthRequest, res, next) 
 });
 
 // Create transportation record
-router.post('/transportation', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
-  try {
-    const data = createH2ATransportationSchema.parse(req.body);
-    const farmId = req.user?.farm_id;
+router.post(
+  '/transportation',
+  requireRole('admin', 'manager'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const data = createH2ATransportationSchema.parse(req.body);
+      const farmId = req.user?.farm_id;
 
-    // Verify visa and worker belong to farm
-    const visa = await db('h2a_visas')
-      .join('workers', 'h2a_visas.worker_id', 'workers.id')
-      .where('h2a_visas.id', data.h2a_visa_id)
-      .where('workers.farm_id', farmId)
-      .select('h2a_visas.id')
-      .first();
+      // Verify visa and worker belong to farm
+      const visa = await db('h2a_visas')
+        .join('workers', 'h2a_visas.worker_id', 'workers.id')
+        .where('h2a_visas.id', data.h2a_visa_id)
+        .where('workers.farm_id', farmId)
+        .select('h2a_visas.id')
+        .first();
 
-    if (!visa) {
-      throw new AppError('H-2A visa record not found', 404);
+      if (!visa) {
+        throw new AppError('H-2A visa record not found', 404);
+      }
+
+      const [transportation] = await db('h2a_transportation').insert(data).returning('*');
+
+      res.status(201).json({
+        success: true,
+        data: transportation,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    const [transportation] = await db('h2a_transportation')
-      .insert(data)
-      .returning('*');
-
-    res.status(201).json({
-      success: true,
-      data: transportation,
-    });
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 // Update transportation record
-router.put('/transportation/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
-  try {
-    const { id } = req.params;
-    const data = updateH2ATransportationSchema.parse(req.body);
-    const farmId = req.user?.farm_id;
+router.put(
+  '/transportation/:id',
+  requireRole('admin', 'manager'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const { id } = req.params;
+      const data = updateH2ATransportationSchema.parse(req.body);
+      const farmId = req.user?.farm_id;
 
-    // Verify transportation record belongs to farm
-    const existing = await db('h2a_transportation')
-      .join('h2a_visas', 'h2a_transportation.h2a_visa_id', 'h2a_visas.id')
-      .join('workers', 'h2a_visas.worker_id', 'workers.id')
-      .where('h2a_transportation.id', id)
-      .where('workers.farm_id', farmId)
-      .select('h2a_transportation.id')
-      .first();
+      // Verify transportation record belongs to farm
+      const existing = await db('h2a_transportation')
+        .join('h2a_visas', 'h2a_transportation.h2a_visa_id', 'h2a_visas.id')
+        .join('workers', 'h2a_visas.worker_id', 'workers.id')
+        .where('h2a_transportation.id', id)
+        .where('workers.farm_id', farmId)
+        .select('h2a_transportation.id')
+        .first();
 
-    if (!existing) {
-      throw new AppError('Transportation record not found', 404);
+      if (!existing) {
+        throw new AppError('Transportation record not found', 404);
+      }
+
+      const [transportation] = await db('h2a_transportation')
+        .where('id', id)
+        .update({
+          ...data,
+          updated_at: new Date(),
+        })
+        .returning('*');
+
+      res.json({
+        success: true,
+        data: transportation,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    const [transportation] = await db('h2a_transportation')
-      .where('id', id)
-      .update({
-        ...data,
-        updated_at: new Date(),
-      })
-      .returning('*');
-
-    res.json({
-      success: true,
-      data: transportation,
-    });
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 // Delete transportation record
 router.delete('/transportation/:id', requireRole('admin'), async (req: AuthRequest, res, next) => {
@@ -532,10 +531,7 @@ router.get('/visas/:visaId/compliance-checks', async (req: AuthRequest, res, nex
     const checks = await db('h2a_compliance_checks')
       .where('h2a_visa_id', visaId)
       .leftJoin('users', 'h2a_compliance_checks.verified_by', 'users.id')
-      .select(
-        'h2a_compliance_checks.*',
-        'users.email as verified_by_email'
-      )
+      .select('h2a_compliance_checks.*', 'users.email as verified_by_email')
       .orderBy('due_date', 'asc');
 
     res.json({
@@ -548,107 +544,117 @@ router.get('/visas/:visaId/compliance-checks', async (req: AuthRequest, res, nex
 });
 
 // Create compliance check
-router.post('/compliance-checks', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
-  try {
-    const data = createH2AComplianceCheckSchema.parse(req.body);
-    const farmId = req.user?.farm_id;
+router.post(
+  '/compliance-checks',
+  requireRole('admin', 'manager'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const data = createH2AComplianceCheckSchema.parse(req.body);
+      const farmId = req.user?.farm_id;
 
-    // Verify visa belongs to farm
-    const visa = await db('h2a_visas')
-      .join('workers', 'h2a_visas.worker_id', 'workers.id')
-      .where('h2a_visas.id', data.h2a_visa_id)
-      .where('workers.farm_id', farmId)
-      .select('h2a_visas.id')
-      .first();
+      // Verify visa belongs to farm
+      const visa = await db('h2a_visas')
+        .join('workers', 'h2a_visas.worker_id', 'workers.id')
+        .where('h2a_visas.id', data.h2a_visa_id)
+        .where('workers.farm_id', farmId)
+        .select('h2a_visas.id')
+        .first();
 
-    if (!visa) {
-      throw new AppError('H-2A visa record not found', 404);
+      if (!visa) {
+        throw new AppError('H-2A visa record not found', 404);
+      }
+
+      const [check] = await db('h2a_compliance_checks').insert(data).returning('*');
+
+      res.status(201).json({
+        success: true,
+        data: check,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    const [check] = await db('h2a_compliance_checks')
-      .insert(data)
-      .returning('*');
-
-    res.status(201).json({
-      success: true,
-      data: check,
-    });
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 // Update compliance check
-router.put('/compliance-checks/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
-  try {
-    const { id } = req.params;
-    const data = updateH2AComplianceCheckSchema.parse(req.body);
-    const farmId = req.user?.farm_id;
-    const userId = req.user?.id;
+router.put(
+  '/compliance-checks/:id',
+  requireRole('admin', 'manager'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const { id } = req.params;
+      const data = updateH2AComplianceCheckSchema.parse(req.body);
+      const farmId = req.user?.farm_id;
+      const userId = req.user?.id;
 
-    // Verify compliance check belongs to farm
-    const existing = await db('h2a_compliance_checks')
-      .join('h2a_visas', 'h2a_compliance_checks.h2a_visa_id', 'h2a_visas.id')
-      .join('workers', 'h2a_visas.worker_id', 'workers.id')
-      .where('h2a_compliance_checks.id', id)
-      .where('workers.farm_id', farmId)
-      .select('h2a_compliance_checks.id')
-      .first();
+      // Verify compliance check belongs to farm
+      const existing = await db('h2a_compliance_checks')
+        .join('h2a_visas', 'h2a_compliance_checks.h2a_visa_id', 'h2a_visas.id')
+        .join('workers', 'h2a_visas.worker_id', 'workers.id')
+        .where('h2a_compliance_checks.id', id)
+        .where('workers.farm_id', farmId)
+        .select('h2a_compliance_checks.id')
+        .first();
 
-    if (!existing) {
-      throw new AppError('Compliance check not found', 404);
+      if (!existing) {
+        throw new AppError('Compliance check not found', 404);
+      }
+
+      // If marking as completed, set verified_by and completed_date
+      const updateData: any = { ...data, updated_at: new Date() };
+      if (data.completed && !data.completed_date) {
+        updateData.completed_date = new Date();
+        updateData.verified_by = userId;
+      }
+
+      const [check] = await db('h2a_compliance_checks')
+        .where('id', id)
+        .update(updateData)
+        .returning('*');
+
+      res.json({
+        success: true,
+        data: check,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    // If marking as completed, set verified_by and completed_date
-    const updateData: any = { ...data, updated_at: new Date() };
-    if (data.completed && !data.completed_date) {
-      updateData.completed_date = new Date();
-      updateData.verified_by = userId;
-    }
-
-    const [check] = await db('h2a_compliance_checks')
-      .where('id', id)
-      .update(updateData)
-      .returning('*');
-
-    res.json({
-      success: true,
-      data: check,
-    });
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 // Delete compliance check
-router.delete('/compliance-checks/:id', requireRole('admin'), async (req: AuthRequest, res, next) => {
-  try {
-    const { id } = req.params;
-    const farmId = req.user?.farm_id;
+router.delete(
+  '/compliance-checks/:id',
+  requireRole('admin'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const { id } = req.params;
+      const farmId = req.user?.farm_id;
 
-    // Verify compliance check belongs to farm
-    const existing = await db('h2a_compliance_checks')
-      .join('h2a_visas', 'h2a_compliance_checks.h2a_visa_id', 'h2a_visas.id')
-      .join('workers', 'h2a_visas.worker_id', 'workers.id')
-      .where('h2a_compliance_checks.id', id)
-      .where('workers.farm_id', farmId)
-      .select('h2a_compliance_checks.id')
-      .first();
+      // Verify compliance check belongs to farm
+      const existing = await db('h2a_compliance_checks')
+        .join('h2a_visas', 'h2a_compliance_checks.h2a_visa_id', 'h2a_visas.id')
+        .join('workers', 'h2a_visas.worker_id', 'workers.id')
+        .where('h2a_compliance_checks.id', id)
+        .where('workers.farm_id', farmId)
+        .select('h2a_compliance_checks.id')
+        .first();
 
-    if (!existing) {
-      throw new AppError('Compliance check not found', 404);
+      if (!existing) {
+        throw new AppError('Compliance check not found', 404);
+      }
+
+      await db('h2a_compliance_checks').where('id', id).delete();
+
+      res.json({
+        success: true,
+        message: 'Compliance check deleted successfully',
+      });
+    } catch (error) {
+      next(error);
     }
-
-    await db('h2a_compliance_checks').where('id', id).delete();
-
-    res.json({
-      success: true,
-      message: 'Compliance check deleted successfully',
-    });
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 // ============================================================================
 // COMPLIANCE REPORTS
@@ -668,7 +674,7 @@ router.get('/reports/compliance', async (req: AuthRequest, res, next) => {
         'h2a_visas.*',
         'workers.first_name',
         'workers.last_name',
-        db.raw('CONCAT(workers.first_name, \' \', workers.last_name) as worker_name'),
+        db.raw("CONCAT(workers.first_name, ' ', workers.last_name) as worker_name"),
         db.raw('(h2a_visas.end_date - CURRENT_DATE) as days_until_expiration')
       );
 
@@ -703,9 +709,7 @@ router.get('/reports/compliance', async (req: AuthRequest, res, next) => {
 
         // Determine housing compliance
         const housingCompliant =
-          currentHousing &&
-          currentHousing.last_inspection_date &&
-          currentHousing.inspection_passed;
+          currentHousing && currentHousing.last_inspection_date && currentHousing.inspection_passed;
 
         // Determine overall compliance status
         let overallStatus: 'compliant' | 'warning' | 'non-compliant' = 'compliant';

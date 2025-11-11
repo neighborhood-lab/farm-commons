@@ -26,11 +26,11 @@ export function initSentry(_app: Express): void {
 
     // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
     // In production, adjust this value (e.g., 0.1 = 10% sampling)
-    tracesSampleRate: environment === 'production' ? 0.1 : 1.0,
+    tracesSampleRate: environment === 'production' ? 0.1 : 1,
 
     // Set profilesSampleRate to 1.0 to profile 100% of sampled transactions.
     // In production, this should be lower (e.g., 0.1)
-    profilesSampleRate: environment === 'production' ? 0.1 : 1.0,
+    profilesSampleRate: environment === 'production' ? 0.1 : 1,
 
     // Integrations
     integrations: [
@@ -138,11 +138,7 @@ export function captureMessage(
  * @param message - Breadcrumb message
  * @param data - Additional data
  */
-export function addBreadcrumb(
-  category: string,
-  message: string,
-  data?: Record<string, any>
-): void {
+export function addBreadcrumb(category: string, message: string, data?: Record<string, any>): void {
   Sentry.addBreadcrumb({
     category,
     message,

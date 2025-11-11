@@ -91,7 +91,7 @@ describe('Optimized Queries', () => {
         farm_id: testFarmId,
         worker_id: testWorkerId1,
         field_id: testFieldId,
-        scheduled_date: new Date(Date.now() + 86400000), // Tomorrow
+        scheduled_date: new Date(Date.now() + 86_400_000), // Tomorrow
         start_time: '08:00',
         end_time: '17:00',
         task_type: 'Planting',
@@ -106,7 +106,7 @@ describe('Optimized Queries', () => {
         worker_id: testWorkerId1,
         field_id: testFieldId,
         schedule_id: testScheduleId,
-        clock_in: new Date(Date.now() - 7200000), // 2 hours ago
+        clock_in: new Date(Date.now() - 7_200_000), // 2 hours ago
         clock_out: new Date(),
         total_hours: 2,
         task_type: 'Planting',
@@ -121,7 +121,7 @@ describe('Optimized Queries', () => {
         name: 'Tractor Operation',
         issuing_organization: 'Farm Safety Council',
         issue_date: new Date(),
-        expiration_date: new Date(Date.now() + 15 * 86400000), // Expires in 15 days
+        expiration_date: new Date(Date.now() + 15 * 86_400_000), // Expires in 15 days
         verified: true,
       })
       .returning('*');
@@ -156,8 +156,8 @@ describe('Optimized Queries', () => {
     });
 
     it('should filter by date range', async () => {
-      const tomorrow = new Date(Date.now() + 86400000);
-      const dayAfter = new Date(Date.now() + 2 * 86400000);
+      const tomorrow = new Date(Date.now() + 86_400_000);
+      const dayAfter = new Date(Date.now() + 2 * 86_400_000);
 
       const schedules = await getSchedulesDetailed(testFarmId, {
         start_date: tomorrow.toISOString().split('T')[0],
@@ -311,7 +311,7 @@ describe('Optimized Queries', () => {
 
   describe('getLaborHoursSummary', () => {
     it('should return labor hours summary by day', async () => {
-      const startDate = new Date(Date.now() - 7 * 86400000).toISOString();
+      const startDate = new Date(Date.now() - 7 * 86_400_000).toISOString();
       const endDate = new Date().toISOString();
 
       const summary = await getLaborHoursSummary(testFarmId, startDate, endDate, 'day');

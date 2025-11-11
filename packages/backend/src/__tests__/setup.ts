@@ -7,7 +7,7 @@ beforeAll(async () => {
   // Ensure database connection is established
   try {
     await db.raw('SELECT 1');
-  } catch {
+  } catch (error) {
     console.error('Database connection failed:', error);
   }
 });

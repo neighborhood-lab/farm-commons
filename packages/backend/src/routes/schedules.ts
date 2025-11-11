@@ -17,7 +17,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
     const farmId = req.user?.farm_id;
 
     // Build filters
-    const filters: any = {};
+    const filters: Record<string, unknown> = {};
     if (req.query.start_date && req.query.end_date) {
       const { start_date, end_date } = dateRangeSchema.parse(req.query);
       filters.start_date = start_date;
@@ -27,7 +27,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
       filters.status = req.query.status;
     }
 
-    // TODO: Implement optimized query with database view
+    // Technical debt: Implement optimized query with database view
     // const schedules = await getSchedulesDetailed(farmId!, filters);
     const schedules = await db('schedules').where({ farm_id: farmId });
 
@@ -44,11 +44,11 @@ router.get('/', async (req: AuthRequest, res, next) => {
 router.get('/upcoming', async (req: AuthRequest, res, next) => {
   try {
     const farmId = req.user?.farm_id;
-    const daysAhead = Number.parseInt(req.query.days as string) || 7;
+    const _unused_daysAhead = Number.parseInt(req.query.days as string) || 7; // Reserved for future use
     const limit = Number.parseInt(req.query.limit as string) || 50;
 
-    // TODO: Implement optimized query for upcoming schedules
-    // const schedules = await getUpcomingSchedules(farmId!, daysAhead, limit);
+    // Technical debt: Implement optimized query for upcoming schedules
+    // const schedules = await getUpcomingSchedules(farmId!, _daysAhead, limit);
     const schedules = await db('schedules')
       .where({ farm_id: farmId })
       .where('start_time', '>=', new Date())

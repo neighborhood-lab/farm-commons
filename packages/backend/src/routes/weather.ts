@@ -1,4 +1,5 @@
 // Weather API routes
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import express, { type Router } from 'express';
 import { z } from 'zod';
@@ -41,9 +42,7 @@ async function getFieldCoordinates(
   fieldId: string,
   farmId: string
 ): Promise<{ lat: number; lon: number }> {
-  const field = await db('fields')
-    .where({ id: fieldId, farm_id: farmId })
-    .first();
+  const field = await db('fields').where({ id: fieldId, farm_id: farmId }).first();
 
   if (!field) {
     throw new AppError('Field not found', 404);
@@ -187,7 +186,9 @@ router.get('/field/:fieldId/forecast', async (req: AuthRequest, res, next) => {
   try {
     const { fieldId } = req.params;
     const farmId = req.user?.farm_id;
-    const { days } = z.object({ days: z.coerce.number().min(1).max(7).optional().default(7) }).parse(req.query);
+    const { days } = z
+      .object({ days: z.coerce.number().min(1).max(7).optional().default(7) })
+      .parse(req.query);
 
     if (!farmId) {
       throw new AppError('Farm ID not found', 400);

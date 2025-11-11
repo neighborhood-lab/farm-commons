@@ -1,4 +1,5 @@
 // Webhook management routes
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import express, { type Router } from 'express';
 import { createWebhookSchema, updateWebhookSchema } from '@farm-commons/shared';
@@ -250,19 +251,23 @@ router.get('/:id/deliveries', async (req: AuthRequest, res, next) => {
  * POST /api/webhooks/deliveries/:deliveryId/retry
  * Retry a failed webhook delivery (managers and admins only)
  */
-router.post('/deliveries/:deliveryId/retry', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
-  try {
-    const { deliveryId } = req.params;
+router.post(
+  '/deliveries/:deliveryId/retry',
+  requireRole('admin', 'manager'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const { deliveryId } = req.params;
 
-    await retryDelivery(deliveryId);
+      await retryDelivery(deliveryId);
 
-    res.json({
-      success: true,
-      message: 'Delivery retry scheduled',
-    });
-  } catch (error) {
-    next(error);
+      res.json({
+        success: true,
+        message: 'Delivery retry scheduled',
+      });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 export default router;

@@ -54,11 +54,9 @@ beforeAll(async () => {
   testWorkerId = worker.id;
 
   // Generate auth token
-  authToken = jwt.sign(
-    { userId: testUserId, farm_id: testFarmId, role: 'manager' },
-    JWT_SECRET,
-    { expiresIn: '1h' }
-  );
+  authToken = jwt.sign({ userId: testUserId, farm_id: testFarmId, role: 'manager' }, JWT_SECRET, {
+    expiresIn: '1h',
+  });
 });
 
 afterAll(async () => {
@@ -152,9 +150,7 @@ describe('Fields API', () => {
     });
 
     it('should list all fields for the farm', async () => {
-      const fields = await db('fields')
-        .where({ farm_id: testFarmId })
-        .orderBy('name', 'asc');
+      const fields = await db('fields').where({ farm_id: testFarmId }).orderBy('name', 'asc');
 
       expect(fields).toHaveLength(3);
       expect(fields[0].name).toBe('Field A');
@@ -225,9 +221,7 @@ describe('Fields API', () => {
     });
 
     it('should get a single field with crop history', async () => {
-      const field = await db('fields')
-        .where({ id: testFieldId, farm_id: testFarmId })
-        .first();
+      const field = await db('fields').where({ id: testFieldId, farm_id: testFarmId }).first();
 
       expect(field).toBeDefined();
       expect(field.name).toBe('Test Field');
@@ -247,9 +241,7 @@ describe('Fields API', () => {
 
     it('should return 404 for non-existent field', async () => {
       const fakeId = '00000000-0000-0000-0000-000000000000';
-      const field = await db('fields')
-        .where({ id: fakeId, farm_id: testFarmId })
-        .first();
+      const field = await db('fields').where({ id: fakeId, farm_id: testFarmId }).first();
 
       expect(field).toBeUndefined();
     });
@@ -314,8 +306,7 @@ describe('Fields API', () => {
         })
         .returning('*');
 
-      const schedules = await db('schedules')
-        .where({ farm_id: testFarmId, field_id: newField.id });
+      const schedules = await db('schedules').where({ farm_id: testFarmId, field_id: newField.id });
 
       expect(schedules).toHaveLength(0);
     });
@@ -356,7 +347,7 @@ describe('Fields API', () => {
     });
 
     it('should update GPS coordinates', async () => {
-      const newGps = { lat: 40.7128, lng: -74.0060 };
+      const newGps = { lat: 40.7128, lng: -74.006 };
 
       const [updatedField] = await db('fields')
         .where({ id: testFieldId, farm_id: testFarmId })
@@ -390,16 +381,12 @@ describe('Fields API', () => {
         })
         .returning('*');
 
-      const deleted = await db('fields')
-        .where({ id: field.id, farm_id: testFarmId })
-        .delete();
+      const deleted = await db('fields').where({ id: field.id, farm_id: testFarmId }).delete();
 
       expect(deleted).toBe(1);
 
       // Verify deletion
-      const deletedField = await db('fields')
-        .where({ id: field.id })
-        .first();
+      const deletedField = await db('fields').where({ id: field.id }).first();
 
       expect(deletedField).toBeUndefined();
     });
@@ -426,11 +413,9 @@ describe('Fields API', () => {
       });
 
       // Check if field has schedules
-      const [{ count }] = await db('schedules')
-        .where({ field_id: field.id })
-        .count('* as count');
+      const [{ count }] = await db('schedules').where({ field_id: field.id }).count('* as count');
 
-      expect(parseInt(count as string)).toBeGreaterThan(0);
+      expect(Number.parseInt(count as string)).toBeGreaterThan(0);
 
       // The field should not be deleted if the route logic prevents it
       // In a real test with the API, this would throw an error
@@ -459,14 +444,12 @@ describe('Fields API', () => {
         .where({ field_id: field.id })
         .count('* as count');
 
-      expect(parseInt(count as string)).toBeGreaterThan(0);
+      expect(Number.parseInt(count as string)).toBeGreaterThan(0);
     });
 
     it('should return 404 for non-existent field', async () => {
       const fakeId = '00000000-0000-0000-0000-000000000000';
-      const deleted = await db('fields')
-        .where({ id: fakeId, farm_id: testFarmId })
-        .delete();
+      const deleted = await db('fields').where({ id: fakeId, farm_id: testFarmId }).delete();
 
       expect(deleted).toBe(0);
     });

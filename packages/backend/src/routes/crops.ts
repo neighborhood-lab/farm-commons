@@ -1,7 +1,12 @@
 // Crop management and rotation planning routes
 
 import express from 'express';
-import { createCropSchema, updateCropSchema, createCropCompanionSchema, updateCropCompanionSchema } from '@farm-commons/shared';
+import {
+  createCropSchema,
+  updateCropSchema,
+  createCropCompanionSchema,
+  updateCropCompanionSchema,
+} from '@farm-commons/shared';
 import db from '../db/connection.js';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
@@ -22,11 +27,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
       .where({ 'crops.farm_id': farmId })
       .leftJoin('fields', 'crops.field_id', 'fields.id')
       .leftJoin('crop_families', 'crops.crop_family_id', 'crop_families.id')
-      .select(
-        'crops.*',
-        'fields.name as field_name',
-        'crop_families.name as crop_family_name'
-      );
+      .select('crops.*', 'fields.name as field_name', 'crop_families.name as crop_family_name');
 
     // Apply filters
     if (field_id) {
@@ -60,11 +61,7 @@ router.get('/:id', async (req: AuthRequest, res, next) => {
       .where({ 'crops.id': id, 'crops.farm_id': farmId })
       .leftJoin('fields', 'crops.field_id', 'fields.id')
       .leftJoin('crop_families', 'crops.crop_family_id', 'crop_families.id')
-      .select(
-        'crops.*',
-        'fields.name as field_name',
-        'crop_families.name as crop_family_name'
-      )
+      .select('crops.*', 'fields.name as field_name', 'crop_families.name as crop_family_name')
       .first();
 
     if (!crop) {
@@ -87,9 +84,7 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
     const farmId = req.user?.farm_id;
 
     // Verify field belongs to farm
-    const field = await db('fields')
-      .where({ id: data.field_id, farm_id: farmId })
-      .first();
+    const field = await db('fields').where({ id: data.field_id, farm_id: farmId }).first();
 
     if (!field) {
       throw new AppError('Field not found or does not belong to this farm', 404);
@@ -97,12 +92,10 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
 
     // Update field's current_crop if status is planted or growing
     if (data.status === 'planted' || data.status === 'growing') {
-      await db('fields')
-        .where({ id: data.field_id })
-        .update({
-          current_crop: data.crop_name,
-          updated_at: new Date(),
-        });
+      await db('fields').where({ id: data.field_id }).update({
+        current_crop: data.crop_name,
+        updated_at: new Date(),
+      });
     }
 
     const [crop] = await db('crops')
@@ -129,9 +122,7 @@ router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res
     const farmId = req.user?.farm_id;
 
     // Get existing crop
-    const existingCrop = await db('crops')
-      .where({ id, farm_id: farmId })
-      .first();
+    const existingCrop = await db('crops').where({ id, farm_id: farmId }).first();
 
     if (!existingCrop) {
       throw new AppError('Crop not found', 404);
@@ -178,9 +169,7 @@ router.delete('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, 
     const { id } = req.params;
     const farmId = req.user?.farm_id;
 
-    const deleted = await db('crops')
-      .where({ id, farm_id: farmId })
-      .delete();
+    const deleted = await db('crops').where({ id, farm_id: farmId }).delete();
 
     if (!deleted) {
       throw new AppError('Crop not found', 404);
@@ -204,9 +193,7 @@ router.get('/history/field/:fieldId', async (req: AuthRequest, res, next) => {
     const farmId = req.user?.farm_id;
 
     // Verify field belongs to farm
-    const field = await db('fields')
-      .where({ id: fieldId, farm_id: farmId })
-      .first();
+    const field = await db('fields').where({ id: fieldId, farm_id: farmId }).first();
 
     if (!field) {
       throw new AppError('Field not found', 404);
@@ -242,9 +229,7 @@ router.get('/history/field/:fieldId/rotation-analysis', async (req: AuthRequest,
     const farmId = req.user?.farm_id;
 
     // Verify field belongs to farm
-    const field = await db('fields')
-      .where({ id: fieldId, farm_id: farmId })
-      .first();
+    const field = await db('fields').where({ id: fieldId, farm_id: farmId }).first();
 
     if (!field) {
       throw new AppError('Field not found', 404);
@@ -262,9 +247,12 @@ router.get('/history/field/:fieldId/rotation-analysis', async (req: AuthRequest,
       .orderBy('crops.planting_date', 'desc');
 
     // Analyze rotation patterns
-    const familyCounts: Record<string, { count: number; lastPlanted: Date; recommendedYears: number }> = {};
+    const familyCounts: Record<
+      string,
+      { count: number; lastPlanted: Date; recommendedYears: number }
+    > = {};
 
-    crops.forEach((crop) => {
+    for (const crop of crops) {
       if (crop.crop_family_name) {
         if (!familyCounts[crop.crop_family_name]) {
           familyCounts[crop.crop_family_name] = {
@@ -276,26 +264,29 @@ router.get('/history/field/:fieldId/rotation-analysis', async (req: AuthRequest,
         familyCounts[crop.crop_family_name].count++;
 
         // Update last planted if this crop is more recent
-        if (new Date(crop.planting_date) > new Date(familyCounts[crop.crop_family_name].lastPlanted)) {
+        if (
+          new Date(crop.planting_date) > new Date(familyCounts[crop.crop_family_name].lastPlanted)
+        ) {
           familyCounts[crop.crop_family_name].lastPlanted = crop.planting_date;
         }
       }
-    });
+    }
 
     // Calculate rotation warnings
     const warnings: string[] = [];
     const now = new Date();
 
-    Object.entries(familyCounts).forEach(([family, data]) => {
-      const yearsSinceLastPlanted = (now.getTime() - new Date(data.lastPlanted).getTime()) / (1000 * 60 * 60 * 24 * 365);
+    for (const [family, data] of Object.entries(familyCounts)) {
+      const yearsSinceLastPlanted =
+        (now.getTime() - new Date(data.lastPlanted).getTime()) / (1000 * 60 * 60 * 24 * 365);
 
       if (yearsSinceLastPlanted < data.recommendedYears) {
         warnings.push(
           `${family} was last planted ${yearsSinceLastPlanted.toFixed(1)} years ago. ` +
-          `Recommended rotation: ${data.recommendedYears} years.`
+            `Recommended rotation: ${data.recommendedYears} years.`
         );
       }
-    });
+    }
 
     res.json({
       success: true,
@@ -323,8 +314,8 @@ router.get('/companions/:cropName', async (req: AuthRequest, res, next) => {
       .where({ crop_name: cropName.toLowerCase() })
       .select('*');
 
-    const beneficial = companions.filter(c => c.relationship_type === 'beneficial');
-    const antagonistic = companions.filter(c => c.relationship_type === 'antagonistic');
+    const beneficial = companions.filter((c) => c.relationship_type === 'beneficial');
+    const antagonistic = companions.filter((c) => c.relationship_type === 'antagonistic');
 
     res.json({
       success: true,
@@ -344,9 +335,7 @@ router.get('/companions/:cropName', async (req: AuthRequest, res, next) => {
 // Get all crop families
 router.get('/families/list', async (req: AuthRequest, res, next) => {
   try {
-    const families = await db('crop_families')
-      .select('*')
-      .orderBy('name', 'asc');
+    const families = await db('crop_families').select('*').orderBy('name', 'asc');
 
     res.json({
       success: true,
@@ -362,9 +351,7 @@ router.get('/families/list', async (req: AuthRequest, res, next) => {
 // Get all companion relationships (admin only)
 router.get('/companions', requireRole('admin'), async (req: AuthRequest, res, next) => {
   try {
-    const companions = await db('crop_companions')
-      .select('*')
-      .orderBy('crop_name', 'asc');
+    const companions = await db('crop_companions').select('*').orderBy('crop_name', 'asc');
 
     res.json({
       success: true,
@@ -387,9 +374,7 @@ router.post('/companions', requireRole('admin'), async (req: AuthRequest, res, n
       companion_crop: data.companion_crop.toLowerCase(),
     };
 
-    const [companion] = await db('crop_companions')
-      .insert(normalizedData)
-      .returning('*');
+    const [companion] = await db('crop_companions').insert(normalizedData).returning('*');
 
     res.status(201).json({
       success: true,
@@ -439,9 +424,7 @@ router.delete('/companions/:id', requireRole('admin'), async (req: AuthRequest, 
   try {
     const { id } = req.params;
 
-    const deleted = await db('crop_companions')
-      .where({ id })
-      .delete();
+    const deleted = await db('crop_companions').where({ id }).delete();
 
     if (!deleted) {
       throw new AppError('Companion relationship not found', 404);

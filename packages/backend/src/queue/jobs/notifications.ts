@@ -2,7 +2,7 @@
 // Task 0036: Implement Scheduled Notification Jobs
 
 import { Worker } from 'bullmq';
-import { format, addDays, isAfter, isBefore, parseISO } from 'date-fns';
+import { format, addDays, parseISO } from 'date-fns';
 import db from '../../db/connection.js';
 import {
   sendScheduleReminder,
@@ -36,16 +36,14 @@ export enum NotificationJobName {
 /**
  * Process individual schedule reminder job
  */
-async function processScheduleReminder(
-  job: { id: string | undefined; name: string; data: ScheduleReminderJobData }
-): Promise<void> {
-  const { workerId, workerEmail, workerName, scheduledDate, taskDescription } =
-    job.data;
+async function processScheduleReminder(job: {
+  id: string | undefined;
+  name: string;
+  data: ScheduleReminderJobData;
+}): Promise<void> {
+  const { workerId, workerEmail, workerName, scheduledDate, taskDescription } = job.data;
 
-  logger.info(
-    { jobId: job.id, workerId, scheduledDate },
-    'Processing schedule reminder'
-  );
+  logger.info({ jobId: job.id, workerId, scheduledDate }, 'Processing schedule reminder');
 
   try {
     await sendScheduleReminder({
@@ -55,10 +53,7 @@ async function processScheduleReminder(
       taskDescription,
     });
 
-    logger.info(
-      { jobId: job.id, workerId, workerEmail },
-      'Schedule reminder sent successfully'
-    );
+    logger.info({ jobId: job.id, workerId, workerEmail }, 'Schedule reminder sent successfully');
   } catch (error) {
     logger.error(
       { jobId: job.id, workerId, workerEmail, error },
@@ -71,17 +66,13 @@ async function processScheduleReminder(
 /**
  * Process individual certification expiry warning job
  */
-async function processCertificationExpiryWarning(
-  job: { id: string | undefined; name: string; data: CertificationExpiryJobData }
-): Promise<void> {
-  const {
-    workerId,
-    workerEmail,
-    workerName,
-    certificationName,
-    expiryDate,
-    daysUntilExpiry,
-  } = job.data;
+async function processCertificationExpiryWarning(job: {
+  id: string | undefined;
+  name: string;
+  data: CertificationExpiryJobData;
+}): Promise<void> {
+  const { workerId, workerEmail, workerName, certificationName, expiryDate, daysUntilExpiry } =
+    job.data;
 
   logger.info(
     { jobId: job.id, workerId, certificationName, daysUntilExpiry },
@@ -113,11 +104,12 @@ async function processCertificationExpiryWarning(
 /**
  * Process individual unverified time entry reminder job
  */
-async function processUnverifiedTimeEntryReminder(
-  job: { id: string | undefined; name: string; data: UnverifiedTimeEntryJobData }
-): Promise<void> {
-  const { timeEntryId, workerId, workerEmail, workerName, entryDate } =
-    job.data;
+async function processUnverifiedTimeEntryReminder(job: {
+  id: string | undefined;
+  name: string;
+  data: UnverifiedTimeEntryJobData;
+}): Promise<void> {
+  const { timeEntryId, workerId, workerEmail, workerName, entryDate } = job.data;
 
   logger.info(
     { jobId: job.id, timeEntryId, workerId, entryDate },
@@ -191,10 +183,7 @@ async function scanAndQueueScheduleReminders(): Promise<void> {
         workerId: schedule.workerId,
         workerEmail: schedule.email,
         workerName: `${schedule.first_name} ${schedule.last_name}`,
-        scheduledDate: format(
-          parseISO(schedule.scheduled_date),
-          'EEEE, MMMM d, yyyy'
-        ),
+        scheduledDate: format(parseISO(schedule.scheduled_date), 'EEEE, MMMM d, yyyy'),
         taskDescription: schedule.task_description,
       };
 
@@ -212,10 +201,7 @@ async function scanAndQueueScheduleReminders(): Promise<void> {
       );
     }
 
-    logger.info(
-      { queued: schedules.length },
-      'Schedule reminders queued successfully'
-    );
+    logger.info({ queued: schedules.length }, 'Schedule reminders queued successfully');
   } catch (error) {
     logger.error({ error }, 'Failed to scan and queue schedule reminders');
     throw error;
@@ -244,17 +230,11 @@ async function scanAndQueueCertificationWarnings(): Promise<void> {
         'workers.email'
       )
       .join('workers', 'certifications.worker_id', 'workers.id')
-      .whereBetween('certifications.expiry_date', [
-        today.toISOString(),
-        in30Days.toISOString(),
-      ])
+      .whereBetween('certifications.expiry_date', [today.toISOString(), in30Days.toISOString()])
       .whereNotNull('workers.email')
       .where('workers.email', '!=', '');
 
-    logger.info(
-      { count: certifications.length },
-      'Found certifications expiring within 30 days'
-    );
+    logger.info({ count: certifications.length }, 'Found certifications expiring within 30 days');
 
     // Queue individual warning jobs
     const queue = getQueue(QueueName.NOTIFICATIONS);
@@ -334,10 +314,7 @@ async function scanAndQueueUnverifiedTimeEntryReminders(): Promise<void> {
       .whereNotNull('workers.email')
       .where('workers.email', '!=', '');
 
-    logger.info(
-      { count: timeEntries.length },
-      'Found unverified time entries older than 2 days'
-    );
+    logger.info({ count: timeEntries.length }, 'Found unverified time entries older than 2 days');
 
     // Queue individual reminder jobs
     const queue = getQueue(QueueName.NOTIFICATIONS);
@@ -351,17 +328,13 @@ async function scanAndQueueUnverifiedTimeEntryReminders(): Promise<void> {
         entryDate: format(parseISO(entry.clock_in), 'EEEE, MMMM d, yyyy'),
       };
 
-      await queue.add(
-        NotificationJobName.UNVERIFIED_TIME_ENTRY,
-        jobData,
-        {
-          attempts: 3,
-          backoff: {
-            type: 'exponential',
-            delay: 5000,
-          },
-        }
-      );
+      await queue.add(NotificationJobName.UNVERIFIED_TIME_ENTRY, jobData, {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 5000,
+        },
+      });
 
       logger.debug(
         { timeEntryId: entry.timeEntryId, workerId: entry.workerId },
@@ -374,10 +347,7 @@ async function scanAndQueueUnverifiedTimeEntryReminders(): Promise<void> {
       'Unverified time entry reminders queued successfully'
     );
   } catch (error) {
-    logger.error(
-      { error },
-      'Failed to scan and queue unverified time entry reminders'
-    );
+    logger.error({ error }, 'Failed to scan and queue unverified time entry reminders');
     throw error;
   }
 }
@@ -391,38 +361,45 @@ async function processNotificationJob(job: {
   data: ScheduleReminderJobData | CertificationExpiryJobData | UnverifiedTimeEntryJobData;
 }): Promise<void> {
   switch (job.name) {
-    case NotificationJobName.SCHEDULE_REMINDER:
+    case NotificationJobName.SCHEDULE_REMINDER: {
       await processScheduleReminder(
         job as { id: string | undefined; name: string; data: ScheduleReminderJobData }
       );
       break;
+    }
 
-    case NotificationJobName.CERTIFICATION_EXPIRY:
+    case NotificationJobName.CERTIFICATION_EXPIRY: {
       await processCertificationExpiryWarning(
         job as { id: string | undefined; name: string; data: CertificationExpiryJobData }
       );
       break;
+    }
 
-    case NotificationJobName.UNVERIFIED_TIME_ENTRY:
+    case NotificationJobName.UNVERIFIED_TIME_ENTRY: {
       await processUnverifiedTimeEntryReminder(
         job as { id: string | undefined; name: string; data: UnverifiedTimeEntryJobData }
       );
       break;
+    }
 
-    case NotificationJobName.DAILY_SCHEDULE_SCAN:
+    case NotificationJobName.DAILY_SCHEDULE_SCAN: {
       await scanAndQueueScheduleReminders();
       break;
+    }
 
-    case NotificationJobName.DAILY_CERTIFICATION_SCAN:
+    case NotificationJobName.DAILY_CERTIFICATION_SCAN: {
       await scanAndQueueCertificationWarnings();
       break;
+    }
 
-    case NotificationJobName.DAILY_TIME_ENTRY_SCAN:
+    case NotificationJobName.DAILY_TIME_ENTRY_SCAN: {
       await scanAndQueueUnverifiedTimeEntryReminders();
       break;
+    }
 
-    default:
+    default: {
       logger.warn({ jobName: job.name }, 'Unknown notification job type');
+    }
   }
 }
 

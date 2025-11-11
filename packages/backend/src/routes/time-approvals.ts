@@ -56,9 +56,7 @@ router.post('/:id/approve', async (req: AuthRequest, res, next) => {
     const { notes } = approveTimeEntrySchema.parse(req.body);
 
     // Get the time entry
-    const entry = await db('time_entries')
-      .where({ id, farm_id: farmId })
-      .first();
+    const entry = await db('time_entries').where({ id, farm_id: farmId }).first();
 
     if (!entry) {
       throw new AppError('Time entry not found', 404);
@@ -66,10 +64,7 @@ router.post('/:id/approve', async (req: AuthRequest, res, next) => {
 
     // Check if entry is already processed
     if (entry.approval_status !== 'pending') {
-      throw new AppError(
-        `Time entry has already been ${entry.approval_status}`,
-        400
-      );
+      throw new AppError(`Time entry has already been ${entry.approval_status}`, 400);
     }
 
     // Check if entry is clocked out
@@ -110,9 +105,7 @@ router.post('/:id/reject', async (req: AuthRequest, res, next) => {
     const { rejection_reason } = rejectTimeEntrySchema.parse(req.body);
 
     // Get the time entry
-    const entry = await db('time_entries')
-      .where({ id, farm_id: farmId })
-      .first();
+    const entry = await db('time_entries').where({ id, farm_id: farmId }).first();
 
     if (!entry) {
       throw new AppError('Time entry not found', 404);
@@ -120,10 +113,7 @@ router.post('/:id/reject', async (req: AuthRequest, res, next) => {
 
     // Check if entry is already processed
     if (entry.approval_status !== 'pending') {
-      throw new AppError(
-        `Time entry has already been ${entry.approval_status}`,
-        400
-      );
+      throw new AppError(`Time entry has already been ${entry.approval_status}`, 400);
     }
 
     // Check if entry is clocked out
@@ -177,10 +167,7 @@ router.post('/batch-approve', async (req: AuthRequest, res, next) => {
     );
 
     if (invalidEntries.length > 0) {
-      throw new AppError(
-        'All time entries must be pending and clocked out to approve',
-        400
-      );
+      throw new AppError('All time entries must be pending and clocked out to approve', 400);
     }
 
     // Batch approve all entries

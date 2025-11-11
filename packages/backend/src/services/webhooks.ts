@@ -1,4 +1,5 @@
 // Webhook Service for External Integrations
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 
 import crypto from 'node:crypto';
 import db from '../db/connection.js';
@@ -22,7 +23,7 @@ export const WEBHOOK_EVENTS = [
   'certification.expiring',
 ] as const;
 
-export type WebhookEvent = typeof WEBHOOK_EVENTS[number];
+export type WebhookEvent = (typeof WEBHOOK_EVENTS)[number];
 
 interface WebhookRegistration {
   id: string;
@@ -70,25 +71,15 @@ export function generateSecretKey(): string {
  * Generate HMAC signature for webhook payload
  */
 export function generateSignature(payload: string, secret: string): string {
-  return crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex');
+  return crypto.createHmac('sha256', secret).update(payload).digest('hex');
 }
 
 /**
  * Verify webhook signature
  */
-export function verifySignature(
-  payload: string,
-  signature: string,
-  secret: string
-): boolean {
+export function verifySignature(payload: string, signature: string, secret: string): boolean {
   const expectedSignature = generateSignature(payload, secret);
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expectedSignature)
-  );
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
 }
 
 /**
@@ -122,22 +113,14 @@ export async function registerWebhook(
  * Get all webhooks for a farm
  */
 export async function getWebhooks(farmId: string): Promise<WebhookRegistration[]> {
-  return db('webhooks')
-    .where({ farm_id: farmId })
-    .orderBy('created_at', 'desc')
-    .select('*');
+  return db('webhooks').where({ farm_id: farmId }).orderBy('created_at', 'desc').select('*');
 }
 
 /**
  * Get a single webhook by ID
  */
-export async function getWebhook(
-  id: string,
-  farmId: string
-): Promise<WebhookRegistration | null> {
-  const webhook = await db('webhooks')
-    .where({ id, farm_id: farmId })
-    .first();
+export async function getWebhook(id: string, farmId: string): Promise<WebhookRegistration | null> {
+  const webhook = await db('webhooks').where({ id, farm_id: farmId }).first();
 
   return webhook || null;
 }
@@ -174,9 +157,7 @@ export async function updateWebhook(
  * Delete a webhook
  */
 export async function deleteWebhook(id: string, farmId: string): Promise<boolean> {
-  const deleted = await db('webhooks')
-    .where({ id, farm_id: farmId })
-    .delete();
+  const deleted = await db('webhooks').where({ id, farm_id: farmId }).delete();
 
   if (deleted) {
     logger.info({ webhookId: id, farmId }, 'Webhook deleted');
@@ -188,10 +169,7 @@ export async function deleteWebhook(id: string, farmId: string): Promise<boolean
 /**
  * Regenerate secret key for a webhook
  */
-export async function regenerateSecret(
-  id: string,
-  farmId: string
-): Promise<string | null> {
+export async function regenerateSecret(id: string, farmId: string): Promise<string | null> {
   const newSecret = generateSecretKey();
 
   const [webhook] = await db('webhooks')
@@ -213,11 +191,7 @@ export async function regenerateSecret(
 /**
  * Trigger a webhook event
  */
-export async function triggerEvent(
-  farmId: string,
-  event: WebhookEvent,
-  data: any
-): Promise<void> {
+export async function triggerEvent(farmId: string, event: WebhookEvent, data: any): Promise<void> {
   // Find all active webhooks subscribed to this event
   const webhooks = await db('webhooks')
     .where({ farm_id: farmId, active: true })
@@ -229,10 +203,7 @@ export async function triggerEvent(
     return;
   }
 
-  logger.info(
-    { farmId, event, webhookCount: webhooks.length },
-    'Triggering webhook event'
-  );
+  logger.info({ farmId, event, webhookCount: webhooks.length }, 'Triggering webhook event');
 
   // Create delivery records for each webhook
   const deliveries = webhooks.map((webhook) => ({
@@ -290,19 +261,15 @@ export async function processDeliveries(): Promise<void> {
  */
 async function deliverWebhook(delivery: WebhookDelivery): Promise<void> {
   // Get webhook details
-  const webhook = await db('webhooks')
-    .where({ id: delivery.webhook_id })
-    .first();
+  const webhook = await db('webhooks').where({ id: delivery.webhook_id }).first();
 
   if (!webhook || !webhook.active) {
     // Webhook was deleted or deactivated, mark as failed
-    await db('webhook_deliveries')
-      .where({ id: delivery.id })
-      .update({
-        status: 'failed',
-        error_message: 'Webhook not found or inactive',
-        updated_at: new Date(),
-      });
+    await db('webhook_deliveries').where({ id: delivery.id }).update({
+      status: 'failed',
+      error_message: 'Webhook not found or inactive',
+      updated_at: new Date(),
+    });
     return;
   }
 
@@ -320,7 +287,7 @@ async function deliverWebhook(delivery: WebhookDelivery): Promise<void> {
         'User-Agent': 'FarmCommons-Webhook/1.1',
       },
       body: payloadString,
-      signal: AbortSignal.timeout(10000), // 10 second timeout
+      signal: AbortSignal.timeout(10_000), // 10 second timeout
     });
 
     const responseBody = await response.text();
@@ -381,7 +348,7 @@ async function recordFailedDelivery(
 ): Promise<void> {
   // Calculate next retry time using exponential backoff
   // 1 min, 5 min, 15 min, 1 hour, 4 hours
-  const retryDelays = [60, 300, 900, 3600, 14400]; // in seconds
+  const retryDelays = [60, 300, 900, 3600, 14_400]; // in seconds
   const delaySeconds = retryDelays[Math.min(attemptCount - 1, retryDelays.length - 1)];
   const nextRetryAt = new Date(Date.now() + delaySeconds * 1000);
 
@@ -428,13 +395,11 @@ export async function getDeliveryHistory(
  * Retry a failed delivery
  */
 export async function retryDelivery(deliveryId: string): Promise<void> {
-  await db('webhook_deliveries')
-    .where({ id: deliveryId })
-    .update({
-      status: 'pending',
-      next_retry_at: new Date(),
-      updated_at: new Date(),
-    });
+  await db('webhook_deliveries').where({ id: deliveryId }).update({
+    status: 'pending',
+    next_retry_at: new Date(),
+    updated_at: new Date(),
+  });
 
   // Process immediately
   await processDeliveries();

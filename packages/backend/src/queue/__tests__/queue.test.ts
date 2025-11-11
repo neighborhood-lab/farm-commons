@@ -308,13 +308,13 @@ describe.skipIf(shouldSkip)('Queue Infrastructure (requires Redis)', () => {
 
       expect(job.opts.removeOnComplete).toBeDefined();
       expect(job.opts.removeOnComplete).toEqual({
-        age: 86400,
+        age: 86_400,
         count: 1000,
       });
 
       expect(job.opts.removeOnFail).toBeDefined();
       expect(job.opts.removeOnFail).toEqual({
-        age: 604800,
+        age: 604_800,
       });
     });
   });

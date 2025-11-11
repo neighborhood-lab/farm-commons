@@ -1,10 +1,11 @@
 // Payroll Service
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 // Calculate payroll and generate reports
 
-import { Knex } from 'knex';
-import { startOfWeek, endOfWeek, format, parseISO } from 'date-fns';
+import type { Knex } from 'knex';
+import { startOfWeek, endOfWeek, format } from 'date-fns';
 import PDFDocument from 'pdfkit';
-import { PassThrough } from 'stream';
+import { PassThrough } from 'node:stream';
 import db from '../db/connection.js';
 
 export interface PayPeriod {
@@ -60,18 +61,14 @@ export async function calculatePayroll(
   payPeriod: PayPeriod
 ): Promise<PayrollReport> {
   // Get farm details
-  const farm = await db('farms')
-    .where({ id: farmId })
-    .first();
+  const farm = await db('farms').where({ id: farmId }).first();
 
   if (!farm) {
     throw new Error('Farm not found');
   }
 
   // Get all workers for the farm
-  const workers = await db('workers')
-    .where({ farm_id: farmId, status: 'active' })
-    .select('*');
+  const workers = await db('workers').where({ farm_id: farmId, status: 'active' }).select('*');
 
   // Get all time entries for the pay period
   const timeEntries = await db('time_entries')
@@ -79,10 +76,7 @@ export async function calculatePayroll(
     .whereBetween('clock_in', [payPeriod.start_date, payPeriod.end_date])
     .whereNotNull('clock_out')
     .leftJoin('fields', 'time_entries.field_id', 'fields.id')
-    .select(
-      'time_entries.*',
-      'fields.name as field_name'
-    )
+    .select('time_entries.*', 'fields.name as field_name')
     .orderBy('time_entries.clock_in', 'asc');
 
   // Group time entries by worker
@@ -100,11 +94,7 @@ export async function calculatePayroll(
   for (const worker of workers) {
     const entries = entriesByWorker.get(worker.id) || [];
 
-    const payrollEntry = calculateWorkerPayroll(
-      worker,
-      entries,
-      payPeriod
-    );
+    const payrollEntry = calculateWorkerPayroll(worker, entries, payPeriod);
 
     workerEntries.push(payrollEntry);
   }
@@ -120,9 +110,9 @@ export async function calculatePayroll(
     pay_period: payPeriod,
     generated_at: new Date(),
     worker_entries: workerEntries,
-    total_regular_hours: parseFloat(totalRegularHours.toFixed(2)),
-    total_overtime_hours: parseFloat(totalOvertimeHours.toFixed(2)),
-    total_payroll: parseFloat(totalPayroll.toFixed(2)),
+    total_regular_hours: Number.parseFloat(totalRegularHours.toFixed(2)),
+    total_overtime_hours: Number.parseFloat(totalOvertimeHours.toFixed(2)),
+    total_payroll: Number.parseFloat(totalPayroll.toFixed(2)),
     total_workers: workerEntries.length,
   };
 }
@@ -142,11 +132,11 @@ function calculateWorkerPayroll(
   const workerName = `${worker.first_name} ${worker.last_name}`;
 
   // Process time entries
-  const entryDetails: TimeEntryDetail[] = timeEntries.map(entry => ({
+  const entryDetails: TimeEntryDetail[] = timeEntries.map((entry) => ({
     id: entry.id,
     clock_in: entry.clock_in,
     clock_out: entry.clock_out,
-    total_hours: parseFloat(entry.total_hours),
+    total_hours: Number.parseFloat(entry.total_hours),
     task_type: entry.task_type,
     field_name: entry.field_name,
     verified: entry.verified_at !== null,
@@ -167,12 +157,12 @@ function calculateWorkerPayroll(
     // Split hours by week to calculate overtime correctly
     const weeklyHours = calculateWeeklyHours(entryDetails, payPeriod);
 
-    for (const weekHours of Array.from(weeklyHours.values())) {
+    for (const weekHours of weeklyHours.values()) {
       if (weekHours <= 40) {
         regularHours += weekHours;
       } else {
         regularHours += 40;
-        overtimeHours += (weekHours - 40);
+        overtimeHours += weekHours - 40;
       }
     }
 
@@ -197,13 +187,13 @@ function calculateWorkerPayroll(
     hourly_rate: worker.hourly_rate,
     piece_rate: worker.piece_rate,
     time_entries: entryDetails,
-    regular_hours: parseFloat(regularHours.toFixed(2)),
-    overtime_hours: parseFloat(overtimeHours.toFixed(2)),
-    regular_pay: parseFloat(regularPay.toFixed(2)),
-    overtime_pay: parseFloat(overtimePay.toFixed(2)),
-    piece_rate_pay: parseFloat(pieceRatePay.toFixed(2)),
-    total_pay: parseFloat(totalPay.toFixed(2)),
-    total_hours: parseFloat(totalHours.toFixed(2)),
+    regular_hours: Number.parseFloat(regularHours.toFixed(2)),
+    overtime_hours: Number.parseFloat(overtimeHours.toFixed(2)),
+    regular_pay: Number.parseFloat(regularPay.toFixed(2)),
+    overtime_pay: Number.parseFloat(overtimePay.toFixed(2)),
+    piece_rate_pay: Number.parseFloat(pieceRatePay.toFixed(2)),
+    total_pay: Number.parseFloat(totalPay.toFixed(2)),
+    total_hours: Number.parseFloat(totalHours.toFixed(2)),
   };
 }
 
@@ -304,7 +294,7 @@ export function formatPayrollAsText(report: PayrollReport): string {
     output += `  TOTAL PAY: $${entry.total_pay.toFixed(2)}\n`;
     output += `  Time Entries: ${entry.time_entries.length}\n`;
 
-    const unverifiedCount = entry.time_entries.filter(e => !e.verified).length;
+    const unverifiedCount = entry.time_entries.filter((e) => !e.verified).length;
     if (unverifiedCount > 0) {
       output += `  ⚠️  ${unverifiedCount} unverified time entries\n`;
     }
@@ -335,19 +325,19 @@ export function generatePayrollPDF(report: PayrollReport): PassThrough {
   doc.pipe(stream);
 
   // Header
-  doc.fontSize(20)
-    .font('Helvetica-Bold')
-    .text('PAYROLL REPORT', { align: 'center' });
+  doc.fontSize(20).font('Helvetica-Bold').text('PAYROLL REPORT', { align: 'center' });
 
   doc.moveDown();
 
   // Farm and date info
-  doc.fontSize(12)
-    .font('Helvetica')
-    .text(`Farm: ${report.farm_name}`, { align: 'center' });
+  doc.fontSize(12).font('Helvetica').text(`Farm: ${report.farm_name}`, { align: 'center' });
 
-  doc.fontSize(10)
-    .text(`Pay Period: ${format(report.pay_period.start_date, 'MMM dd, yyyy')} - ${format(report.pay_period.end_date, 'MMM dd, yyyy')}`, { align: 'center' })
+  doc
+    .fontSize(10)
+    .text(
+      `Pay Period: ${format(report.pay_period.start_date, 'MMM dd, yyyy')} - ${format(report.pay_period.end_date, 'MMM dd, yyyy')}`,
+      { align: 'center' }
+    )
     .text(`Generated: ${format(report.generated_at, 'MMM dd, yyyy HH:mm')}`, { align: 'center' });
 
   doc.moveDown(2);
@@ -363,98 +353,105 @@ export function generatePayrollPDF(report: PayrollReport): PassThrough {
     }
 
     // Worker header
-    doc.fontSize(14)
-      .font('Helvetica-Bold')
-      .text(entry.worker_name);
+    doc.fontSize(14).font('Helvetica-Bold').text(entry.worker_name);
 
     doc.moveDown(0.5);
 
     // Worker details
-    doc.fontSize(10)
+    doc
+      .fontSize(10)
       .font('Helvetica')
       .text(`Total Hours: ${entry.total_hours.toFixed(2)}`, { indent: 20 });
 
     if (entry.hourly_rate) {
-      doc.text(`Hourly Rate: $${entry.hourly_rate.toFixed(2)}`, { indent: 20 })
-        .text(`Regular Hours: ${entry.regular_hours.toFixed(2)} × $${entry.hourly_rate.toFixed(2)} = $${entry.regular_pay.toFixed(2)}`, { indent: 20 });
+      doc
+        .text(`Hourly Rate: $${entry.hourly_rate.toFixed(2)}`, { indent: 20 })
+        .text(
+          `Regular Hours: ${entry.regular_hours.toFixed(2)} × $${entry.hourly_rate.toFixed(2)} = $${entry.regular_pay.toFixed(2)}`,
+          { indent: 20 }
+        );
 
       if (entry.overtime_hours > 0) {
-        doc.text(`Overtime Hours: ${entry.overtime_hours.toFixed(2)} × $${(entry.hourly_rate * 1.5).toFixed(2)} = $${entry.overtime_pay.toFixed(2)}`, { indent: 20 });
+        doc.text(
+          `Overtime Hours: ${entry.overtime_hours.toFixed(2)} × $${(entry.hourly_rate * 1.5).toFixed(2)} = $${entry.overtime_pay.toFixed(2)}`,
+          { indent: 20 }
+        );
       }
     }
 
     if (entry.piece_rate && !entry.hourly_rate) {
-      doc.text(`Piece Rate: $${entry.piece_rate.toFixed(2)}/unit`, { indent: 20 })
+      doc
+        .text(`Piece Rate: $${entry.piece_rate.toFixed(2)}/unit`, { indent: 20 })
         .text(`Piece Rate Pay: $${entry.piece_rate_pay.toFixed(2)}`, { indent: 20 });
     }
 
-    doc.fontSize(11)
+    doc
+      .fontSize(11)
       .font('Helvetica-Bold')
       .text(`Total Pay: $${entry.total_pay.toFixed(2)}`, { indent: 20 });
 
-    doc.fontSize(9)
+    doc
+      .fontSize(9)
       .font('Helvetica')
       .text(`Time Entries: ${entry.time_entries.length}`, { indent: 20 });
 
-    const unverifiedCount = entry.time_entries.filter(e => !e.verified).length;
+    const unverifiedCount = entry.time_entries.filter((e) => !e.verified).length;
     if (unverifiedCount > 0) {
-      doc.fillColor('red')
+      doc
+        .fillColor('red')
         .text(`⚠ ${unverifiedCount} unverified time entries`, { indent: 20 })
         .fillColor('black');
     }
 
     // Draw line separator
     doc.moveDown(0.5);
-    doc.moveTo(70, doc.y)
-      .lineTo(550, doc.y)
-      .stroke();
+    doc.moveTo(70, doc.y).lineTo(550, doc.y).stroke();
     doc.moveDown();
   }
 
   // Summary section
   doc.moveDown();
-  doc.fontSize(16)
-    .font('Helvetica-Bold')
-    .text('SUMMARY', { align: 'center' });
+  doc.fontSize(16).font('Helvetica-Bold').text('SUMMARY', { align: 'center' });
 
   doc.moveDown();
 
   // Summary table
   const summaryX = 150;
-  doc.fontSize(11)
+  doc
+    .fontSize(11)
     .font('Helvetica')
     .text('Total Workers:', summaryX, doc.y, { continued: true })
     .text(report.total_workers.toString(), 400, doc.y, { align: 'right' });
 
-  doc.text('Total Regular Hours:', summaryX, doc.y + 20, { continued: true })
+  doc
+    .text('Total Regular Hours:', summaryX, doc.y + 20, { continued: true })
     .text(report.total_regular_hours.toFixed(2), 400, doc.y + 20, { align: 'right' });
 
-  doc.text('Total Overtime Hours:', summaryX, doc.y + 40, { continued: true })
+  doc
+    .text('Total Overtime Hours:', summaryX, doc.y + 40, { continued: true })
     .text(report.total_overtime_hours.toFixed(2), 400, doc.y + 40, { align: 'right' });
 
   doc.moveDown(3);
 
   // Total payroll - highlighted
   const totalY = doc.y;
-  doc.rect(summaryX - 10, totalY - 5, 320, 30)
-    .fillAndStroke('#f0f0f0', '#000000');
+  doc.rect(summaryX - 10, totalY - 5, 320, 30).fillAndStroke('#f0f0f0', '#000000');
 
-  doc.fillColor('black')
+  doc
+    .fillColor('black')
     .fontSize(14)
     .font('Helvetica-Bold')
     .text('TOTAL PAYROLL:', summaryX, totalY + 5, { continued: true })
     .text(`$${report.total_payroll.toFixed(2)}`, 400, totalY + 5, { align: 'right' });
 
   // Footer
-  doc.fontSize(8)
+  doc
+    .fontSize(8)
     .font('Helvetica')
     .fillColor('gray')
-    .text(
-      'This is a confidential document. Please handle with care.',
-      50,
-      doc.page.height - 50,
-      { align: 'center' }
-    );
+    .text('This is a confidential document. Please handle with care.', 50, doc.page.height - 50, {
+      align: 'center',
+    });
 
   doc.end();
 
