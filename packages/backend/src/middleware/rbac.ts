@@ -174,7 +174,7 @@ export function requireWorkerOwnership() {
       }
 
       next();
-    } catch (error) {
+    } catch {
       next(error);
     }
   };
@@ -252,7 +252,7 @@ export function requireTimeEntryOwnership() {
       }
 
       next();
-    } catch (error) {
+    } catch {
       next(error);
     }
   };
@@ -330,7 +330,7 @@ export function requireScheduleOwnership() {
       }
 
       next();
-    } catch (error) {
+    } catch {
       next(error);
     }
   };
@@ -412,7 +412,7 @@ export function requireCertificationOwnership() {
       }
 
       next();
-    } catch (error) {
+    } catch {
       next(error);
     }
   };
