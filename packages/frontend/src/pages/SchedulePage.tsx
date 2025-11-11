@@ -24,9 +24,7 @@ export default function SchedulePage() {
   const getSchedulesForDay = (day: Date) => {
     if (!schedules) return [];
     const dayStr = format(day, 'yyyy-MM-dd');
-    return schedules.filter(
-      (s) => format(new Date(s.scheduled_date), 'yyyy-MM-dd') === dayStr
-    );
+    return schedules.filter((s) => format(new Date(s.scheduled_date), 'yyyy-MM-dd') === dayStr);
   };
 
   if (isLoading) {
@@ -78,40 +76,47 @@ export default function SchedulePage() {
             const daySchedules = getSchedulesForDay(day);
             const isToday = format(day, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
 
-          return (
-            <div
-              key={day.toISOString()}
-              className={`bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/50 border p-4 min-h-[200px] ${
-                isToday ? 'border-earth-500 dark:border-earth-600 ring-2 ring-earth-200 dark:ring-earth-700' : 'border-gray-200 dark:border-gray-700'
-              }`}
-            >
-              <div className="mb-3">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {format(day, 'EEE')}
-                </p>
-                <p className={`text-2xl font-bold ${isToday ? 'text-earth-700 dark:text-earth-400' : 'text-gray-900 dark:text-white'}`}>
-                  {format(day, 'd')}
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                {daySchedules.map((schedule) => (
-                  <div
-                    key={schedule.id}
-                    className={`p-2 rounded text-xs border ${
-                      schedule.status === 'completed'
-                        ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800'
-                        : schedule.status === 'in_progress'
-                        ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800'
-                        : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
-                    }`}
+            return (
+              <div
+                key={day.toISOString()}
+                className={`bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/50 border p-4 min-h-[200px] ${
+                  isToday
+                    ? 'border-earth-500 dark:border-earth-600 ring-2 ring-earth-200 dark:ring-earth-700'
+                    : 'border-gray-200 dark:border-gray-700'
+                }`}
+              >
+                <div className="mb-3">
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    {format(day, 'EEE')}
+                  </p>
+                  <p
+                    className={`text-2xl font-bold ${isToday ? 'text-earth-700 dark:text-earth-400' : 'text-gray-900 dark:text-white'}`}
                   >
-                    <p className="font-medium truncate text-gray-900 dark:text-white">{schedule.task_type}</p>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
-                      {schedule.start_time} - {schedule.end_time}
-                    </p>
-                  </div>
-                ))}
+                    {format(day, 'd')}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  {daySchedules.map((schedule) => (
+                    <div
+                      key={schedule.id}
+                      className={`p-2 rounded text-xs border ${
+                        schedule.status === 'completed'
+                          ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800'
+                          : schedule.status === 'in_progress'
+                            ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800'
+                            : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
+                      }`}
+                    >
+                      <p className="font-medium truncate text-gray-900 dark:text-white">
+                        {schedule.task_type}
+                      </p>
+                      <p className="text-gray-600 dark:text-gray-400 mt-1">
+                        {schedule.start_time} - {schedule.end_time}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
             );
           })}
@@ -122,7 +127,9 @@ export default function SchedulePage() {
       {schedules && schedules.length === 0 && (
         <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 mt-6">
           <CalendarIcon className="mx-auto text-gray-400 dark:text-gray-500 mb-4" size={48} />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No shifts scheduled</h3>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            No shifts scheduled
+          </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             Start planning your week by adding shifts for your workers
           </p>
