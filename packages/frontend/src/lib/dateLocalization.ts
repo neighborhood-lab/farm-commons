@@ -1,11 +1,11 @@
-import { format as dateFnsFormat } from 'date-fns';
+import { format as dateFnsFormat, type Locale } from 'date-fns';
 import { enUS, es } from 'date-fns/locale';
 import i18n from './i18n';
 
 /**
  * Get the date-fns locale based on the current i18next language
  */
-export const getDateFnsLocale = () => {
+export const getDateFnsLocale = (): Locale => {
   const language = i18n.language || 'en';
 
   const locales: Record<string, Locale> = {

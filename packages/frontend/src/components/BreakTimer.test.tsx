@@ -254,11 +254,7 @@ describe('BreakTimer', () => {
   describe('Compliance Warnings', () => {
     it('should show lunch break warning when minimum not met', () => {
       render(
-        <BreakTimer
-          {...mockProps}
-          minLunchBreakMinutes={30}
-          workHoursForLunchRequirement={6}
-        />
+        <BreakTimer {...mockProps} minLunchBreakMinutes={30} workHoursForLunchRequirement={6} />
       );
 
       expect(screen.getByText('Break Requirements')).toBeInTheDocument();
@@ -275,11 +271,7 @@ describe('BreakTimer', () => {
 
     it('should hide warnings when break is active', () => {
       render(
-        <BreakTimer
-          {...mockProps}
-          minLunchBreakMinutes={30}
-          workHoursForLunchRequirement={6}
-        />
+        <BreakTimer {...mockProps} minLunchBreakMinutes={30} workHoursForLunchRequirement={6} />
       );
 
       expect(screen.getByText('Break Requirements')).toBeInTheDocument();
@@ -411,11 +403,7 @@ describe('BreakTimer', () => {
 
     it('should handle zero work hours requirement', () => {
       render(
-        <BreakTimer
-          {...mockProps}
-          minLunchBreakMinutes={30}
-          workHoursForLunchRequirement={0}
-        />
+        <BreakTimer {...mockProps} minLunchBreakMinutes={30} workHoursForLunchRequirement={0} />
       );
 
       // Should not show lunch requirement warning
