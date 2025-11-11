@@ -1,14 +1,10 @@
 // File Upload Service for Farm Commons
 // Handles certification document uploads with local and S3 storage support
 
-import fs from 'fs/promises';
-import path from 'path';
-import crypto from 'crypto';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 
 // Allowed file types for uploads
 export const ALLOWED_MIME_TYPES = {
@@ -65,8 +61,8 @@ export class LocalStorageProvider implements StorageProvider {
   }
 
   private generateFilename(originalname: string, mimetype: string): string {
-    const extension = ALLOWED_MIME_TYPES[mimetype as keyof typeof ALLOWED_MIME_TYPES] ||
-                     path.extname(originalname);
+    const extension =
+      ALLOWED_MIME_TYPES[mimetype as keyof typeof ALLOWED_MIME_TYPES] || path.extname(originalname);
     const randomString = crypto.randomBytes(16).toString('hex');
     const timestamp = Date.now();
     return `${timestamp}-${randomString}${extension}`;
@@ -133,8 +129,8 @@ export class S3StorageProvider implements StorageProvider {
   }
 
   private generateFilename(originalname: string, mimetype: string): string {
-    const extension = ALLOWED_MIME_TYPES[mimetype as keyof typeof ALLOWED_MIME_TYPES] ||
-                     path.extname(originalname);
+    const extension =
+      ALLOWED_MIME_TYPES[mimetype as keyof typeof ALLOWED_MIME_TYPES] || path.extname(originalname);
     const randomString = crypto.randomBytes(16).toString('hex');
     const timestamp = Date.now();
     return `${timestamp}-${randomString}${extension}`;
@@ -157,17 +153,23 @@ export class S3StorageProvider implements StorageProvider {
     // });
     // await client.send(command);
 
-    throw new Error('S3 storage provider not fully implemented. Install @aws-sdk/client-s3 and implement.');
+    throw new Error(
+      'S3 storage provider not fully implemented. Install @aws-sdk/client-s3 and implement.'
+    );
   }
 
   async delete(filename: string): Promise<void> {
     // Placeholder for S3 delete implementation
-    throw new Error('S3 storage provider not fully implemented. Install @aws-sdk/client-s3 and implement.');
+    throw new Error(
+      'S3 storage provider not fully implemented. Install @aws-sdk/client-s3 and implement.'
+    );
   }
 
   async getSignedUrl(filename: string, expiresIn: number = 3600): Promise<string> {
     // Placeholder for S3 signed URL generation
-    throw new Error('S3 storage provider not fully implemented. Install @aws-sdk/client-s3 and implement.');
+    throw new Error(
+      'S3 storage provider not fully implemented. Install @aws-sdk/client-s3 and implement.'
+    );
   }
 }
 
@@ -240,7 +242,10 @@ export class UploadService {
   /**
    * Upload multiple files
    */
-  async uploadFiles(files: UploadedFile[], folder: string = 'certifications'): Promise<UploadResult[]> {
+  async uploadFiles(
+    files: UploadedFile[],
+    folder: string = 'certifications'
+  ): Promise<UploadResult[]> {
     const results: UploadResult[] = [];
 
     for (const file of files) {

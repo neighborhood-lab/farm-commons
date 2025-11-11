@@ -110,8 +110,8 @@ function ipKeyGenerator(req: Request): string {
  * 5 requests per 15 minutes
  */
 export const authRateLimiter = createRateLimiter({
-  windowMs: parseInt(process.env.AUTH_RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-  max: parseInt(process.env.AUTH_RATE_LIMIT_MAX || '5'),
+  windowMs: Number.parseInt(process.env.AUTH_RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
+  max: Number.parseInt(process.env.AUTH_RATE_LIMIT_MAX || '5'),
   message: 'Too many authentication attempts, please try again later',
   keyGenerator: ipKeyGenerator, // Always use IP for auth to prevent credential stuffing
 });
@@ -121,8 +121,8 @@ export const authRateLimiter = createRateLimiter({
  * 3 requests per hour
  */
 export const passwordResetRateLimiter = createRateLimiter({
-  windowMs: parseInt(process.env.PASSWORD_RESET_WINDOW_MS || '3600000'), // 1 hour
-  max: parseInt(process.env.PASSWORD_RESET_MAX || '3'),
+  windowMs: Number.parseInt(process.env.PASSWORD_RESET_WINDOW_MS || '3600000'), // 1 hour
+  max: Number.parseInt(process.env.PASSWORD_RESET_MAX || '3'),
   message: 'Too many password reset requests, please try again later',
   keyGenerator: ipKeyGenerator,
 });
@@ -133,8 +133,8 @@ export const passwordResetRateLimiter = createRateLimiter({
  * 300 requests per 15 minutes
  */
 export const readOnlyRateLimiter = createRateLimiter({
-  windowMs: parseInt(process.env.READ_RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-  max: parseInt(process.env.READ_RATE_LIMIT_MAX || '300'),
+  windowMs: Number.parseInt(process.env.READ_RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
+  max: Number.parseInt(process.env.READ_RATE_LIMIT_MAX || '300'),
   message: 'Too many requests, please try again later',
   keyGenerator: userOrIpKeyGenerator,
 });
@@ -145,8 +145,8 @@ export const readOnlyRateLimiter = createRateLimiter({
  * 100 requests per 15 minutes
  */
 export const writeRateLimiter = createRateLimiter({
-  windowMs: parseInt(process.env.WRITE_RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-  max: parseInt(process.env.WRITE_RATE_LIMIT_MAX || '100'),
+  windowMs: Number.parseInt(process.env.WRITE_RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
+  max: Number.parseInt(process.env.WRITE_RATE_LIMIT_MAX || '100'),
   message: 'Too many write requests, please try again later',
   keyGenerator: userOrIpKeyGenerator,
 });
@@ -156,8 +156,8 @@ export const writeRateLimiter = createRateLimiter({
  * 100 requests per 15 minutes
  */
 export const defaultRateLimiter = createRateLimiter({
-  windowMs: parseInt(process.env.DEFAULT_RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-  max: parseInt(process.env.DEFAULT_RATE_LIMIT_MAX || '100'),
+  windowMs: Number.parseInt(process.env.DEFAULT_RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
+  max: Number.parseInt(process.env.DEFAULT_RATE_LIMIT_MAX || '100'),
   message: 'Too many requests, please try again later',
   keyGenerator: userOrIpKeyGenerator,
 });
@@ -167,8 +167,8 @@ export const defaultRateLimiter = createRateLimiter({
  * 10 requests per hour
  */
 export const strictRateLimiter = createRateLimiter({
-  windowMs: parseInt(process.env.STRICT_RATE_LIMIT_WINDOW_MS || '3600000'), // 1 hour
-  max: parseInt(process.env.STRICT_RATE_LIMIT_MAX || '10'),
+  windowMs: Number.parseInt(process.env.STRICT_RATE_LIMIT_WINDOW_MS || '3600000'), // 1 hour
+  max: Number.parseInt(process.env.STRICT_RATE_LIMIT_MAX || '10'),
   message: 'Rate limit exceeded for sensitive operation, please try again later',
   keyGenerator: userOrIpKeyGenerator,
 });
@@ -179,8 +179,8 @@ export const strictRateLimiter = createRateLimiter({
  * 1000 requests per 15 minutes
  */
 export const healthCheckRateLimiter = createRateLimiter({
-  windowMs: parseInt(process.env.HEALTH_CHECK_WINDOW_MS || '900000'), // 15 minutes
-  max: parseInt(process.env.HEALTH_CHECK_MAX || '1000'),
+  windowMs: Number.parseInt(process.env.HEALTH_CHECK_WINDOW_MS || '900000'), // 15 minutes
+  max: Number.parseInt(process.env.HEALTH_CHECK_MAX || '1000'),
   message: 'Too many health check requests',
   keyGenerator: ipKeyGenerator,
 });
