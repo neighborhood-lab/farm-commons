@@ -148,3 +148,6 @@ scripts/backup-cron
 scripts/backup.env
 *.sql
 *.sql.gz
+
+# Turborepo cache
+.turbo/
