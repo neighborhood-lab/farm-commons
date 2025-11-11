@@ -99,11 +99,7 @@ export default function FieldFormModal({ field, onClose }: FieldFormModalProps) 
   }, [selectedLocation, setValue]);
 
   const onSubmit = async (data: FieldFormData) => {
-    if (isEditing) {
-      await updateMutation.mutateAsync(data);
-    } else {
-      await createMutation.mutateAsync(data);
-    }
+    await (isEditing ? updateMutation.mutateAsync(data) : createMutation.mutateAsync(data));
   };
 
   const mapCenter = selectedLocation || { lat: 39.8283, lng: -98.5795 }; // Default to center of US
