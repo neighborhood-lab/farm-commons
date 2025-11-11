@@ -270,7 +270,7 @@ export async function sendSMS(options: SendSMSOptions): Promise<SMSResult> {
       success: true,
       messageId: result.sid,
     };
-  } catch (error) {
+  } catch {
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
     logger.error(
