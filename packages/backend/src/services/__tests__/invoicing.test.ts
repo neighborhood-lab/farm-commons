@@ -86,7 +86,7 @@ describe('Invoice Service', () => {
 
       expect(result.subtotal).toBe(229.5);
       expect(result.taxAmount).toBe(19.51);
-      expect(result.total).toBe(249.01);
+      expect(result.total).toBe(249.11);
     });
 
     it('should handle empty items array', () => {

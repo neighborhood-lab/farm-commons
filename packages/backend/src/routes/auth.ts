@@ -48,7 +48,7 @@ router.post('/login', async (req, res, next) => {
         expires_in: 604_800, // 7 days in seconds
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -98,7 +98,7 @@ router.post('/register', async (req, res, next) => {
         expires_in: 604_800,
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -111,7 +111,7 @@ router.get('/me', async (_req, res, next) => {
       success: true,
       message: 'User profile endpoint - requires authentication',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -153,7 +153,7 @@ router.post('/refresh', authenticateToken, async (req: AuthRequest, res, next) =
         expires_in: 604_800, // 7 days in seconds
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -174,7 +174,7 @@ router.post('/logout', authenticateToken, async (req: AuthRequest, res, next) =>
       success: true,
       message: 'Logged out successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -219,7 +219,7 @@ router.post('/forgot-password', async (req, res, next) => {
       // In development, include the token for testing
       ...(process.env.NODE_ENV === 'development' && { reset_token: resetToken }),
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -260,7 +260,7 @@ router.post('/reset-password', async (req, res, next) => {
       success: true,
       message: 'Password has been reset successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });

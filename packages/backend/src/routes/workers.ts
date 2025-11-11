@@ -34,13 +34,13 @@ router.get('/', auditListAccess('worker'), async (req: AuthRequest, res, next) =
       success: true,
       data: {
         data: workers,
-        total: Number.parseInt(count as string),
+        total: Number.Number.parseInt(count as string),
         page,
         per_page,
-        total_pages: Math.ceil(Number.parseInt(count as string) / per_page),
+        total_pages: Math.ceil(Number.Number.parseInt(count as string) / per_page),
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -61,7 +61,7 @@ router.get('/:id', auditReadAccess('worker'), async (req: AuthRequest, res, next
       success: true,
       data: worker,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -83,7 +83,7 @@ router.post('/', requireRole('admin', 'manager'), auditLog('create', 'worker'), 
       success: true,
       data: worker,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -111,7 +111,7 @@ router.put('/:id', requireRole('admin', 'manager'), auditLog('update', 'worker')
       success: true,
       data: worker,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -132,7 +132,7 @@ router.delete('/:id', requireRole('admin'), auditLog('delete', 'worker'), async 
       success: true,
       message: 'Worker deleted successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });

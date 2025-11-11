@@ -1,11 +1,11 @@
 // File Upload Service for Farm Commons
 // Handles certification document uploads with local and S3 storage support
 
-import fs from 'fs/promises';
-import path from 'path';
-import crypto from 'crypto';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -93,7 +93,7 @@ export class LocalStorageProvider implements StorageProvider {
     const filepath = path.join(this.uploadDir, filename);
     try {
       await fs.unlink(filepath);
-    } catch (error) {
+    } catch {
       // File might not exist, log but don't throw
       console.warn(`Failed to delete file ${filename}:`, error);
     }

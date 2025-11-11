@@ -1,8 +1,8 @@
 // Unit tests for File Upload Service
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import fs from 'fs/promises';
-import path from 'path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import {
   UploadService,
   LocalStorageProvider,
@@ -124,7 +124,7 @@ describe('UploadService', () => {
       // Clean up test uploads
       try {
         await fs.rm(tempDir, { recursive: true, force: true });
-      } catch (error) {
+      } catch {
         // Ignore cleanup errors
       }
     });
@@ -149,7 +149,7 @@ describe('UploadService', () => {
 
       // Verify file was actually written
       const filepath = path.join(tempDir, result.filename);
-      const fileContent = await fs.readFile(filepath, 'utf-8');
+      const fileContent = await fs.readFile(filepath, 'utf8');
       expect(fileContent).toBe('test pdf content');
     });
 
@@ -275,7 +275,7 @@ describe('UploadService', () => {
       // Clean up test uploads
       try {
         await fs.rm(tempDir, { recursive: true, force: true });
-      } catch (error) {
+      } catch {
         // Ignore cleanup errors
       }
     });
@@ -389,7 +389,7 @@ describe('UploadService', () => {
     afterEach(async () => {
       try {
         await fs.rm(tempDir, { recursive: true, force: true });
-      } catch (error) {
+      } catch {
         // Ignore cleanup errors
       }
     });
