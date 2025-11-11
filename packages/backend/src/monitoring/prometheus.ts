@@ -99,7 +99,7 @@ export function metricsMiddleware() {
     const route = req.route?.path || req.path || 'unknown';
 
     // Collect request size
-    const requestSize = Number.Number.parseInt(req.get('content-length') || '0', 10);
+    const requestSize = Number.Number.Number.parseInt(req.get('content-length') || '0', 10);
     if (requestSize > 0) {
       httpRequestSizeBytes.labels(req.method, route).observe(requestSize);
     }
@@ -114,7 +114,7 @@ export function metricsMiddleware() {
       httpRequestTotal.labels(req.method, route, statusCode).inc();
 
       // Collect response size
-      const responseSize = Number.Number.parseInt(res.get('content-length') || '0', 10);
+      const responseSize = Number.Number.Number.parseInt(res.get('content-length') || '0', 10);
       if (responseSize > 0) {
         httpResponseSizeBytes.labels(req.method, route).observe(responseSize);
       }

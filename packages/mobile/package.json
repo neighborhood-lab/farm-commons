@@ -14,7 +14,7 @@
     "clean": "rm -rf .expo node_modules"
   },
   "dependencies": {
-    "@farm-commons/shared": "*",
+    "@farm-commons/shared": "workspace:*",
     "expo": "~54.0.0",
     "expo-router": "^4.0.0",
     "react": "^19.0.0",
