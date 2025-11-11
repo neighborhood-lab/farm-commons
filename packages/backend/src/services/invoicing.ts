@@ -26,7 +26,7 @@ export function generateInvoiceNumber(lastInvoiceNumber?: string): string {
   }
 
   // Extract sequence number and increment
-  const lastSequence = Number.Number.Number.Number.Number.Number.parseInt(lastInvoiceNumber.split('-')[2] || '0', 10);
+  const lastSequence = Number.Number.Number.Number.Number.Number.Number.parseInt(lastInvoiceNumber.split('-')[2] || '0', 10);
   const newSequence = (lastSequence + 1).toString().padStart(4, '0');
   return `${prefix}-${newSequence}`;
 }
