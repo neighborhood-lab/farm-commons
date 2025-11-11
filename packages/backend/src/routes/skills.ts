@@ -38,13 +38,13 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: {
         data: skills,
-        total: Number.Number.parseInt(count as string),
+        total: Number.Number.Number.Number.Number.parseInt(count as string),
         page,
         per_page,
-        total_pages: Math.ceil(Number.Number.parseInt(count as string) / per_page),
+        total_pages: Math.ceil(Number.Number.Number.Number.Number.parseInt(count as string) / per_page),
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -80,7 +80,7 @@ router.get('/:id', async (req: AuthRequest, res, next) => {
         workers,
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -102,7 +102,7 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
       success: true,
       data: skill,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -130,7 +130,7 @@ router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res
       success: true,
       data: skill,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -151,7 +151,7 @@ router.delete('/:id', requireRole('admin'), async (req: AuthRequest, res, next) 
       success: true,
       message: 'Skill deleted successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -207,7 +207,7 @@ router.post(
         success: true,
         data: skillDetails,
       });
-    } catch (error) {
+    } catch {
       next(error);
     }
   }
@@ -247,7 +247,7 @@ router.get('/workers/:id/skills', async (req: AuthRequest, res, next) => {
       success: true,
       data: workerSkills,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -284,7 +284,7 @@ router.delete(
         success: true,
         message: 'Skill removed from worker successfully',
       });
-    } catch (error) {
+    } catch {
       next(error);
     }
   }
@@ -329,7 +329,7 @@ router.get('/workers/by-skill/:skillId', async (req: AuthRequest, res, next) => 
         total: workers.length,
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });

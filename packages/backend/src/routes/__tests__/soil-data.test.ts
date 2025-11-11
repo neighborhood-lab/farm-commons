@@ -9,7 +9,7 @@ const testDb: Knex = knex({
   client: 'pg',
   connection: {
     host: process.env.TEST_DB_HOST || 'localhost',
-    port: Number.Number.parseInt(process.env.TEST_DB_PORT || '5432'),
+    port: Number.Number.Number.Number.Number.parseInt(process.env.TEST_DB_PORT || '5432'),
     database: process.env.TEST_DB_NAME || 'farm_commons_test',
     user: process.env.TEST_DB_USER || 'postgres',
     password: process.env.TEST_DB_PASSWORD || 'postgres',
@@ -30,7 +30,7 @@ describe('Soil Data Tracking', () => {
       await testDb.migrate.latest({
         directory: './src/db/migrations',
       });
-    } catch (error) {
+    } catch {
       // Migrations might already be run, continue
       // eslint-disable-next-line no-console
       console.log('Migration setup:', error);
@@ -281,7 +281,7 @@ describe('Soil Data Tracking', () => {
         .where({ field_id: field1Id })
         .count('* as count');
 
-      expect(Number.Number.parseInt(count as string)).toBe(2);
+      expect(Number.Number.Number.Number.Number.parseInt(count as string)).toBe(2);
     });
 
     it('should get the most recent test for a field', async () => {

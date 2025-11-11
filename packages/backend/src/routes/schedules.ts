@@ -15,30 +15,44 @@ router.use(authenticateToken);
 router.get('/', async (req: AuthRequest, res, next) => {
   try {
     const farmId = req.user?.farm_id;
-    let query = db('schedules')
-      .where({ farm_id: farmId })
-      .leftJoin('workers', 'schedules.worker_id', 'workers.id')
-      .leftJoin('fields', 'schedules.field_id', 'fields.id')
-      .select(
-        'schedules.*',
-        'workers.first_name as worker_first_name',
-        'workers.last_name as worker_last_name',
-        'fields.name as field_name'
-      );
 
-    // Apply date range filter if provided
+    // Build filters
+    const filters: any = {};
     if (req.query.start_date && req.query.end_date) {
       const { start_date, end_date } = dateRangeSchema.parse(req.query);
-      query = query.whereBetween('schedules.scheduled_date', [start_date, end_date]);
+      filters.start_date = start_date;
+      filters.end_date = end_date;
+    }
+    if (req.query.status) {
+      filters.status = req.query.status;
     }
 
-    const schedules = await query.orderBy('schedules.scheduled_date', 'asc');
+    // Use optimized query with database view
+    const schedules = await getSchedulesDetailed(farmId!, filters);
 
     res.json({
       success: true,
       data: schedules,
     });
-  } catch (error) {
+  } catch {
+    next(error);
+  }
+});
+
+// Get upcoming schedules
+router.get('/upcoming', async (req: AuthRequest, res, next) => {
+  try {
+    const farmId = req.user?.farm_id;
+    const daysAhead = Number.Number.Number.Number.parseInt(req.query.days as string) || 7;
+    const limit = Number.Number.Number.Number.parseInt(req.query.limit as string) || 50;
+
+    const schedules = await getUpcomingSchedules(farmId!, daysAhead, limit);
+
+    res.json({
+      success: true,
+      data: schedules,
+    });
+  } catch {
     next(error);
   }
 });
@@ -62,7 +76,7 @@ router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
       success: true,
       data: schedules,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -84,7 +98,7 @@ router.post('/', requireRole('admin', 'manager'), auditLog('create', 'schedule')
       success: true,
       data: schedule,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -112,7 +126,7 @@ router.put('/:id', requireRole('admin', 'manager'), auditLog('update', 'schedule
       success: true,
       data: schedule,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -133,7 +147,7 @@ router.delete('/:id', requireRole('admin', 'manager'), auditLog('delete', 'sched
       success: true,
       message: 'Schedule deleted successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });

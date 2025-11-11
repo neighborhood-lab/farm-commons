@@ -35,6 +35,7 @@ import invoiceRoutes from './routes/invoices.js';
 
 // Middleware
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import { setupQueryMonitoring, queryMetricsMiddleware, createMetricsRoute } from './middleware/queryMonitoring.js';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3001;
@@ -84,8 +85,8 @@ app.use(
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: Number.Number.parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-  max: Number.Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
+  windowMs: Number.Number.Number.Number.Number.parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
+  max: Number.Number.Number.Number.Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
   message: 'Too many requests from this IP, please try again later',
   standardHeaders: true,
   legacyHeaders: false,
@@ -107,6 +108,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // HTTP logging
 app.use(httpLogger);
+
+// Query metrics tracking (per request)
+app.use(queryMetricsMiddleware);
 
 // Health check
 app.get('/health', (_req, res) => {
@@ -147,7 +151,7 @@ app.use('/api/task-checklists', taskChecklistRoutes);
 app.get('/', (_req, res) => {
   res.json({
     name: 'Farm Commons API',
-    version: '0.1.0',
+    version: '0.1.1',
     description: 'Shared farm management software, community owned. For the humans who feed us.',
     documentation: '/api/docs',
   });
