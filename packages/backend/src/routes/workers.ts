@@ -1,18 +1,19 @@
 // Worker management routes
 
-import express from 'express';
+import express, { type Router } from 'express';
 import { createWorkerSchema, updateWorkerSchema, paginationSchema } from '@farm-commons/shared';
 import db from '../db/connection.js';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { auditLog, auditReadAccess, auditListAccess } from '../middleware/auditLog.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // All worker routes require authentication
 router.use(authenticateToken);
 
 // List workers
-router.get('/', async (req: AuthRequest, res, next) => {
+router.get('/', auditListAccess('worker'), async (req: AuthRequest, res, next) => {
   try {
     const { page, per_page } = paginationSchema.parse(req.query);
     const farmId = req.user?.farm_id;
@@ -26,19 +27,17 @@ router.get('/', async (req: AuthRequest, res, next) => {
         .limit(per_page)
         .offset(offset)
         .select('*'),
-      db('workers')
-        .where({ farm_id: farmId })
-        .count('* as count'),
+      db('workers').where({ farm_id: farmId }).count('* as count'),
     ]);
 
     res.json({
       success: true,
       data: {
         data: workers,
-        total: parseInt(count as string),
+        total: Number.Number.parseInt(count as string),
         page,
         per_page,
-        total_pages: Math.ceil(parseInt(count as string) / per_page),
+        total_pages: Math.ceil(Number.Number.parseInt(count as string) / per_page),
       },
     });
   } catch (error) {
@@ -47,14 +46,12 @@ router.get('/', async (req: AuthRequest, res, next) => {
 });
 
 // Get single worker
-router.get('/:id', async (req: AuthRequest, res, next) => {
+router.get('/:id', auditReadAccess('worker'), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const farmId = req.user?.farm_id;
 
-    const worker = await db('workers')
-      .where({ id, farm_id: farmId })
-      .first();
+    const worker = await db('workers').where({ id, farm_id: farmId }).first();
 
     if (!worker) {
       throw new AppError('Worker not found', 404);
@@ -70,7 +67,7 @@ router.get('/:id', async (req: AuthRequest, res, next) => {
 });
 
 // Create worker (managers and admins only)
-router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
+router.post('/', requireRole('admin', 'manager'), auditLog('create', 'worker'), async (req: AuthRequest, res, next) => {
   try {
     const data = createWorkerSchema.parse(req.body);
     const farmId = req.user?.farm_id;
@@ -92,7 +89,7 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
 });
 
 // Update worker
-router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
+router.put('/:id', requireRole('admin', 'manager'), auditLog('update', 'worker'), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const data = updateWorkerSchema.parse(req.body);
@@ -120,14 +117,12 @@ router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res
 });
 
 // Delete worker
-router.delete('/:id', requireRole('admin'), async (req: AuthRequest, res, next) => {
+router.delete('/:id', requireRole('admin'), auditLog('delete', 'worker'), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const farmId = req.user?.farm_id;
 
-    const deleted = await db('workers')
-      .where({ id, farm_id: farmId })
-      .delete();
+    const deleted = await db('workers').where({ id, farm_id: farmId }).delete();
 
     if (!deleted) {
       throw new AppError('Worker not found', 404);

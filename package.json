@@ -4,6 +4,7 @@
   "private": true,
   "description": "Shared farm management software, community owned. For the humans who feed us.",
   "type": "module",
+  "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=22.0.0",
     "npm": ">=10.9.0"
@@ -27,6 +28,7 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@types/express-rate-limit": "^6.0.2",
     "@types/node": "^22.10.2",
     "@typescript-eslint/eslint-plugin": "^8.18.2",
     "@typescript-eslint/parser": "^8.18.2",
@@ -56,5 +58,9 @@
     "agpl"
   ],
   "author": "Farm Commons Contributors",
-  "license": "AGPL-3.0"
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "@types/pdfkit": "^0.17.3",
+    "pdfkit": "^0.17.2"
+  }
 }

@@ -1,13 +1,14 @@
 // Time tracking routes
 
-import express from 'express';
+import express, { type Router } from 'express';
 import { clockInSchema, clockOutSchema, dateRangeSchema } from '@farm-commons/shared';
 import { calculatePreciseHours } from '@farm-commons/shared';
 import db from '../db/connection.js';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { auditLog } from '../middleware/auditLog.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.use(authenticateToken);
 
@@ -55,10 +56,7 @@ router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
         worker_id: workerId,
       })
       .leftJoin('fields', 'time_entries.field_id', 'fields.id')
-      .select(
-        'time_entries.*',
-        'fields.name as field_name'
-      )
+      .select('time_entries.*', 'fields.name as field_name')
       .orderBy('time_entries.clock_in', 'desc');
 
     res.json({
@@ -71,7 +69,7 @@ router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
 });
 
 // Clock in
-router.post('/clock-in', async (req: AuthRequest, res, next) => {
+router.post('/clock-in', auditLog('create', 'time_entry'), async (req: AuthRequest, res, next) => {
   try {
     const data = clockInSchema.parse(req.body);
     const farmId = req.user?.farm_id;
@@ -108,15 +106,13 @@ router.post('/clock-in', async (req: AuthRequest, res, next) => {
 });
 
 // Clock out
-router.post('/:id/clock-out', async (req: AuthRequest, res, next) => {
+router.post('/:id/clock-out', auditLog('update', 'time_entry'), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const { break_minutes, notes } = clockOutSchema.parse(req.body);
     const farmId = req.user?.farm_id;
 
-    const entry = await db('time_entries')
-      .where({ id, farm_id: farmId })
-      .first();
+    const entry = await db('time_entries').where({ id, farm_id: farmId }).first();
 
     if (!entry) {
       throw new AppError('Time entry not found', 404);
@@ -127,7 +123,7 @@ router.post('/:id/clock-out', async (req: AuthRequest, res, next) => {
     }
 
     const clockOut = new Date();
-    const totalHours = calculatePreciseHours(entry.clock_in, clockOut) - (break_minutes / 60);
+    const totalHours = calculatePreciseHours(entry.clock_in, clockOut) - break_minutes / 60;
 
     const [updatedEntry] = await db('time_entries')
       .where({ id, farm_id: farmId })
@@ -150,7 +146,7 @@ router.post('/:id/clock-out', async (req: AuthRequest, res, next) => {
 });
 
 // Verify time entry (managers/admins only)
-router.post('/:id/verify', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
+router.post('/:id/verify', requireRole('admin', 'manager'), auditLog('update', 'time_entry'), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const farmId = req.user?.farm_id;

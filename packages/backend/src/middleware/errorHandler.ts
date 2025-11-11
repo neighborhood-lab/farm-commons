@@ -2,6 +2,8 @@
 
 import type { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
+import { captureException } from '../monitoring/sentry.js';
+import { recordError } from '../monitoring/prometheus.js';
 
 export interface ApiError extends Error {
   statusCode?: number;
@@ -24,15 +26,19 @@ export function errorHandler(
   err: ApiError | ZodError,
   req: Request,
   res: Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next: NextFunction
+  _next: NextFunction
 ): void {
+  const route = req.route?.path || req.path || 'unknown';
+
   // Handle Zod validation errors
   if (err instanceof ZodError) {
+    // Record validation error in Prometheus
+    recordError('ValidationError', route);
+
     res.status(400).json({
       success: false,
       error: 'Validation error',
-      details: err.errors,
+      details: err.issues,
     });
     return;
   }
@@ -41,12 +47,26 @@ export function errorHandler(
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal server error';
 
+  // Record error in monitoring
+  const errorType = err.constructor.name || 'UnknownError';
+  recordError(errorType, route);
+
+  // For non-operational errors (unexpected errors), capture in Sentry
+  if (!err.isOperational || statusCode >= 500) {
+    captureException(err, {
+      url: req.url,
+      method: req.method,
+      statusCode,
+      body: req.body,
+      query: req.query,
+    });
+  }
+
+  // eslint-disable-next-line no-console
   console.error('Error:', {
     message: err.message,
     statusCode,
     stack: err.stack,
-    url: req.url,
-    method: req.method,
   });
 
   res.status(statusCode).json({

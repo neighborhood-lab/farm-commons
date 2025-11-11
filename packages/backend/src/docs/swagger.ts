@@ -139,7 +139,7 @@ const options: swaggerJsdoc.Options = {
                 },
                 expires_in: {
                   type: 'number',
-                  example: 604800,
+                  example: 604_800,
                   description: 'Token expiration time in seconds (7 days)',
                 },
               },
@@ -192,7 +192,7 @@ const options: swaggerJsdoc.Options = {
             },
             hourly_wage: {
               type: 'number',
-              example: 18.50,
+              example: 18.5,
               nullable: true,
             },
             employment_status: {
@@ -263,7 +263,7 @@ const options: swaggerJsdoc.Options = {
             },
             hourly_wage: {
               type: 'number',
-              example: 18.50,
+              example: 18.5,
             },
             employment_status: {
               type: 'string',
@@ -309,7 +309,7 @@ const options: swaggerJsdoc.Options = {
             },
             hourly_wage: {
               type: 'number',
-              example: 19.00,
+              example: 19,
             },
             employment_status: {
               type: 'string',
