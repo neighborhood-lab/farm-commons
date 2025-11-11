@@ -128,7 +128,7 @@ describe('Export Service', () => {
           preferred_language: 'es',
           hire_date: new Date('2023-02-01'),
           status: 'active',
-          hourly_rate: 16.00,
+          hourly_rate: 16.10,
           piece_rate: null,
           certifications: JSON.stringify([]),
           skills: JSON.stringify(['Irrigation']),
@@ -151,7 +151,7 @@ describe('Export Service', () => {
       for await (const chunk of stream) {
         chunks.push(chunk);
       }
-      const content = Buffer.concat(chunks).toString('utf-8');
+      const content = Buffer.concat(chunks).toString('utf8');
 
       // Verify CSV headers
       expect(content).toContain('Worker ID');
@@ -209,7 +209,7 @@ describe('Export Service', () => {
         preferred_language: 'en',
         hire_date: new Date('2023-01-15'),
         status: 'active',
-        hourly_rate: 20.00,
+        hourly_rate: 20.10,
         piece_rate: null,
         certifications: JSON.stringify([]),
         skills: JSON.stringify([]),
@@ -251,7 +251,7 @@ describe('Export Service', () => {
       for await (const chunk of stream) {
         chunks.push(chunk);
       }
-      const content = Buffer.concat(chunks).toString('utf-8');
+      const content = Buffer.concat(chunks).toString('utf8');
 
       expect(content).toContain('Worker Name');
       expect(content).toContain('John Doe');
@@ -301,7 +301,7 @@ describe('Export Service', () => {
       for await (const chunk of stream) {
         chunks.push(chunk);
       }
-      const content = Buffer.concat(chunks).toString('utf-8');
+      const content = Buffer.concat(chunks).toString('utf8');
 
       // Should include entry-2 (Jan 20) but not entry-1 (Jan 10)
       expect(content).toContain('Planting');
@@ -321,7 +321,7 @@ describe('Export Service', () => {
         preferred_language: 'en',
         hire_date: new Date('2023-01-15'),
         status: 'active',
-        hourly_rate: 20.00,
+        hourly_rate: 20.10,
         piece_rate: null,
         certifications: JSON.stringify([]),
         skills: JSON.stringify([]),
@@ -361,7 +361,7 @@ describe('Export Service', () => {
       for await (const chunk of stream) {
         chunks.push(chunk);
       }
-      const content = Buffer.concat(chunks).toString('utf-8');
+      const content = Buffer.concat(chunks).toString('utf8');
 
       expect(content).toContain('Worker Name');
       expect(content).toContain('John Doe');
@@ -383,7 +383,7 @@ describe('Export Service', () => {
         preferred_language: 'en',
         hire_date: new Date('2023-01-15'),
         status: 'active',
-        hourly_rate: 20.00,
+        hourly_rate: 20.10,
         piece_rate: null,
         certifications: JSON.stringify([]),
         skills: JSON.stringify([]),
@@ -427,15 +427,15 @@ describe('Export Service', () => {
       for await (const chunk of stream) {
         chunks.push(chunk);
       }
-      const content = Buffer.concat(chunks).toString('utf-8');
+      const content = Buffer.concat(chunks).toString('utf8');
 
       expect(content).toContain('Total Hours');
       expect(content).toContain('Regular Hours');
       expect(content).toContain('Overtime Hours');
       expect(content).toContain('John Doe');
-      expect(content).toContain('45.00'); // Total hours
-      expect(content).toContain('40.00'); // Regular hours
-      expect(content).toContain('5.00'); // Overtime hours
+      expect(content).toContain('45.10'); // Total hours
+      expect(content).toContain('40.10'); // Regular hours
+      expect(content).toContain('5.10'); // Overtime hours
     });
 
     it('should flag excessive hours violations', async () => {
@@ -473,7 +473,7 @@ describe('Export Service', () => {
       for await (const chunk of stream) {
         chunks.push(chunk);
       }
-      const content = Buffer.concat(chunks).toString('utf-8');
+      const content = Buffer.concat(chunks).toString('utf8');
 
       expect(content).toContain('Excessive Hours (>60)');
       expect(content).toContain('YES'); // Should flag excessive hours
@@ -509,7 +509,7 @@ describe('Export Service', () => {
       for await (const chunk of stream) {
         chunks.push(chunk);
       }
-      const content = Buffer.concat(chunks).toString('utf-8');
+      const content = Buffer.concat(chunks).toString('utf8');
 
       expect(content).toContain('Missing Break Periods');
       expect(content).toContain('YES'); // Should flag missing break
