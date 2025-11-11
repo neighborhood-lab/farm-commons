@@ -6,6 +6,7 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "types": [],
     "paths": {
       "@/*": ["./src/*"],
       "@farm-commons/shared": ["../shared/src"]
