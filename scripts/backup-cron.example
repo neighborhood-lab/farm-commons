@@ -1,0 +1,94 @@
+# Farm Commons Database Backup Cron Job Example
+#
+# This file shows example cron configurations for automated database backups.
+# To use this:
+#   1. Copy this file: cp backup-cron.example backup-cron
+#   2. Edit backup-cron with your specific configuration
+#   3. Install the cron job: crontab backup-cron
+#
+# Cron format:
+# ┌───────────── minute (0 - 59)
+# │ ┌───────────── hour (0 - 23)
+# │ │ ┌───────────── day of month (1 - 31)
+# │ │ │ ┌───────────── month (1 - 12)
+# │ │ │ │ ┌───────────── day of week (0 - 6) (Sunday to Saturday)
+# │ │ │ │ │
+# * * * * * command to execute
+
+# Set PATH to include PostgreSQL binaries
+PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/pgsql/bin
+
+# Set your project directory
+FARM_COMMONS_DIR=/path/to/farm-commons
+
+# =============================================================================
+# Daily Backup at 2 AM
+# =============================================================================
+# This is the recommended configuration for production use
+0 2 * * * cd $FARM_COMMONS_DIR && POSTGRES_PASSWORD=your_password BACKUP_DIR=/var/backups/farm-commons BACKUP_RETENTION=30 ./scripts/backup-database.sh >> /var/log/farm-commons-backup.log 2>&1
+
+# =============================================================================
+# Daily Backup with S3 Upload at 3 AM
+# =============================================================================
+# Uncomment this if you want to upload backups to S3 for offsite storage
+# 0 3 * * * cd $FARM_COMMONS_DIR && POSTGRES_PASSWORD=your_password BACKUP_DIR=/var/backups/farm-commons ENABLE_S3=true S3_BUCKET=your-bucket S3_PREFIX=farm-commons-backups ./scripts/backup-database.sh >> /var/log/farm-commons-backup.log 2>&1
+
+# =============================================================================
+# Hourly Backup (for high-frequency changes)
+# =============================================================================
+# Uncomment this for hourly backups (not typically recommended due to storage)
+# 0 * * * * cd $FARM_COMMONS_DIR && POSTGRES_PASSWORD=your_password BACKUP_DIR=/var/backups/farm-commons BACKUP_RETENTION=7 ./scripts/backup-database.sh >> /var/log/farm-commons-backup.log 2>&1
+
+# =============================================================================
+# Weekly Backup Verification at 4 AM on Sundays
+# =============================================================================
+# It's good practice to regularly verify your backups
+0 4 * * 0 cd $FARM_COMMONS_DIR && ./scripts/backup-database.sh --verify-only >> /var/log/farm-commons-backup-verify.log 2>&1
+
+# =============================================================================
+# Before Important Operations
+# =============================================================================
+# You can also run manual backups before important operations:
+#   cd /path/to/farm-commons
+#   POSTGRES_PASSWORD=your_password ./scripts/backup-database.sh
+
+# =============================================================================
+# Environment Variables Reference
+# =============================================================================
+# You can customize the backup behavior with these environment variables:
+#
+# POSTGRES_HOST=localhost           # Database host
+# POSTGRES_PORT=5432                # Database port
+# POSTGRES_DB=farm_commons          # Database name
+# POSTGRES_USER=postgres            # Database user
+# POSTGRES_PASSWORD=secret          # Database password (REQUIRED)
+# BACKUP_DIR=./backups              # Where to store backups
+# BACKUP_RETENTION=30               # Days to keep backups
+# S3_BUCKET=my-bucket               # S3 bucket name (optional)
+# S3_PREFIX=farm-commons-backups    # S3 folder prefix
+# ENABLE_S3=false                   # Enable S3 upload
+
+# =============================================================================
+# Security Notes
+# =============================================================================
+# IMPORTANT: Never commit backup-cron with your actual password!
+#
+# Instead, consider these secure alternatives:
+#
+# 1. Use PostgreSQL password file (~/.pgpass):
+#    Create file: ~/.pgpass
+#    Content: localhost:5432:farm_commons:postgres:your_password
+#    Permissions: chmod 600 ~/.pgpass
+#    Then you don't need POSTGRES_PASSWORD in the cron job
+#
+# 2. Use environment variables from a secure file:
+#    Create file: /etc/farm-commons/backup.env
+#    Content: POSTGRES_PASSWORD=your_password
+#    Permissions: chmod 600 /etc/farm-commons/backup.env
+#    Cron: 0 2 * * * source /etc/farm-commons/backup.env && cd $FARM_COMMONS_DIR && ./scripts/backup-database.sh
+
+# 3. Use a secrets management system:
+#    - HashiCorp Vault
+#    - AWS Secrets Manager
+#    - 1Password CLI
+#    - etc.
