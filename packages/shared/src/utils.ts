@@ -93,3 +93,13 @@ export function calculateWage(hours: number, hourlyRate: number): number {
 export function isValidTimeString(time: string): boolean {
   return /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(time);
 }
+
+/**
+ * Format currency for display
+ */
+export function formatCurrency(amount: number, currency = 'USD', locale = 'en-US'): string {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+  }).format(amount);
+}
