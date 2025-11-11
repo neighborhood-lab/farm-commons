@@ -83,5 +83,22 @@ export default [
       'sonarjs/use-type-alias': 'warn',
     },
   },
+  // Relaxed rules for test files
+  {
+    files: [
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+      '**/__tests__/**/*.ts',
+      '**/__tests__/**/*.tsx',
+    ],
+    rules: {
+      'sonarjs/no-hardcoded-passwords': 'off', // Test fixtures often have demo passwords
+      'sonarjs/assertions-in-tests': 'off', // Some tests are for side effects
+      '@typescript-eslint/no-unused-vars': 'off', // Test setup may have intentionally unused vars
+      'unicorn/no-zero-fractions': 'off', // Test data may use explicit 0.0 for clarity
+    },
+  },
   prettierConfig,
 ];
