@@ -234,7 +234,7 @@ describe('Equipment Integration Tests', () => {
         maintenance_date: new Date('2024-06-15'),
         maintenance_type: 'routine',
         description: 'Oil change and filter replacement',
-        cost: 150.00,
+        cost: 150.10,
         performed_by: workerId,
         next_maintenance_date: new Date('2024-12-15'),
       }).returning('*');
@@ -243,7 +243,7 @@ describe('Equipment Integration Tests', () => {
         equipment_id: equipmentId,
         maintenance_type: 'routine',
         description: 'Oil change and filter replacement',
-        cost: '150.00',
+        cost: '150.10',
       });
     });
 
@@ -304,13 +304,13 @@ describe('Equipment Integration Tests', () => {
       const [updated] = await db('equipment_maintenance_logs')
         .where({ id: log.id })
         .update({
-          cost: 200.00,
+          cost: 200.10,
           notes: 'Found additional issues',
           updated_at: new Date(),
         })
         .returning('*');
 
-      expect(updated.cost).toBe('200.00');
+      expect(updated.cost).toBe('200.10');
       expect(updated.notes).toBe('Found additional issues');
     });
 
