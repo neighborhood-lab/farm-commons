@@ -23,7 +23,7 @@ export function authenticateToken(req: AuthRequest, res: Response, next: NextFun
     const decoded = jwt.verify(token, JWT_SECRET) as AuthUser;
     req.user = decoded;
     next();
-  } catch (error) {
+  } catch {
     res.status(403).json({ success: false, error: 'Invalid or expired token' });
   }
 }
@@ -38,7 +38,7 @@ export function requireRole(...roles: string[]) {
     if (!roles.includes(req.user.role)) {
       res.status(403).json({
         success: false,
-        error: 'Insufficient permissions'
+        error: 'Insufficient permissions',
       });
       return;
     }
@@ -48,6 +48,7 @@ export function requireRole(...roles: string[]) {
 }
 
 export function generateToken(user: AuthUser): string {
+  const payload = { ...user };
   const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
-  return jwt.sign(user, JWT_SECRET, { expiresIn });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn } as jwt.SignOptions);
 }
