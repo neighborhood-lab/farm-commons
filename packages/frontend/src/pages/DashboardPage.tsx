@@ -53,8 +53,8 @@ export default function DashboardPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-2">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">
           Welcome to Farm Commons - Overview of your farm operations
         </p>
       </div>
@@ -66,19 +66,19 @@ export default function DashboardPage() {
           return (
             <div
               key={stat.name}
-              className="bg-white rounded-lg shadow p-6 border border-gray-200"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/50 p-6 border border-gray-200 dark:border-gray-700"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{stat.name}</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
                     {stat.value}
                     {stat.total && (
-                      <span className="text-lg text-gray-500">/{stat.total}</span>
+                      <span className="text-lg text-gray-500 dark:text-gray-400">/{stat.total}</span>
                     )}
                   </p>
                 </div>
-                <div className={`${stat.color} p-3 rounded-lg`}>
+                <div className={`${stat.color} dark:opacity-90 p-3 rounded-lg`}>
                   <Icon className="text-white" size={24} />
                 </div>
               </div>
@@ -93,11 +93,11 @@ export default function DashboardPage() {
       </div>
 
       {/* Welcome Message */}
-      <div className="bg-earth-50 border border-earth-200 rounded-lg p-8">
-        <h2 className="text-2xl font-bold text-earth-900 mb-4">
+      <div className="bg-earth-50 dark:bg-earth-900/50 border border-earth-200 dark:border-earth-800 rounded-lg p-8">
+        <h2 className="text-2xl font-bold text-earth-900 dark:text-earth-100 mb-4">
           Welcome to Farm Commons MVP
         </h2>
-        <div className="prose text-earth-700">
+        <div className="prose dark:prose-invert text-earth-700 dark:text-earth-300">
           <p className="mb-4">
             This is the initial MVP (Minimum Viable Product) showcasing Phase 1 features:
           </p>
@@ -106,7 +106,7 @@ export default function DashboardPage() {
             <li><strong>Scheduling:</strong> Daily work schedules and field assignments</li>
             <li><strong>Time Tracking:</strong> Clock in/out, hours worked, compliance tracking</li>
           </ul>
-          <p className="text-sm mt-6 pt-6 border-t border-earth-300">
+          <p className="text-sm mt-6 pt-6 border-t border-earth-300 dark:border-earth-700">
             Built for farmworkers and small-scale farmers, not corporations. <br />
             Community owned · AGPL-3.0 Licensed · Open Source
           </p>
