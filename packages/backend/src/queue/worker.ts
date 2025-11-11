@@ -2,8 +2,8 @@
 // This module handles the actual processing of background jobs
 
 import { Worker, Job } from 'bullmq';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
 import pino from 'pino';
 import { redisConnection, QueueNames, QueueName } from './config.js';
 import type {
@@ -58,7 +58,7 @@ async function processNotificationJob(
       message: `Notification sent to recipient ${recipientId}`,
       data: { type, recipientId },
     };
-  } catch (error) {
+  } catch {
     logger.error({ jobId: job.id, error }, 'Notification job failed');
     return {
       success: false,
@@ -94,7 +94,7 @@ async function processDataCleanupJob(
       message: `Data cleanup completed for type: ${type}`,
       data: { type, olderThanDays, dryRun, recordsProcessed: 0 },
     };
-  } catch (error) {
+  } catch {
     logger.error({ jobId: job.id, error }, 'Data cleanup job failed');
     return {
       success: false,
@@ -127,7 +127,7 @@ async function processExportJob(
       message: `Export completed for ${type}`,
       data: { type, format, farmId, userId, fileUrl: '/exports/placeholder.csv' },
     };
-  } catch (error) {
+  } catch {
     logger.error({ jobId: job.id, error }, 'Export job failed');
     return {
       success: false,
@@ -158,7 +158,7 @@ async function processEmailJob(job: TypedJob<EmailJobData>): Promise<JobResult> 
       message: `Email sent to ${to}`,
       data: { to, subject, template },
     };
-  } catch (error) {
+  } catch {
     logger.error({ jobId: job.id, error }, 'Email job failed');
     return {
       success: false,
@@ -193,7 +193,7 @@ function createWorker(name: QueueName): Worker {
 
   const worker = new Worker(name, processor, {
     connection: redisConnection,
-    concurrency: parseInt(process.env.WORKER_CONCURRENCY || '5'),
+    concurrency: Number.parseInt(process.env.WORKER_CONCURRENCY || '5'),
     limiter: {
       max: 10, // Maximum number of jobs processed
       duration: 1000, // per 1 second
@@ -274,7 +274,7 @@ export async function gracefulShutdown(): Promise<void> {
   try {
     await stopWorkers();
     logger.info('Graceful shutdown completed');
-  } catch (error) {
+  } catch {
     logger.error({ error }, 'Error during graceful shutdown');
     throw error;
   }
