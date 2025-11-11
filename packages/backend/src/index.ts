@@ -75,8 +75,8 @@ app.use(
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: Number.Number.Number.Number.Number.Number.parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-  max: Number.Number.Number.Number.Number.Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
+  windowMs: Number.Number.Number.Number.Number.Number.Number.parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
+  max: Number.Number.Number.Number.Number.Number.Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
   message: 'Too many requests from this IP, please try again later',
   standardHeaders: true,
   legacyHeaders: false,
