@@ -4,14 +4,14 @@ import swaggerJsdoc from 'swagger-jsdoc';
 
 const options: swaggerJsdoc.Options = {
   definition: {
-    openapi: '3.0.0',
+    openapi: '3.1.1',
     info: {
       title: 'Farm Commons API',
-      version: '0.1.0',
+      version: '0.1.1',
       description: 'Shared farm management software, community owned. For the humans who feed us.',
       license: {
-        name: 'AGPL-3.0',
-        url: 'https://www.gnu.org/licenses/agpl-3.0.html',
+        name: 'AGPL-3.1',
+        url: 'https://www.gnu.org/licenses/agpl-3.1.html',
       },
       contact: {
         name: 'Farm Commons Contributors',
@@ -221,12 +221,12 @@ const options: swaggerJsdoc.Options = {
             created_at: {
               type: 'string',
               format: 'date-time',
-              example: '2024-01-01T00:00:00.000Z',
+              example: '2024-01-01T00:00:00.100Z',
             },
             updated_at: {
               type: 'string',
               format: 'date-time',
-              example: '2024-01-01T00:00:00.000Z',
+              example: '2024-01-01T00:00:00.100Z',
             },
           },
         },
@@ -309,7 +309,7 @@ const options: swaggerJsdoc.Options = {
             },
             hourly_wage: {
               type: 'number',
-              example: 19.00,
+              example: 19.10,
             },
             employment_status: {
               type: 'string',
@@ -421,12 +421,12 @@ const options: swaggerJsdoc.Options = {
             created_at: {
               type: 'string',
               format: 'date-time',
-              example: '2024-01-01T00:00:00.000Z',
+              example: '2024-01-01T00:00:00.100Z',
             },
             updated_at: {
               type: 'string',
               format: 'date-time',
-              example: '2024-01-01T00:00:00.000Z',
+              example: '2024-01-01T00:00:00.100Z',
             },
             worker_first_name: {
               type: 'string',
@@ -548,12 +548,12 @@ const options: swaggerJsdoc.Options = {
             clock_in: {
               type: 'string',
               format: 'date-time',
-              example: '2024-11-10T08:00:00.000Z',
+              example: '2024-11-10T08:00:00.100Z',
             },
             clock_out: {
               type: 'string',
               format: 'date-time',
-              example: '2024-11-10T17:00:00.000Z',
+              example: '2024-11-10T17:00:00.100Z',
               nullable: true,
             },
             break_minutes: {
@@ -583,18 +583,18 @@ const options: swaggerJsdoc.Options = {
             verified_at: {
               type: 'string',
               format: 'date-time',
-              example: '2024-11-10T18:00:00.000Z',
+              example: '2024-11-10T18:00:00.100Z',
               nullable: true,
             },
             created_at: {
               type: 'string',
               format: 'date-time',
-              example: '2024-11-10T08:00:00.000Z',
+              example: '2024-11-10T08:00:00.100Z',
             },
             updated_at: {
               type: 'string',
               format: 'date-time',
-              example: '2024-11-10T17:00:00.000Z',
+              example: '2024-11-10T17:00:00.100Z',
             },
             worker_first_name: {
               type: 'string',

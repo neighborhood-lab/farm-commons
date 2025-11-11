@@ -1,12 +1,13 @@
 // Scheduling routes
 
-import express from 'express';
+import express, { type Router } from 'express';
 import { createScheduleSchema, updateScheduleSchema, dateRangeSchema } from '@farm-commons/shared';
 import db from '../db/connection.js';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { auditLog } from '../middleware/auditLog.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.use(authenticateToken);
 
@@ -37,7 +38,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: schedules,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -54,23 +55,20 @@ router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
         worker_id: workerId,
       })
       .leftJoin('fields', 'schedules.field_id', 'fields.id')
-      .select(
-        'schedules.*',
-        'fields.name as field_name'
-      )
+      .select('schedules.*', 'fields.name as field_name')
       .orderBy('schedules.scheduled_date', 'asc');
 
     res.json({
       success: true,
       data: schedules,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
 
 // Create schedule
-router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
+router.post('/', requireRole('admin', 'manager'), auditLog('create', 'schedule'), async (req: AuthRequest, res, next) => {
   try {
     const data = createScheduleSchema.parse(req.body);
     const farmId = req.user?.farm_id;
@@ -86,13 +84,13 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
       success: true,
       data: schedule,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
 
 // Update schedule
-router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
+router.put('/:id', requireRole('admin', 'manager'), auditLog('update', 'schedule'), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const data = updateScheduleSchema.parse(req.body);
@@ -114,20 +112,18 @@ router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res
       success: true,
       data: schedule,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
 
 // Delete schedule
-router.delete('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
+router.delete('/:id', requireRole('admin', 'manager'), auditLog('delete', 'schedule'), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const farmId = req.user?.farm_id;
 
-    const deleted = await db('schedules')
-      .where({ id, farm_id: farmId })
-      .delete();
+    const deleted = await db('schedules').where({ id, farm_id: farmId }).delete();
 
     if (!deleted) {
       throw new AppError('Schedule not found', 404);
@@ -137,7 +133,7 @@ router.delete('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, 
       success: true,
       message: 'Schedule deleted successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
