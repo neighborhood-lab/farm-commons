@@ -1,8 +1,8 @@
 // Unit tests for File Upload Service
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import fs from 'fs/promises';
-import path from 'path';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import {
   UploadService,
   LocalStorageProvider,

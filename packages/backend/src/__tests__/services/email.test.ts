@@ -33,6 +33,7 @@ describe('EmailService', () => {
       SMTP_PORT: '587',
       SMTP_SECURE: 'false',
       SMTP_USER: 'test@example.com',
+      // eslint-disable-next-line sonarjs/no-hardcoded-passwords
       SMTP_PASSWORD: 'testpassword',
       SMTP_FROM: 'noreply@farmcommons.test',
     };

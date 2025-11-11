@@ -16,7 +16,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@farm-commons/shared": "workspace:*",
+    "@farm-commons/shared": "*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^6.29.0",
