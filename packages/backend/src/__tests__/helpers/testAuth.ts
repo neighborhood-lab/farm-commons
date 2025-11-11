@@ -25,10 +25,10 @@ export async function hashTestPassword(password: string): Promise<string> {
  */
 export function createTestUser(overrides: Partial<AuthUser> = {}): AuthUser {
   return {
-    id: 1,
+    id: '1',
     email: 'test@example.com',
     role: 'manager',
-    farm_id: 1,
+    farm_id: '1',
     ...overrides,
   };
 }
@@ -45,23 +45,23 @@ export function getAuthHeader(token: string): { authorization: string } {
 /**
  * Create test tokens for different roles
  */
-export function createTestTokens(farmId: number = 1) {
+export function createTestTokens(farmId: string = '1') {
   const adminUser: AuthUser = {
-    id: 1,
+    id: '1',
     email: 'admin@test.com',
     role: 'admin',
     farm_id: farmId,
   };
 
   const managerUser: AuthUser = {
-    id: 2,
+    id: '2',
     email: 'manager@test.com',
     role: 'manager',
     farm_id: farmId,
   };
 
   const workerUser: AuthUser = {
-    id: 3,
+    id: '3',
     email: 'worker@test.com',
     role: 'worker',
     farm_id: farmId,

@@ -43,8 +43,8 @@ router.get('/', cache({ ttl: 120 }), async (req: AuthRequest, res, next) => {
 router.get('/upcoming', async (req: AuthRequest, res, next) => {
   try {
     const farmId = req.user?.farm_id;
-    const daysAhead = Number.Number.Number.Number.parseInt(req.query.days as string) || 7;
-    const limit = Number.Number.Number.Number.parseInt(req.query.limit as string) || 50;
+    const daysAhead = Number.parseInt(req.query.days as string) || 7;
+    const limit = Number.parseInt(req.query.limit as string) || 50;
 
     const schedules = await getUpcomingSchedules(farmId!, daysAhead, limit);
 

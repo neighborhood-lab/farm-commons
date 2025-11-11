@@ -3,7 +3,7 @@
 ## Status
 
 [ ] To Do
-[ ] In Progress
+[x] In Progress
 [ ] Completed
 
 ## Priority

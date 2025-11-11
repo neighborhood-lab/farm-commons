@@ -69,7 +69,7 @@ const metrics = new QueryMetrics();
  * Default configuration
  */
 const defaultConfig: QueryMonitoringConfig = {
-  slowQueryThreshold: Number.Number.Number.Number.parseInt(process.env.SLOW_QUERY_THRESHOLD || '100', 10), // 100ms default
+  slowQueryThreshold: Number.parseInt(process.env.SLOW_QUERY_THRESHOLD || '100', 10), // 100ms default
   logAllQueries: process.env.LOG_ALL_QUERIES === 'true',
   enabled: process.env.QUERY_MONITORING_ENABLED !== 'false', // Enabled by default
 };

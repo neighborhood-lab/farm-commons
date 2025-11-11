@@ -234,7 +234,7 @@ router.get('/:id/deliveries', async (req: AuthRequest, res, next) => {
       throw new AppError('Webhook not found', 404);
     }
 
-    const limit = Number.Number.Number.parseInt(req.query.limit as string) || 50;
+    const limit = Number.Number.parseInt(req.query.limit as string) || 50;
     const deliveries = await getDeliveryHistory(id, limit);
 
     res.json({
