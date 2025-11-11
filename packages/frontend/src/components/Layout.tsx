@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { Users, Calendar, Clock, Home, LogOut, BarChart3 } from 'lucide-react';
+import { Users, Calendar, Clock, Home, LogOut, BarChart3, MapPin } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../lib/store';
 import ThemeToggle from './ThemeToggle';
 
@@ -16,15 +16,13 @@ export default function Layout() {
   };
 
   const navigation = [
-    { name: 'Dashboard', href: '/', icon: Home },
-    { name: 'Workers', href: '/workers', icon: Users },
-    { name: 'Fields', href: '/fields', icon: MapPin },
-    { name: 'Schedule', href: '/schedule', icon: Calendar },
-    { name: 'Time Tracking', href: '/time-tracking', icon: Clock },
-    { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+    { name: t('navigation.dashboard'), href: '/', icon: Home },
+    { name: t('navigation.workers'), href: '/workers', icon: Users },
+    { name: t('navigation.fields'), href: '/fields', icon: MapPin },
+    { name: t('navigation.schedule'), href: '/schedule', icon: Calendar },
+    { name: t('navigation.timeTracking'), href: '/time-tracking', icon: Clock },
+    { name: t('navigation.analytics'), href: '/analytics', icon: BarChart3 },
   ];
-
-  const closeMobileMenu = () => setMobileMenuOpen(false);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -34,9 +32,7 @@ export default function Layout() {
           {/* Logo */}
           <div className="p-6 border-b border-earth-700 dark:border-earth-800">
             <h1 className="text-2xl font-bold">🚜 Farm Commons</h1>
-            <p className="text-earth-300 dark:text-earth-400 text-sm mt-1">
-              Community owned
-            </p>
+            <p className="text-earth-300 dark:text-earth-400 text-sm mt-1">Community owned</p>
           </div>
 
           {/* Navigation */}
@@ -49,7 +45,6 @@ export default function Layout() {
                 <Link
                   key={item.name}
                   to={item.href}
-                  onClick={closeMobileMenu}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors touch-manipulation min-h-[44px] ${
                     isActive
                       ? 'bg-earth-700 dark:bg-earth-800 text-white'
@@ -68,7 +63,9 @@ export default function Layout() {
             <div className="flex items-center justify-between mb-3">
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{user?.email}</p>
-                <p className="text-xs text-earth-400 dark:text-earth-500 capitalize">{user?.role}</p>
+                <p className="text-xs text-earth-400 dark:text-earth-500 capitalize">
+                  {user?.role}
+                </p>
               </div>
               <button
                 onClick={handleLogout}

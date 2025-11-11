@@ -54,7 +54,7 @@ describe('Layout', () => {
   });
 
   it('highlights active navigation item based on current route', () => {
-    const { rerender } = renderWithProviders(<Layout />);
+    renderWithProviders(<Layout />);
 
     // Dashboard should be active (route is '/')
     const dashboardLink = screen.getByRole('link', { name: /dashboard/i });
@@ -105,7 +105,10 @@ describe('Layout', () => {
     expect(screen.getByRole('link', { name: /dashboard/i })).toHaveAttribute('href', '/');
     expect(screen.getByRole('link', { name: /workers/i })).toHaveAttribute('href', '/workers');
     expect(screen.getByRole('link', { name: /schedule/i })).toHaveAttribute('href', '/schedule');
-    expect(screen.getByRole('link', { name: /time tracking/i })).toHaveAttribute('href', '/time-tracking');
+    expect(screen.getByRole('link', { name: /time tracking/i })).toHaveAttribute(
+      'href',
+      '/time-tracking'
+    );
   });
 
   it('capitalizes user role in display', () => {
@@ -141,7 +144,9 @@ describe('Layout', () => {
   it('has fixed sidebar with correct positioning', () => {
     renderWithProviders(<Layout />);
 
-    const sidebar = screen.getByRole('heading', { name: /farm commons/i }).closest('div')?.parentElement;
+    const sidebar = screen
+      .getByRole('heading', { name: /farm commons/i })
+      .closest('div')?.parentElement;
     expect(sidebar?.className).toContain('fixed');
   });
 
@@ -169,8 +174,9 @@ describe('Layout', () => {
   it('navigation items have consistent spacing', () => {
     renderWithProviders(<Layout />);
 
-    const nav = screen.getByRole('navigation') ||
-                screen.getByRole('link', { name: /dashboard/i }).closest('nav');
+    const nav =
+      screen.getByRole('navigation') ||
+      screen.getByRole('link', { name: /dashboard/i }).closest('nav');
     expect(nav?.className || nav?.parentElement?.className).toContain('space-y-2');
   });
 

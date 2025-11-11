@@ -3,7 +3,14 @@ import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
 
 import { schema } from './schema';
 import migrations from './migrations';
-import * as models from './models';
+import User from './models/User';
+import Farm from './models/Farm';
+import Worker from './models/Worker';
+import Field from './models/Field';
+import Schedule from './models/Schedule';
+import TimeEntry from './models/TimeEntry';
+import Certification from './models/Certification';
+import SyncQueue from './models/SyncQueue';
 
 /**
  * Database Configuration and Initialization
@@ -25,16 +32,7 @@ const adapter = new SQLiteAdapter({
 // Initialize the database
 export const database = new Database({
   adapter,
-  modelClasses: [
-    models.User,
-    models.Farm,
-    models.Worker,
-    models.Field,
-    models.Schedule,
-    models.TimeEntry,
-    models.Certification,
-    models.SyncQueue,
-  ],
+  modelClasses: [User, Farm, Worker, Field, Schedule, TimeEntry, Certification, SyncQueue],
 });
 
 /**
@@ -77,14 +75,17 @@ export async function getDatabaseStats() {
  * Export commonly used collections for easy access
  */
 export const collections = {
-  users: database.get<models.User>('users'),
-  farms: database.get<models.Farm>('farms'),
-  workers: database.get<models.Worker>('workers'),
-  fields: database.get<models.Field>('fields'),
-  schedules: database.get<models.Schedule>('schedules'),
-  timeEntries: database.get<models.TimeEntry>('time_entries'),
-  certifications: database.get<models.Certification>('certifications'),
-  syncQueue: database.get<models.SyncQueue>('sync_queue'),
+  users: database.get<User>('users'),
+  farms: database.get<Farm>('farms'),
+  workers: database.get<Worker>('workers'),
+  fields: database.get<Field>('fields'),
+  schedules: database.get<Schedule>('schedules'),
+  timeEntries: database.get<TimeEntry>('time_entries'),
+  certifications: database.get<Certification>('certifications'),
+  syncQueue: database.get<SyncQueue>('sync_queue'),
 };
+
+// Re-export React provider components from index.tsx
+export { DatabaseProvider, useDatabase } from './provider';
 
 export default database;

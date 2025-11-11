@@ -13,7 +13,7 @@
       "@farm-commons/shared": ["../shared/src"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/**/*.json"],
   "exclude": [
     "node_modules",
     "dist",
@@ -22,8 +22,7 @@
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx",
-    "src/test/**/*",
-    "src/locales/**/*"
+    "src/test/**/*"
   ],
   "references": [{ "path": "../shared" }]
 }

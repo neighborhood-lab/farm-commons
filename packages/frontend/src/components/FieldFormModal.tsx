@@ -99,11 +99,7 @@ export default function FieldFormModal({ field, onClose }: FieldFormModalProps) 
   }, [selectedLocation, setValue]);
 
   const onSubmit = async (data: FieldFormData) => {
-    if (isEditing) {
-      await updateMutation.mutateAsync(data);
-    } else {
-      await createMutation.mutateAsync(data);
-    }
+    await (isEditing ? updateMutation.mutateAsync(data) : createMutation.mutateAsync(data));
   };
 
   const mapCenter = selectedLocation || { lat: 39.8283, lng: -98.5795 }; // Default to center of US
@@ -116,10 +112,7 @@ export default function FieldFormModal({ field, onClose }: FieldFormModalProps) 
           <h2 className="text-2xl font-bold text-gray-900">
             {isEditing ? 'Edit Field' : 'Add New Field'}
           </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
-          >
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 transition-colors">
             <X size={24} />
           </button>
         </div>
@@ -129,24 +122,18 @@ export default function FieldFormModal({ field, onClose }: FieldFormModalProps) 
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Field Name *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Field Name *</label>
               <input
                 {...register('name')}
                 type="text"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-earth-500 focus:border-transparent"
                 placeholder="North Field"
               />
-              {errors.name && (
-                <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-              )}
+              {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Size (acres) *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Size (acres) *</label>
               <input
                 {...register('size_acres', { valueAsNumber: true })}
                 type="number"
@@ -162,9 +149,7 @@ export default function FieldFormModal({ field, onClose }: FieldFormModalProps) 
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Current Crop
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Current Crop</label>
               <input
                 {...register('current_crop')}
                 type="text"
@@ -174,9 +159,7 @@ export default function FieldFormModal({ field, onClose }: FieldFormModalProps) 
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Soil Type
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Soil Type</label>
               <input
                 {...register('soil_type')}
                 type="text"
@@ -192,9 +175,7 @@ export default function FieldFormModal({ field, onClose }: FieldFormModalProps) 
               <MapPin size={16} className="inline mr-1" />
               GPS Location
             </label>
-            <p className="text-sm text-gray-600 mb-2">
-              Click on the map to set the field location
-            </p>
+            <p className="text-sm text-gray-600 mb-2">Click on the map to set the field location</p>
             {selectedLocation && (
               <p className="text-sm text-gray-700 mb-2">
                 Selected: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
@@ -247,8 +228,8 @@ export default function FieldFormModal({ field, onClose }: FieldFormModalProps) 
               {createMutation.isPending || updateMutation.isPending
                 ? 'Saving...'
                 : isEditing
-                ? 'Update Field'
-                : 'Create Field'}
+                  ? 'Update Field'
+                  : 'Create Field'}
             </button>
           </div>
         </form>

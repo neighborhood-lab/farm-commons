@@ -1,5 +1,3 @@
-/* eslint-env browser */
-/* global setInterval, clearInterval, alert */
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Clock, Play, Square, User } from 'lucide-react';
