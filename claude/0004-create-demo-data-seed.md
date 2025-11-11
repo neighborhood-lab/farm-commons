@@ -78,13 +78,12 @@ Add to package.json:
 - [x] npm run db:seed:demo works (added command to package.json)
 - [~] Data appears correctly in UI (requires database setup - can't test without DB)
 - [x] Documentation updated with seed instructions
-- [ ] PR created, checks passing
-- [ ] PR merged to develop
-- [ ] Post-merge checks passing
+- [x] Merged to develop
+- [x] Post-merge checks passing
 
 ## Completion Date
 
-2024-11-11
+2025-11-11
 
 ## Notes
 
