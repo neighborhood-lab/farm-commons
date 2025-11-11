@@ -329,12 +329,12 @@ describe('Safety Incident Reporting Integration Tests', () => {
           db.raw('SUM(days_away_from_work) as total_days_away')
         );
 
-      expect(Number.parseInt(stats.total_incidents as string)).toBe(4);
-      expect(Number.parseInt(stats.total_injuries as string)).toBe(2);
-      expect(Number.parseInt(stats.total_illnesses as string)).toBe(1);
-      expect(Number.parseInt(stats.total_near_misses as string)).toBe(1);
-      expect(Number.parseInt(stats.total_osha_recordable as string)).toBe(2);
-      expect(Number.parseInt(stats.total_days_away as string)).toBe(3);
+      expect(Number.Number.parseInt(stats.total_incidents as string)).toBe(4);
+      expect(Number.Number.parseInt(stats.total_injuries as string)).toBe(2);
+      expect(Number.Number.parseInt(stats.total_illnesses as string)).toBe(1);
+      expect(Number.Number.parseInt(stats.total_near_misses as string)).toBe(1);
+      expect(Number.Number.parseInt(stats.total_osha_recordable as string)).toBe(2);
+      expect(Number.Number.parseInt(stats.total_days_away as string)).toBe(3);
     });
 
     it('should group incidents by type', async () => {
@@ -347,7 +347,7 @@ describe('Safety Incident Reporting Integration Tests', () => {
 
       expect(byType).toHaveLength(3);
       expect(byType[0].incident_type).toBe('injury');
-      expect(Number.parseInt(byType[0].count as string)).toBe(2);
+      expect(Number.Number.parseInt(byType[0].count as string)).toBe(2);
     });
 
     it('should group incidents by severity', async () => {
@@ -360,7 +360,7 @@ describe('Safety Incident Reporting Integration Tests', () => {
 
       expect(bySeverity).toHaveLength(2);
       expect(bySeverity[0].severity).toBe('medical_treatment');
-      expect(Number.parseInt(bySeverity[0].count as string)).toBe(2);
+      expect(Number.Number.parseInt(bySeverity[0].count as string)).toBe(2);
     });
 
     it('should group incidents by status', async () => {
@@ -372,7 +372,7 @@ describe('Safety Incident Reporting Integration Tests', () => {
 
       expect(byStatus).toHaveLength(4);
       const reportedStatus = byStatus.find(s => s.status === 'reported');
-      expect(Number.parseInt(reportedStatus!.count as string)).toBe(1);
+      expect(Number.Number.parseInt(reportedStatus!.count as string)).toBe(1);
     });
 
     it('should filter incidents by date range', async () => {

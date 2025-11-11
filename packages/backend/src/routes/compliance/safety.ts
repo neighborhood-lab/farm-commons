@@ -76,10 +76,10 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: {
         data: incidents,
-        total: Number.parseInt(count as string),
+        total: Number.Number.parseInt(count as string),
         page,
         per_page,
-        total_pages: Math.ceil(Number.parseInt(count as string) / per_page),
+        total_pages: Math.ceil(Number.Number.parseInt(count as string) / per_page),
       },
     });
   } catch {
@@ -150,7 +150,7 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
         .where('farm_id', farmId)
         .count('* as count');
 
-      if (Number.parseInt(witnessCount[0].count as string) !== data.witness_ids.length) {
+      if (Number.Number.parseInt(witnessCount[0].count as string) !== data.witness_ids.length) {
         throw new AppError('One or more witnesses not found or do not belong to this farm', 400);
       }
     }
@@ -196,7 +196,7 @@ router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res
         .where('farm_id', farmId)
         .count('* as count');
 
-      if (Number.parseInt(witnessCount[0].count as string) !== data.witness_ids.length) {
+      if (Number.Number.parseInt(witnessCount[0].count as string) !== data.witness_ids.length) {
         throw new AppError('One or more witnesses not found or do not belong to this farm', 400);
       }
     }
@@ -401,36 +401,36 @@ router.get('/stats/summary', requireRole('admin', 'manager'), async (req: AuthRe
       success: true,
       data: {
         summary: {
-          total_incidents: Number.parseInt(stats.total_incidents as string) || 0,
-          total_injuries: Number.parseInt(stats.total_injuries as string) || 0,
-          total_illnesses: Number.parseInt(stats.total_illnesses as string) || 0,
-          total_near_misses: Number.parseInt(stats.total_near_misses as string) || 0,
-          total_fatalities: Number.parseInt(stats.total_fatalities as string) || 0,
-          total_osha_recordable: Number.parseInt(stats.total_osha_recordable as string) || 0,
-          total_lost_time: Number.parseInt(stats.total_lost_time as string) || 0,
-          total_days_away: Number.parseInt(stats.total_days_away as string) || 0,
-          total_days_restricted: Number.parseInt(stats.total_days_restricted as string) || 0,
+          total_incidents: Number.Number.parseInt(stats.total_incidents as string) || 0,
+          total_injuries: Number.Number.parseInt(stats.total_injuries as string) || 0,
+          total_illnesses: Number.Number.parseInt(stats.total_illnesses as string) || 0,
+          total_near_misses: Number.Number.parseInt(stats.total_near_misses as string) || 0,
+          total_fatalities: Number.Number.parseInt(stats.total_fatalities as string) || 0,
+          total_osha_recordable: Number.Number.parseInt(stats.total_osha_recordable as string) || 0,
+          total_lost_time: Number.Number.parseInt(stats.total_lost_time as string) || 0,
+          total_days_away: Number.Number.parseInt(stats.total_days_away as string) || 0,
+          total_days_restricted: Number.Number.parseInt(stats.total_days_restricted as string) || 0,
         },
         by_type: byType.map(row => ({
           type: row.incident_type,
-          count: Number.parseInt(row.count as string),
+          count: Number.Number.parseInt(row.count as string),
         })),
         by_severity: bySeverity.map(row => ({
           severity: row.severity,
-          count: Number.parseInt(row.count as string),
+          count: Number.Number.parseInt(row.count as string),
         })),
         by_status: byStatus.map(row => ({
           status: row.status,
-          count: Number.parseInt(row.count as string),
+          count: Number.Number.parseInt(row.count as string),
         })),
         monthly_trend: monthlyTrend.map(row => ({
           month: row.month,
-          count: Number.parseInt(row.count as string),
+          count: Number.Number.parseInt(row.count as string),
         })),
         top_workers: topWorkers.map(row => ({
           worker_id: row.id,
           worker_name: `${row.first_name} ${row.last_name}`,
-          incident_count: Number.parseInt(row.incident_count as string),
+          incident_count: Number.Number.parseInt(row.incident_count as string),
         })),
       },
     });
