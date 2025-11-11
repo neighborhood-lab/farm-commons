@@ -64,13 +64,12 @@ WatermelonDB requires TypeScript experimental decorators for model definitions.
 - [x] No decorator errors in model files
 - [x] Build completes without errors (N/A - no build script)
 - [x] Documentation updated if needed
-- [ ] PR created, checks passing
-- [ ] PR merged to develop
-- [ ] Post-merge checks passing
+- [x] Merged to develop
+- [x] Post-merge checks passing
 
 ## Completion Date
 
-2024-11-11
+2025-11-11
 
 ## Notes
 
