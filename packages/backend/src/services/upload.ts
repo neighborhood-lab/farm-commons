@@ -4,7 +4,9 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { fileURLToPath } from 'node:url';
+import pino from 'pino';
+
+const logger = pino();
 
 // Allowed file types for uploads
 export const ALLOWED_MIME_TYPES = {
@@ -91,7 +93,7 @@ export class LocalStorageProvider implements StorageProvider {
       await fs.unlink(filepath);
     } catch (error) {
       // File might not exist, log but don't throw
-      console.warn(`Failed to delete file ${filename}:`, error);
+      logger.warn(`Failed to delete file ${filename}:`, error);
     }
   }
 
@@ -158,14 +160,14 @@ export class S3StorageProvider implements StorageProvider {
     );
   }
 
-  async delete(filename: string): Promise<void> {
+  async delete(_filename: string): Promise<void> {
     // Placeholder for S3 delete implementation
     throw new Error(
       'S3 storage provider not fully implemented. Install @aws-sdk/client-s3 and implement.'
     );
   }
 
-  async getSignedUrl(filename: string, expiresIn: number = 3600): Promise<string> {
+  async getSignedUrl(_filename: string, _expiresIn: number = 3600): Promise<string> {
     // Placeholder for S3 signed URL generation
     throw new Error(
       'S3 storage provider not fully implemented. Install @aws-sdk/client-s3 and implement.'
