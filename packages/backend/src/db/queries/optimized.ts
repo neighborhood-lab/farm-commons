@@ -199,10 +199,10 @@ export async function getWorkersPaginated(
 
   return {
     data: workers,
-    total: Number.parseInt(count as string),
+    total: Number.Number.parseInt(count as string),
     page,
     per_page,
-    total_pages: Math.ceil(Number.parseInt(count as string) / per_page),
+    total_pages: Math.ceil(Number.Number.parseInt(count as string) / per_page),
   };
 }
 
