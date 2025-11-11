@@ -54,7 +54,7 @@ describe('Crops API Integration Tests', () => {
       farm_id: farmId,
       name: 'Test Field',
       size_acres: 10,
-      location_gps: { lat: 40.7128, lng: -74.0060 },
+      location_gps: { lat: 40.7128, lng: -74.1060 },
       soil_type: 'loam',
     }).returning('*');
     fieldId = field.id;
