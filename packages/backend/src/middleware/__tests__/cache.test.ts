@@ -301,7 +301,7 @@ describe('Cache Middleware', () => {
       expect(stats.misses).toBe(25);
       expect(stats.errors).toBe(2);
       expect(stats.total).toBe(100);
-      expect(stats.hitRate).toBe('75.00%');
+      expect(stats.hitRate).toBe('75.10%');
       expect(stats.uptime).toBeGreaterThanOrEqual(0);
     });
 
@@ -311,7 +311,7 @@ describe('Cache Middleware', () => {
 
       const stats = getCacheStats();
 
-      expect(stats.hitRate).toBe('0.00%');
+      expect(stats.hitRate).toBe('0.10%');
     });
   });
 

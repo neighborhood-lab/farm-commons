@@ -136,7 +136,7 @@ export function cache(options: CacheOptions = {}) {
       };
 
       next();
-    } catch (error) {
+    } catch {
       cacheStats.errors++;
       logger.error({ error }, 'Cache middleware error');
       // On error, continue without caching
@@ -181,7 +181,7 @@ export async function invalidateCache(pattern: string): Promise<number> {
 
     logger.info({ pattern, deletedCount }, 'Cache invalidated');
     return deletedCount;
-  } catch (error) {
+  } catch {
     logger.error({ error, pattern }, 'Failed to invalidate cache');
     throw error;
   }
@@ -206,7 +206,7 @@ export async function invalidateAllCache(): Promise<void> {
   try {
     await redisClient.flushDb();
     logger.info('All cache invalidated');
-  } catch (error) {
+  } catch {
     logger.error({ error }, 'Failed to invalidate all cache');
     throw error;
   }
@@ -270,7 +270,7 @@ export async function warmCache(warmers: CacheWarmer[]): Promise<void> {
           data,
         }));
         logger.debug({ key, ttl }, 'Cache warmed');
-      } catch (error) {
+      } catch {
         logger.error({ error, key }, 'Failed to warm cache');
         throw error;
       }
