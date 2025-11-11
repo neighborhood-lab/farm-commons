@@ -104,7 +104,7 @@ export async function archiveOldTimeEntries(job: Job): Promise<void> {
       cutoffDate: oneYearAgo.toISOString(),
       duration,
     } as any;
-  } catch (error) {
+  } catch {
     logger.error({ error }, 'Failed to archive old time entries');
     throw error;
   }
@@ -149,7 +149,7 @@ export async function cleanupExpiredSessions(job: Job): Promise<void> {
           // Set expiration for sessions without TTL (7 days)
           await redisClient.expire(key, 7 * 24 * 60 * 60);
         }
-      } catch (error) {
+      } catch {
         errorCount++;
         logger.warn({ key, error }, 'Error checking session key');
       }
@@ -179,7 +179,7 @@ export async function cleanupExpiredSessions(job: Job): Promise<void> {
       errorCount,
       duration,
     } as any;
-  } catch (error) {
+  } catch {
     logger.error({ error }, 'Failed to cleanup expired sessions');
     throw error;
   } finally {
@@ -310,7 +310,7 @@ export async function aggregateHistoricalStats(job: Job): Promise<void> {
       fieldStatsCount: fieldUtilization.length,
       duration,
     } as any;
-  } catch (error) {
+  } catch {
     logger.error({ error }, 'Failed to aggregate historical statistics');
     throw error;
   }
