@@ -43,7 +43,7 @@ describe('Weather Service', () => {
   describe('getCurrentWeather', () => {
     const mockCurrentWeather: WeatherData = {
       lat: 40.7128,
-      lon: -74.006,
+      lon: -74.106,
       timezone: 'America/New_York',
       timezone_offset: -18000,
       current: {
@@ -80,16 +80,16 @@ describe('Weather Service', () => {
         json: async () => mockCurrentWeather,
       });
 
-      const result = await weatherService.getCurrentWeather(40.7128, -74.006);
+      const result = await weatherService.getCurrentWeather(40.7128, -74.106);
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('api.openweathermap.org/data/3.0/onecall')
+        expect.stringContaining('api.openweathermap.org/data/3.1/onecall')
       );
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('lat=40.7128')
       );
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('lon=-74.006')
+        expect.stringContaining('lon=-74.106')
       );
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('appid=test-api-key')
@@ -106,7 +106,7 @@ describe('Weather Service', () => {
       mockRedis.connect.mockResolvedValue(undefined);
       mockRedis.get.mockResolvedValue(cachedData);
 
-      const result = await weatherService.getCurrentWeather(40.7128, -74.006);
+      const result = await weatherService.getCurrentWeather(40.7128, -74.106);
 
       expect(mockFetch).not.toHaveBeenCalled();
       expect(result).toEqual(mockCurrentWeather.current);
@@ -118,7 +118,7 @@ describe('Weather Service', () => {
       mockRedis.get.mockResolvedValue(null);
 
       await expect(
-        weatherService.getCurrentWeather(40.7128, -74.006)
+        weatherService.getCurrentWeather(40.7128, -74.106)
       ).rejects.toThrow('OPENWEATHER_API_KEY is not configured');
     });
 
@@ -133,7 +133,7 @@ describe('Weather Service', () => {
       });
 
       await expect(
-        weatherService.getCurrentWeather(40.7128, -74.006)
+        weatherService.getCurrentWeather(40.7128, -74.106)
       ).rejects.toThrow('OpenWeatherMap API error');
     });
 
@@ -144,7 +144,7 @@ describe('Weather Service', () => {
         json: async () => mockCurrentWeather,
       });
 
-      const result = await weatherService.getCurrentWeather(40.7128, -74.006);
+      const result = await weatherService.getCurrentWeather(40.7128, -74.106);
 
       expect(result).toEqual(mockCurrentWeather.current);
     });
@@ -153,7 +153,7 @@ describe('Weather Service', () => {
   describe('getWeatherForecast', () => {
     const mockForecastData: WeatherData = {
       lat: 40.7128,
-      lon: -74.006,
+      lon: -74.106,
       timezone: 'America/New_York',
       timezone_offset: -18000,
       daily: [
@@ -215,7 +215,7 @@ describe('Weather Service', () => {
         json: async () => eightDayForecast,
       });
 
-      const result = await weatherService.getWeatherForecast(40.7128, -74.006);
+      const result = await weatherService.getWeatherForecast(40.7128, -74.106);
 
       expect(result).toHaveLength(7);
       expect(mockFetch).toHaveBeenCalledWith(
@@ -238,7 +238,7 @@ describe('Weather Service', () => {
         json: async () => fiveDayForecast,
       });
 
-      const result = await weatherService.getWeatherForecast(40.7128, -74.006, 3);
+      const result = await weatherService.getWeatherForecast(40.7128, -74.106, 3);
 
       expect(result).toHaveLength(3);
     });
@@ -258,7 +258,7 @@ describe('Weather Service', () => {
         json: async () => eightDayForecast,
       });
 
-      const result = await weatherService.getWeatherForecast(40.7128, -74.006, 10);
+      const result = await weatherService.getWeatherForecast(40.7128, -74.106, 10);
 
       expect(result).toHaveLength(8);
     });
@@ -267,7 +267,7 @@ describe('Weather Service', () => {
   describe('getWeatherAlerts', () => {
     const mockAlertsData: WeatherData = {
       lat: 40.7128,
-      lon: -74.006,
+      lon: -74.106,
       timezone: 'America/New_York',
       timezone_offset: -18000,
       alerts: [
@@ -291,7 +291,7 @@ describe('Weather Service', () => {
         json: async () => mockAlertsData,
       });
 
-      const result = await weatherService.getWeatherAlerts(40.7128, -74.006);
+      const result = await weatherService.getWeatherAlerts(40.7128, -74.106);
 
       expect(result).toHaveLength(1);
       expect(result[0].event).toBe('Winter Storm Warning');
@@ -308,13 +308,13 @@ describe('Weather Service', () => {
         ok: true,
         json: async () => ({
           lat: 40.7128,
-          lon: -74.006,
+          lon: -74.106,
           timezone: 'America/New_York',
           timezone_offset: -18000,
         }),
       });
 
-      const result = await weatherService.getWeatherAlerts(40.7128, -74.006);
+      const result = await weatherService.getWeatherAlerts(40.7128, -74.106);
 
       expect(result).toEqual([]);
     });
@@ -323,7 +323,7 @@ describe('Weather Service', () => {
   describe('getCompleteWeather', () => {
     const mockCompleteData: WeatherData = {
       lat: 40.7128,
-      lon: -74.006,
+      lon: -74.106,
       timezone: 'America/New_York',
       timezone_offset: -18000,
       current: {
@@ -381,7 +381,7 @@ describe('Weather Service', () => {
         json: async () => mockCompleteData,
       });
 
-      const result = await weatherService.getCompleteWeather(40.7128, -74.006);
+      const result = await weatherService.getCompleteWeather(40.7128, -74.106);
 
       expect(result.current).toBeDefined();
       expect(result.forecast).toHaveLength(7);
@@ -397,7 +397,7 @@ describe('Weather Service', () => {
       mockRedis.connect.mockResolvedValue(undefined);
       mockRedis.del.mockResolvedValue(1);
 
-      await weatherService.clearWeatherCache(40.7128, -74.006);
+      await weatherService.clearWeatherCache(40.7128, -74.106);
 
       expect(mockRedis.del).toHaveBeenCalledTimes(4);
     });
@@ -408,7 +408,7 @@ describe('Weather Service', () => {
 
       // Should not throw
       await expect(
-        weatherService.clearWeatherCache(40.7128, -74.006)
+        weatherService.clearWeatherCache(40.7128, -74.106)
       ).resolves.toBeUndefined();
     });
   });
@@ -425,7 +425,7 @@ describe('Weather Service', () => {
         json: async () => ({ lat: 0, lon: 0, timezone: 'UTC', timezone_offset: 0 }),
       });
 
-      await weatherService.getCurrentWeather(40.7128, -74.006);
+      await weatherService.getCurrentWeather(40.7128, -74.106);
 
       // Then close
       await weatherService.closeWeatherService();

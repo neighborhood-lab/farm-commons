@@ -26,7 +26,7 @@ vi.mock('../../db/connection.js', () => ({
           id: 'field-123',
           farm_id: 'farm-123',
           name: 'North Field',
-          location_gps: { lat: 40.7128, lon: -74.006 },
+          location_gps: { lat: 40.7128, lon: -74.106 },
         }),
       };
     }
@@ -69,18 +69,18 @@ describe('Weather Routes', () => {
 
       const response = await request(app)
         .get('/api/weather/current')
-        .query({ lat: 40.7128, lon: -74.006 });
+        .query({ lat: 40.7128, lon: -74.106 });
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toEqual(mockWeather);
-      expect(weatherService.getCurrentWeather).toHaveBeenCalledWith(40.7128, -74.006);
+      expect(weatherService.getCurrentWeather).toHaveBeenCalledWith(40.7128, -74.106);
     });
 
     it('should return 400 for invalid coordinates', async () => {
       const response = await request(app)
         .get('/api/weather/current')
-        .query({ lat: 'invalid', lon: -74.006 });
+        .query({ lat: 'invalid', lon: -74.106 });
 
       expect(response.status).toBe(400);
     });
@@ -98,7 +98,7 @@ describe('Weather Routes', () => {
 
       const response = await request(app)
         .get('/api/weather/current')
-        .query({ lat: 40.7128, lon: -74.006 });
+        .query({ lat: 40.7128, lon: -74.106 });
 
       expect(response.status).toBe(404);
     });
@@ -116,12 +116,12 @@ describe('Weather Routes', () => {
 
       const response = await request(app)
         .get('/api/weather/forecast')
-        .query({ lat: 40.7128, lon: -74.006 });
+        .query({ lat: 40.7128, lon: -74.106 });
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toHaveLength(7);
-      expect(weatherService.getWeatherForecast).toHaveBeenCalledWith(40.7128, -74.006, 7);
+      expect(weatherService.getWeatherForecast).toHaveBeenCalledWith(40.7128, -74.106, 7);
     });
 
     it('should respect custom days parameter', async () => {
@@ -134,11 +134,11 @@ describe('Weather Routes', () => {
 
       const response = await request(app)
         .get('/api/weather/forecast')
-        .query({ lat: 40.7128, lon: -74.006, days: 3 });
+        .query({ lat: 40.7128, lon: -74.106, days: 3 });
 
       expect(response.status).toBe(200);
       expect(response.body.data).toHaveLength(3);
-      expect(weatherService.getWeatherForecast).toHaveBeenCalledWith(40.7128, -74.006, 3);
+      expect(weatherService.getWeatherForecast).toHaveBeenCalledWith(40.7128, -74.106, 3);
     });
   });
 
@@ -159,7 +159,7 @@ describe('Weather Routes', () => {
 
       const response = await request(app)
         .get('/api/weather/alerts')
-        .query({ lat: 40.7128, lon: -74.006 });
+        .query({ lat: 40.7128, lon: -74.106 });
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -172,7 +172,7 @@ describe('Weather Routes', () => {
 
       const response = await request(app)
         .get('/api/weather/alerts')
-        .query({ lat: 40.7128, lon: -74.006 });
+        .query({ lat: 40.7128, lon: -74.106 });
 
       expect(response.status).toBe(200);
       expect(response.body.data).toEqual([]);
@@ -191,7 +191,7 @@ describe('Weather Routes', () => {
 
       const response = await request(app)
         .get('/api/weather/complete')
-        .query({ lat: 40.7128, lon: -74.006 });
+        .query({ lat: 40.7128, lon: -74.106 });
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -217,7 +217,7 @@ describe('Weather Routes', () => {
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.fieldId).toBe('field-123');
-      expect(response.body.data.coordinates).toEqual({ lat: 40.7128, lon: -74.006 });
+      expect(response.body.data.coordinates).toEqual({ lat: 40.7128, lon: -74.106 });
       expect(response.body.data.weather).toEqual(mockWeather);
     });
   });
@@ -248,7 +248,7 @@ describe('Weather Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.data.forecast).toHaveLength(3);
-      expect(weatherService.getWeatherForecast).toHaveBeenCalledWith(40.7128, -74.006, 3);
+      expect(weatherService.getWeatherForecast).toHaveBeenCalledWith(40.7128, -74.106, 3);
     });
   });
 
@@ -278,18 +278,18 @@ describe('Weather Routes', () => {
 
       const response = await request(app)
         .delete('/api/weather/cache')
-        .query({ lat: 40.7128, lon: -74.006 });
+        .query({ lat: 40.7128, lon: -74.106 });
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.message).toBe('Weather cache cleared successfully');
-      expect(weatherService.clearWeatherCache).toHaveBeenCalledWith(40.7128, -74.006);
+      expect(weatherService.clearWeatherCache).toHaveBeenCalledWith(40.7128, -74.106);
     });
 
     it('should return 400 for invalid coordinates', async () => {
       const response = await request(app)
         .delete('/api/weather/cache')
-        .query({ lat: 'invalid', lon: -74.006 });
+        .query({ lat: 'invalid', lon: -74.106 });
 
       expect(response.status).toBe(400);
     });

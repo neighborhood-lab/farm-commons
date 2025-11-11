@@ -100,7 +100,7 @@ export interface WeatherData {
 
 // Service configuration
 const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY || '';
-const OPENWEATHER_BASE_URL = 'https://api.openweathermap.org/data/3.0/onecall';
+const OPENWEATHER_BASE_URL = 'https://api.openweathermap.org/data/3.1/onecall';
 const CACHE_TTL = 3600; // 1 hour in seconds
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 
@@ -157,7 +157,7 @@ async function fetchWithCache<T>(
     await client.setEx(cacheKey, CACHE_TTL, JSON.stringify(data));
 
     return data;
-  } catch (error) {
+  } catch {
     logger.warn({ error, cacheKey }, 'Cache operation failed, fetching directly');
     // If cache fails, fetch directly
     return fetchFn();
@@ -295,7 +295,7 @@ export async function clearWeatherCache(lat: number, lon: number): Promise<void>
 
     await Promise.all(keys.map((key) => client.del(key)));
     logger.info({ lat, lon }, 'Cleared weather cache');
-  } catch (error) {
+  } catch {
     logger.error({ error, lat, lon }, 'Failed to clear weather cache');
   }
 }
