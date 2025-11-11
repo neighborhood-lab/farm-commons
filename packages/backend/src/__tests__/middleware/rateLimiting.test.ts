@@ -62,7 +62,7 @@ describe('Rate Limiting Middleware', () => {
       const response = await request(app).post('/test-auth').send({});
       expect(response.status).toBe(429);
       expect(response.body.error).toContain('Too many');
-    }, 10000); // Increase timeout for this test
+    }, 10_000); // Increase timeout for this test
   });
 
   describe('Password Reset Rate Limiter', () => {
@@ -91,7 +91,7 @@ describe('Rate Limiting Middleware', () => {
       // Next request should be rate limited
       const response = await request(app).post('/test-password-reset').send({});
       expect(response.status).toBe(429);
-    }, 10000);
+    }, 10_000);
   });
 
   describe('Read-Only Rate Limiter', () => {
@@ -109,9 +109,9 @@ describe('Rate Limiting Middleware', () => {
         Array.from({ length: 10 }, () => request(app).get('/test-read'))
       );
 
-      responses.forEach((response) => {
+      for (const response of responses) {
         expect(response.status).toBe(200);
-      });
+      }
     });
 
     it('should include rate limit headers', async () => {
@@ -195,9 +195,9 @@ describe('Rate Limiting Middleware', () => {
         Array.from({ length: 20 }, () => request(app).get('/health'))
       );
 
-      responses.forEach((response) => {
+      for (const response of responses) {
         expect(response.status).toBe(200);
-      });
+      }
     });
 
     it('should have high rate limits', async () => {
@@ -322,7 +322,7 @@ describe('Rate Limiting Middleware', () => {
 
       const response = await request(app).post('/test-limit').send({});
       expect(response.status).toBe(429);
-    }, 15000);
+    }, 15_000);
 
     it('should return error message in response body', async () => {
       const limit = Number.parseInt(process.env.STRICT_RATE_LIMIT_MAX || '10');
@@ -335,6 +335,6 @@ describe('Rate Limiting Middleware', () => {
       const response = await request(app).post('/test-limit').send({});
       expect(response.body).toHaveProperty('error');
       expect(response.body.success).toBe(false);
-    }, 15000);
+    }, 15_000);
   });
 });

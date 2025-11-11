@@ -136,7 +136,7 @@ describe('Audit Logging Middleware', () => {
       mockResponse.json!({ success: true, data: { id: 'worker-123' } });
 
       // Wait for async operations
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise((resolve) => globalThis.setTimeout(resolve, 10));
 
       expect(nextFunction).toHaveBeenCalled();
       expect(mockDb).toHaveBeenCalledWith('audit_logs');
@@ -159,7 +159,7 @@ describe('Audit Logging Middleware', () => {
       mockResponse.json!({ success: true, data: { id: 'worker-123' } });
 
       // Wait for async operations
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise((resolve) => globalThis.setTimeout(resolve, 10));
 
       expect(mockDb).toHaveBeenCalledWith('audit_logs');
       expect(mockInsert).toHaveBeenCalledWith(
@@ -187,7 +187,7 @@ describe('Audit Logging Middleware', () => {
       mockResponse.json!({ success: true, message: 'Deleted' });
 
       // Wait for async operations
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise((resolve) => globalThis.setTimeout(resolve, 10));
 
       expect(mockDb).toHaveBeenCalledWith('audit_logs');
       expect(mockInsert).toHaveBeenCalledWith(
@@ -212,7 +212,7 @@ describe('Audit Logging Middleware', () => {
       mockResponse.json!({ success: false, error: 'Bad request' });
 
       // Wait for async operations
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise((resolve) => globalThis.setTimeout(resolve, 10));
 
       // Should not have called db
       expect(mockDb).not.toHaveBeenCalled();
@@ -238,7 +238,7 @@ describe('Audit Logging Middleware', () => {
       mockResponse.json!({ success: true, data: { id: 'user-123' } });
 
       // Wait for async operations
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise((resolve) => globalThis.setTimeout(resolve, 10));
 
       expect(mockInsert).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -350,7 +350,7 @@ describe('Audit Logging Middleware', () => {
       mockResponse.json!({ success: true, data: { id: 'worker-123' } });
 
       // Wait for async operations
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise((resolve) => globalThis.setTimeout(resolve, 10));
 
       expect(mockDb).toHaveBeenCalledWith('audit_logs');
     });
@@ -372,7 +372,7 @@ describe('Audit Logging Middleware', () => {
       mockResponse.json!({ success: true, data: [] });
 
       // Wait for async operations
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise((resolve) => globalThis.setTimeout(resolve, 10));
 
       expect(mockDb).toHaveBeenCalledWith('audit_logs');
     });

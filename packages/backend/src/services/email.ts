@@ -199,14 +199,18 @@ export class EmailService {
    */
   private getScheduleChangeSubject(changeType: string): string {
     switch (changeType) {
-      case 'created':
+      case 'created': {
         return 'New Schedule Assignment - Farm Commons';
-      case 'updated':
+      }
+      case 'updated': {
         return 'Schedule Update - Farm Commons';
-      case 'cancelled':
+      }
+      case 'cancelled': {
         return 'Schedule Cancelled - Farm Commons';
-      default:
+      }
+      default: {
         return 'Schedule Notification - Farm Commons';
+      }
     }
   }
 
@@ -227,18 +231,21 @@ export class EmailService {
     let actionDetail = '';
 
     switch (changeType) {
-      case 'created':
+      case 'created': {
         action = 'assigned to a new schedule';
         actionDetail = 'You have been scheduled for a new task.';
         break;
-      case 'updated':
+      }
+      case 'updated': {
         action = 'notified of a schedule change';
         actionDetail = 'Your schedule has been updated.';
         break;
-      case 'cancelled':
+      }
+      case 'cancelled': {
         action = 'notified that a schedule has been cancelled';
         actionDetail = 'A scheduled task has been cancelled.';
         break;
+      }
     }
 
     // Plain text version
