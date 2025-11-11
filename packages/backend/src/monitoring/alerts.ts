@@ -67,10 +67,12 @@ export function sendAlert(
   title: string,
   message: string,
   level: AlertLevel = AlertLevel.WARNING,
-  data?: Record<string, any>
+  data?: Record<string, unknown>
 ): void {
   // Log to console
-  const logLevel = level === AlertLevel.ERROR ? 'error' : level === AlertLevel.WARNING ? 'warn' : 'info';
+  const logLevel =
+    level === AlertLevel.ERROR ? 'error' : level === AlertLevel.WARNING ? 'warn' : 'info';
+  // eslint-disable-next-line no-console
   console[logLevel](`[ALERT] ${title}: ${message}`, data);
 
   // Send to Sentry
@@ -241,11 +243,8 @@ export function checkCpuUsage(usagePercent: number): void {
       { usagePercent }
     );
   } else if (usagePercent >= ALERT_THRESHOLDS.cpu.warning) {
-    sendAlert(
-      'High CPU Usage',
-      `CPU usage is at ${usagePercent.toFixed(1)}%`,
-      AlertLevel.WARNING,
-      { usagePercent }
-    );
+    sendAlert('High CPU Usage', `CPU usage is at ${usagePercent.toFixed(1)}%`, AlertLevel.WARNING, {
+      usagePercent,
+    });
   }
 }

@@ -3,7 +3,7 @@
 
 import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
-import type { Express, Request, Response, NextFunction } from 'express';
+import type { Express } from 'express';
 
 /**
  * Initialize Sentry error tracking
@@ -16,6 +16,7 @@ export function initSentry(_app: Express): void {
   const enabled = dsn && dsn.length > 0;
 
   if (!enabled) {
+    // eslint-disable-next-line no-console
     console.warn('⚠️  Sentry DSN not configured - error tracking disabled');
     return;
   }
@@ -26,11 +27,11 @@ export function initSentry(_app: Express): void {
 
     // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
     // In production, adjust this value (e.g., 0.1 = 10% sampling)
-    tracesSampleRate: environment === 'production' ? 0.1 : 1.0,
+    tracesSampleRate: environment === 'production' ? 0.1 : 1,
 
     // Set profilesSampleRate to 1.0 to profile 100% of sampled transactions.
     // In production, this should be lower (e.g., 0.1)
-    profilesSampleRate: environment === 'production' ? 0.1 : 1.0,
+    profilesSampleRate: environment === 'production' ? 0.1 : 1,
 
     // Integrations
     integrations: [
@@ -64,40 +65,15 @@ export function initSentry(_app: Express): void {
     debug: environment === 'development',
   });
 
+  // eslint-disable-next-line no-console
   console.log('✅ Sentry error tracking initialized');
 }
 
 /**
- * Get Sentry request handler middleware
- * This should be the first middleware in your Express app
+ * Capture error in middleware
  */
-export function sentryRequestHandler() {
-  return (_req: Request, _res: Response, next: NextFunction) => {
-    next();
-  };
-}
-
-/**
- * Get Sentry tracing handler middleware
- * This should be after all request handlers but before your route handlers
- */
-export function sentryTracingHandler() {
-  return (_req: Request, _res: Response, next: NextFunction) => {
-    next();
-  };
-}
-
-/**
- * Get Sentry error handler middleware
- * This should be the first error handler in your Express app
- */
-export function sentryErrorHandler() {
-  // Return the Express error handler middleware from Sentry
-  // This expects (app: Express) as argument
-  return (err: any, _req: Request, _res: Response, next: NextFunction) => {
-    Sentry.captureException(err);
-    next(err);
-  };
+export function captureRequestError(error: Error): void {
+  Sentry.captureException(error);
 }
 
 /**
@@ -106,7 +82,7 @@ export function sentryErrorHandler() {
  * @param error - Error to capture
  * @param context - Additional context information
  */
-export function captureException(error: Error, context?: Record<string, any>): void {
+export function captureException(error: Error, context?: Record<string, unknown>): void {
   if (context) {
     Sentry.setContext('additional', context);
   }
@@ -123,7 +99,7 @@ export function captureException(error: Error, context?: Record<string, any>): v
 export function captureMessage(
   message: string,
   level: 'info' | 'warning' | 'error' = 'info',
-  context?: Record<string, any>
+  context?: Record<string, unknown>
 ): void {
   if (context) {
     Sentry.setContext('additional', context);
@@ -141,7 +117,7 @@ export function captureMessage(
 export function addBreadcrumb(
   category: string,
   message: string,
-  data?: Record<string, any>
+  data?: Record<string, unknown>
 ): void {
   Sentry.addBreadcrumb({
     category,

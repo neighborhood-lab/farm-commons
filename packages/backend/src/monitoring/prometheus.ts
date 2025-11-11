@@ -34,7 +34,7 @@ const httpRequestSizeBytes = new promClient.Histogram({
   name: 'farm_commons_http_request_size_bytes',
   help: 'Size of HTTP requests in bytes',
   labelNames: ['method', 'route'],
-  buckets: [100, 1000, 10000, 100000, 1000000],
+  buckets: [100, 1000, 10_000, 100_000, 1_000_000],
   registers: [register],
 });
 
@@ -42,7 +42,7 @@ const httpResponseSizeBytes = new promClient.Histogram({
   name: 'farm_commons_http_response_size_bytes',
   help: 'Size of HTTP responses in bytes',
   labelNames: ['method', 'route'],
-  buckets: [100, 1000, 10000, 100000, 1000000],
+  buckets: [100, 1000, 10_000, 100_000, 1_000_000],
   registers: [register],
 });
 
@@ -99,7 +99,7 @@ export function metricsMiddleware() {
     const route = req.route?.path || req.path || 'unknown';
 
     // Collect request size
-    const requestSize = parseInt(req.get('content-length') || '0', 10);
+    const requestSize = Number.parseInt(req.get('content-length') || '0', 10);
     if (requestSize > 0) {
       httpRequestSizeBytes.labels(req.method, route).observe(requestSize);
     }
@@ -114,7 +114,7 @@ export function metricsMiddleware() {
       httpRequestTotal.labels(req.method, route, statusCode).inc();
 
       // Collect response size
-      const responseSize = parseInt(res.get('content-length') || '0', 10);
+      const responseSize = Number.parseInt(res.get('content-length') || '0', 10);
       if (responseSize > 0) {
         httpResponseSizeBytes.labels(req.method, route).observe(responseSize);
       }
