@@ -53,7 +53,7 @@ describe('Import Service', () => {
       const csv = `
 first_name,last_name,email,phone,hire_date,status,hourly_rate
 John,Doe,john@example.com,555-0101,2024-01-15,active,18.50
-Jane,Smith,jane@example.com,555-0102,2024-02-01,active,20.00
+Jane,Smith,jane@example.com,555-0102,2024-02-01,active,20.10
 Bob,Johnson,,555-0103,2024-03-01,seasonal,17.50
       `.trim();
 
