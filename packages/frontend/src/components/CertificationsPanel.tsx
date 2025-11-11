@@ -40,7 +40,7 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
 
   // Create certification mutation
   const createMutation = useMutation({
-    mutationFn: (data: any) => api.post('/certifications', { ...data, worker_id: workerId }),
+    mutationFn: (data: Record<string, unknown>) => api.post('/certifications', { ...data, worker_id: workerId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['certifications', workerId] });
       resetForm();
@@ -49,7 +49,7 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
 
   // Update certification mutation
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => api.put(`/certifications/${id}`, data),
+    mutationFn: ({ id, data }: { id: string; data: Record<string, unknown> }) => api.put(`/certifications/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['certifications', workerId] });
       resetForm();
@@ -101,7 +101,7 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this certification?')) {
+    if (globalThis.confirm('Are you sure you want to delete this certification?')) {
       deleteMutation.mutate(id);
     }
   };
@@ -120,7 +120,11 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
       return { text: 'No expiration', color: 'text-gray-600', bg: 'bg-gray-100', icon: null };
     }
 
-    const daysUntilExpiry = getDaysUntilExpiry(expirationDate);
+    // Calculate days until expiration
+    const expDate = typeof expirationDate === 'string' ? new Date(expirationDate) : expirationDate;
+    const today = new Date();
+    const diffTime = expDate.getTime() - today.getTime();
+    const daysUntilExpiry = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (daysUntilExpiry < 0) {
       return {
@@ -175,7 +179,7 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
             <FileText size={24} className="text-earth-600" />
             <div>
               <h2 className="text-xl font-semibold text-gray-900">Certifications</h2>
-              <p className="text-sm text-gray-600">{certs.length} certification{certs.length !== 1 ? 's' : ''} on file</p>
+              <p className="text-sm text-gray-600">{certs.length} certification{certs.length === 1 ? '' : 's'} on file</p>
             </div>
           </div>
           {!isAddingNew && (
