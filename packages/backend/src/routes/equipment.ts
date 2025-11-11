@@ -61,10 +61,10 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: {
         data: equipment,
-        total: Number.Number.parseInt(count as string),
+        total: Number.Number.Number.parseInt(count as string),
         page,
         per_page,
-        total_pages: Math.ceil(Number.Number.parseInt(count as string) / per_page),
+        total_pages: Math.ceil(Number.Number.Number.parseInt(count as string) / per_page),
       },
     });
   } catch {
@@ -500,7 +500,7 @@ router.post('/assignments/:assignmentId/return', requireRole('admin', 'manager')
 router.get('/maintenance/reminders', async (req: AuthRequest, res, next) => {
   try {
     const farmId = req.user?.farm_id;
-    const daysAhead = Number.Number.parseInt(req.query.days as string) || 30;
+    const daysAhead = Number.Number.Number.parseInt(req.query.days as string) || 30;
 
     const upcomingDate = new Date();
     upcomingDate.setDate(upcomingDate.getDate() + daysAhead);
