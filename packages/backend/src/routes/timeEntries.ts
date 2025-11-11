@@ -7,6 +7,11 @@ import db from '../db/connection.js';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { auditLog } from '../middleware/auditLog.js';
+import {
+  getTimeEntriesDetailed,
+  getUnverifiedTimeEntries,
+  getActiveTimeEntries,
+} from '../db/queries/optimized.js';
 
 const router: Router = express.Router();
 
@@ -18,7 +23,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
     const farmId = req.user?.farm_id;
 
     // Build filters
-    const filters: any = {};
+    const filters: Record<string, unknown> = {};
     if (req.query.start_date && req.query.end_date) {
       const { start_date, end_date } = dateRangeSchema.parse(req.query);
       filters.start_date = start_date;
@@ -35,7 +40,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: entries,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -52,7 +57,7 @@ router.get('/unverified', async (req: AuthRequest, res, next) => {
       success: true,
       data: entries,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -68,7 +73,7 @@ router.get('/active', async (req: AuthRequest, res, next) => {
       success: true,
       data: entries,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -92,7 +97,7 @@ router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
       success: true,
       data: entries,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -129,78 +134,87 @@ router.post('/clock-in', auditLog('create', 'time_entry'), async (req: AuthReque
       success: true,
       data: entry,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
 
 // Clock out
-router.post('/:id/clock-out', auditLog('update', 'time_entry'), async (req: AuthRequest, res, next) => {
-  try {
-    const { id } = req.params;
-    const { break_minutes, notes } = clockOutSchema.parse(req.body);
-    const farmId = req.user?.farm_id;
+router.post(
+  '/:id/clock-out',
+  auditLog('update', 'time_entry'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const { id } = req.params;
+      const { break_minutes, notes } = clockOutSchema.parse(req.body);
+      const farmId = req.user?.farm_id;
 
-    const entry = await db('time_entries').where({ id, farm_id: farmId }).first();
+      const entry = await db('time_entries').where({ id, farm_id: farmId }).first();
 
-    if (!entry) {
-      throw new AppError('Time entry not found', 404);
+      if (!entry) {
+        throw new AppError('Time entry not found', 404);
+      }
+
+      if (entry.clock_out) {
+        throw new AppError('Time entry already clocked out', 400);
+      }
+
+      const clockOut = new Date();
+      const totalHours = calculatePreciseHours(entry.clock_in, clockOut) - break_minutes / 60;
+
+      const [updatedEntry] = await db('time_entries')
+        .where({ id, farm_id: farmId })
+        .update({
+          clock_out: clockOut,
+          break_minutes,
+          total_hours: totalHours,
+          notes: notes || entry.notes,
+          updated_at: new Date(),
+        })
+        .returning('*');
+
+      res.json({
+        success: true,
+        data: updatedEntry,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    if (entry.clock_out) {
-      throw new AppError('Time entry already clocked out', 400);
-    }
-
-    const clockOut = new Date();
-    const totalHours = calculatePreciseHours(entry.clock_in, clockOut) - break_minutes / 60;
-
-    const [updatedEntry] = await db('time_entries')
-      .where({ id, farm_id: farmId })
-      .update({
-        clock_out: clockOut,
-        break_minutes,
-        total_hours: totalHours,
-        notes: notes || entry.notes,
-        updated_at: new Date(),
-      })
-      .returning('*');
-
-    res.json({
-      success: true,
-      data: updatedEntry,
-    });
-  } catch {
-    next(error);
   }
-});
+);
 
 // Verify time entry (managers/admins only)
-router.post('/:id/verify', requireRole('admin', 'manager'), auditLog('update', 'time_entry'), async (req: AuthRequest, res, next) => {
-  try {
-    const { id } = req.params;
-    const farmId = req.user?.farm_id;
-    const userId = req.user?.id;
+router.post(
+  '/:id/verify',
+  requireRole('admin', 'manager'),
+  auditLog('update', 'time_entry'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const { id } = req.params;
+      const farmId = req.user?.farm_id;
+      const userId = req.user?.id;
 
-    const [entry] = await db('time_entries')
-      .where({ id, farm_id: farmId })
-      .update({
-        verified_by: userId,
-        verified_at: new Date(),
-        updated_at: new Date(),
-      })
-      .returning('*');
+      const [entry] = await db('time_entries')
+        .where({ id, farm_id: farmId })
+        .update({
+          verified_by: userId,
+          verified_at: new Date(),
+          updated_at: new Date(),
+        })
+        .returning('*');
 
-    if (!entry) {
-      throw new AppError('Time entry not found', 404);
+      if (!entry) {
+        throw new AppError('Time entry not found', 404);
+      }
+
+      res.json({
+        success: true,
+        data: entry,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    res.json({
-      success: true,
-      data: entry,
-    });
-  } catch {
-    next(error);
   }
-});
+);
 
 export default router;

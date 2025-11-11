@@ -88,7 +88,7 @@ export class EmailService {
 
       logger.info(`Email transporter initialized with host: ${this.config.host}`);
     } catch (error) {
-      logger.error('Failed to initialize email transporter', error);
+      logger.error({ error }, 'Failed to initialize email transporter');
       throw error;
     }
   }
@@ -107,7 +107,7 @@ export class EmailService {
       logger.info('SMTP connection verified successfully');
       return true;
     } catch (error) {
-      logger.error('SMTP connection verification failed', error);
+      logger.error({ error }, 'SMTP connection verification failed');
       return false;
     }
   }
@@ -117,11 +117,14 @@ export class EmailService {
    */
   private async sendEmail(options: EmailOptions): Promise<boolean> {
     if (!this.enabled || !this.transporter) {
-      logger.debug('Email not sent - service disabled or not configured', {
-        to: options.to,
-        subject: options.subject,
-      });
-      return false;
+      logger.debug(
+        {
+          to: options.to,
+          subject: options.subject,
+        },
+        'Email not sent - service disabled or not configured'
+      );
+      return null;
     }
 
     try {
@@ -133,20 +136,26 @@ export class EmailService {
         html: options.html,
       });
 
-      logger.info('Email sent successfully', {
-        messageId: info.messageId,
-        to: options.to,
-        subject: options.subject,
-      });
+      logger.info(
+        {
+          messageId: info.messageId,
+          to: options.to,
+          subject: options.subject,
+        },
+        'Email sent successfully'
+      );
 
-      return true;
+      return info;
     } catch (error) {
-      logger.error('Failed to send email', {
-        to: options.to,
-        subject: options.subject,
-        error,
-      });
-      return false;
+      logger.error(
+        {
+          to: options.to,
+          subject: options.subject,
+          error,
+        },
+        'Failed to send email'
+      );
+      throw error;
     }
   }
 
@@ -154,10 +163,10 @@ export class EmailService {
    * Send schedule change notification
    */
   async sendScheduleChangeNotification(data: ScheduleChangeEmailData): Promise<boolean> {
-    const { worker, schedule, changeType, fieldName } = data;
+    const { worker, changeType, fieldName } = data;
 
     if (!worker.email) {
-      logger.warn('Worker has no email address', { workerId: worker.id });
+      logger.warn({ workerId: worker.id }, 'Worker has no email address');
       return false;
     }
 
@@ -179,7 +188,7 @@ export class EmailService {
     const { worker, certifications } = data;
 
     if (!worker.email) {
-      logger.warn('Worker has no email address', { workerId: worker.id });
+      logger.warn({ workerId: worker.id }, 'Worker has no email address');
       return false;
     }
 
