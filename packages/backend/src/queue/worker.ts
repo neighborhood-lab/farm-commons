@@ -58,7 +58,7 @@ async function processNotificationJob(
       message: `Notification sent to recipient ${recipientId}`,
       data: { type, recipientId },
     };
-  } catch {
+  } catch (error) {
     logger.error({ jobId: job.id, error }, 'Notification job failed');
     return {
       success: false,
@@ -94,7 +94,7 @@ async function processDataCleanupJob(
       message: `Data cleanup completed for type: ${type}`,
       data: { type, olderThanDays, dryRun, recordsProcessed: 0 },
     };
-  } catch {
+  } catch (error) {
     logger.error({ jobId: job.id, error }, 'Data cleanup job failed');
     return {
       success: false,
@@ -127,7 +127,7 @@ async function processExportJob(
       message: `Export completed for ${type}`,
       data: { type, format, farmId, userId, fileUrl: '/exports/placeholder.csv' },
     };
-  } catch {
+  } catch (error) {
     logger.error({ jobId: job.id, error }, 'Export job failed');
     return {
       success: false,
@@ -158,7 +158,7 @@ async function processEmailJob(job: TypedJob<EmailJobData>): Promise<JobResult> 
       message: `Email sent to ${to}`,
       data: { to, subject, template },
     };
-  } catch {
+  } catch (error) {
     logger.error({ jobId: job.id, error }, 'Email job failed');
     return {
       success: false,
@@ -274,7 +274,7 @@ export async function gracefulShutdown(): Promise<void> {
   try {
     await stopWorkers();
     logger.info('Graceful shutdown completed');
-  } catch {
+  } catch (error) {
     logger.error({ error }, 'Error during graceful shutdown');
     throw error;
   }

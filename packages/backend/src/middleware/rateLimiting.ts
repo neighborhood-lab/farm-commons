@@ -35,7 +35,7 @@ export async function initializeRedisClient(): Promise<void> {
 
       await redisClient.connect();
       console.log('Redis client connected for rate limiting');
-    } catch {
+    } catch (error) {
       console.warn('Failed to connect to Redis, using in-memory rate limiting:', error);
       redisClient = null;
     }

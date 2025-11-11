@@ -152,11 +152,7 @@ export function resetQueryMetrics() {
 /**
  * Middleware to add query metrics to response headers (for debugging)
  */
-export function queryMetricsMiddleware(
-  req: any,
-  res: any,
-  next: any
-) {
+export function queryMetricsMiddleware(req: any, res: any, next: any) {
   // Save initial metrics
   const initialMetrics = metrics.getMetrics();
   const requestStartTime = Date.now();
@@ -205,7 +201,7 @@ export async function analyzeQuery(sql: string, bindings?: any[]) {
     const explainQuery = `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) ${sql}`;
     const result = await db.raw(explainQuery, bindings);
     return result.rows[0]['QUERY PLAN'];
-  } catch {
+  } catch (error) {
     console.error('Error analyzing query:', error);
     throw error;
   }

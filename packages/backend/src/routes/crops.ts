@@ -45,7 +45,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: crops,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -75,7 +75,7 @@ router.get('/:id', async (req: AuthRequest, res, next) => {
       success: true,
       data: crop,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -116,7 +116,7 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
       success: true,
       data: crop,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -167,7 +167,7 @@ router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res
       success: true,
       data: crop,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -190,7 +190,7 @@ router.delete('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, 
       success: true,
       message: 'Crop deleted successfully',
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -230,7 +230,7 @@ router.get('/history/field/:fieldId', async (req: AuthRequest, res, next) => {
         crops,
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -307,7 +307,7 @@ router.get('/history/field/:fieldId/rotation-analysis', async (req: AuthRequest,
         total_crops_planted: crops.length,
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -336,7 +336,7 @@ router.get('/companions/:cropName', async (req: AuthRequest, res, next) => {
         },
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -352,7 +352,7 @@ router.get('/families/list', async (req: AuthRequest, res, next) => {
       success: true,
       data: families,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -370,7 +370,7 @@ router.get('/companions', requireRole('admin'), async (req: AuthRequest, res, ne
       success: true,
       data: companions,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -395,7 +395,7 @@ router.post('/companions', requireRole('admin'), async (req: AuthRequest, res, n
       success: true,
       data: companion,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -429,7 +429,7 @@ router.put('/companions/:id', requireRole('admin'), async (req: AuthRequest, res
       success: true,
       data: companion,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -451,7 +451,7 @@ router.delete('/companions/:id', requireRole('admin'), async (req: AuthRequest, 
       success: true,
       message: 'Companion relationship deleted successfully',
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });

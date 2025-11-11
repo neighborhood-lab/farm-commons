@@ -57,7 +57,7 @@ async function scheduleAllJobs() {
 
     await closeQueues();
     process.exit(0);
-  } catch {
+  } catch (error) {
     logger.error({ error }, '❌ Failed to schedule jobs');
     process.exit(1);
   }

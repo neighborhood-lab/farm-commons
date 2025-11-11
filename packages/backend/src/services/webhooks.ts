@@ -356,7 +356,7 @@ async function deliverWebhook(delivery: WebhookDelivery): Promise<void> {
         `HTTP ${response.status}: ${response.statusText}`
       );
     }
-  } catch {
+  } catch (error) {
     // Network error or timeout, will retry
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     await recordFailedDelivery(

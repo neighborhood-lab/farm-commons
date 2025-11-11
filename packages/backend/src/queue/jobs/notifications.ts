@@ -59,7 +59,7 @@ async function processScheduleReminder(
       { jobId: job.id, workerId, workerEmail },
       'Schedule reminder sent successfully'
     );
-  } catch {
+  } catch (error) {
     logger.error(
       { jobId: job.id, workerId, workerEmail, error },
       'Failed to send schedule reminder'
@@ -101,7 +101,7 @@ async function processCertificationExpiryWarning(
       { jobId: job.id, workerId, workerEmail, certificationName },
       'Certification expiry warning sent successfully'
     );
-  } catch {
+  } catch (error) {
     logger.error(
       { jobId: job.id, workerId, workerEmail, certificationName, error },
       'Failed to send certification expiry warning'
@@ -135,7 +135,7 @@ async function processUnverifiedTimeEntryReminder(
       { jobId: job.id, timeEntryId, workerId, workerEmail },
       'Unverified time entry reminder sent successfully'
     );
-  } catch {
+  } catch (error) {
     logger.error(
       { jobId: job.id, timeEntryId, workerId, workerEmail, error },
       'Failed to send unverified time entry reminder'
@@ -216,7 +216,7 @@ async function scanAndQueueScheduleReminders(): Promise<void> {
       { queued: schedules.length },
       'Schedule reminders queued successfully'
     );
-  } catch {
+  } catch (error) {
     logger.error({ error }, 'Failed to scan and queue schedule reminders');
     throw error;
   }
@@ -303,7 +303,7 @@ async function scanAndQueueCertificationWarnings(): Promise<void> {
     }
 
     logger.info('Certification warnings queued successfully');
-  } catch {
+  } catch (error) {
     logger.error({ error }, 'Failed to scan and queue certification warnings');
     throw error;
   }
@@ -373,7 +373,7 @@ async function scanAndQueueUnverifiedTimeEntryReminders(): Promise<void> {
       { queued: timeEntries.length },
       'Unverified time entry reminders queued successfully'
     );
-  } catch {
+  } catch (error) {
     logger.error(
       { error },
       'Failed to scan and queue unverified time entry reminders'

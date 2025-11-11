@@ -55,7 +55,7 @@ export class LocalStorageProvider implements StorageProvider {
   private async ensureDirectoryExists(dir: string): Promise<void> {
     try {
       await fs.access(dir);
-    } catch {
+    } catch (error) {
       await fs.mkdir(dir, { recursive: true });
     }
   }
@@ -89,7 +89,7 @@ export class LocalStorageProvider implements StorageProvider {
     const filepath = path.join(this.uploadDir, filename);
     try {
       await fs.unlink(filepath);
-    } catch {
+    } catch (error) {
       // File might not exist, log but don't throw
       console.warn(`Failed to delete file ${filename}:`, error);
     }

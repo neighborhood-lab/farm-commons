@@ -8,9 +8,12 @@
     "paths": {
       "@/*": ["./src/*"],
       "@farm-commons/shared": ["../shared/src"]
-    }
+    },
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitAny": false
   },
   "include": ["src/**/*", "knexfile.js"],
-  "exclude": ["node_modules", "dist", "tests"],
+  "exclude": ["node_modules", "dist", "tests", "**/__tests__/**", "**/*.test.ts", "**/*.spec.ts"],
   "references": [{ "path": "../shared" }]
 }

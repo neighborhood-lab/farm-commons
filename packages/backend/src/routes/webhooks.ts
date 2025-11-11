@@ -55,7 +55,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: sanitizedWebhooks,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -88,7 +88,7 @@ router.get('/:id', async (req: AuthRequest, res, next) => {
         has_secret: true,
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -120,7 +120,7 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
         message: 'Webhook created successfully. Save the secret_key - it will not be shown again.',
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -154,7 +154,7 @@ router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res
         has_secret: true,
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -181,7 +181,7 @@ router.delete('/:id', requireRole('admin'), async (req: AuthRequest, res, next) 
       success: true,
       message: 'Webhook deleted successfully',
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -211,7 +211,7 @@ router.post('/:id/regenerate-secret', requireRole('admin'), async (req: AuthRequ
         message: 'Secret key regenerated. Save it - it will not be shown again.',
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -234,14 +234,14 @@ router.get('/:id/deliveries', async (req: AuthRequest, res, next) => {
       throw new AppError('Webhook not found', 404);
     }
 
-    const limit = Number.Number.parseInt(req.query.limit as string) || 50;
+    const limit = Number.parseInt(req.query.limit as string) || 50;
     const deliveries = await getDeliveryHistory(id, limit);
 
     res.json({
       success: true,
       data: deliveries,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -260,7 +260,7 @@ router.post('/deliveries/:deliveryId/retry', requireRole('admin', 'manager'), as
       success: true,
       message: 'Delivery retry scheduled',
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });

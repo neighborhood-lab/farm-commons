@@ -157,7 +157,7 @@ async function fetchWithCache<T>(
     await client.setEx(cacheKey, CACHE_TTL, JSON.stringify(data));
 
     return data;
-  } catch {
+  } catch (error) {
     logger.warn({ error, cacheKey }, 'Cache operation failed, fetching directly');
     // If cache fails, fetch directly
     return fetchFn();
@@ -295,7 +295,7 @@ export async function clearWeatherCache(lat: number, lon: number): Promise<void>
 
     await Promise.all(keys.map((key) => client.del(key)));
     logger.info({ lat, lon }, 'Cleared weather cache');
-  } catch {
+  } catch (error) {
     logger.error({ error, lat, lon }, 'Failed to clear weather cache');
   }
 }

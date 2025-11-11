@@ -30,7 +30,7 @@ export async function logAuditEvent(entry: AuditLogEntry): Promise<void> {
       ip_address: entry.ipAddress,
       user_agent: entry.userAgent,
     });
-  } catch {
+  } catch (error) {
     // Log error but don't fail the request
     console.error('Failed to create audit log:', error);
   }

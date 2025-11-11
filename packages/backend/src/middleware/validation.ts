@@ -118,7 +118,7 @@ export function validate<T extends ZodSchema>(
       (req as unknown as Record<string, unknown>)[target] = validated;
 
       next();
-    } catch {
+    } catch (error) {
       if (error instanceof ZodError) {
         const formatted = formatZodErrors(error);
         res.status(400).json({
@@ -217,7 +217,7 @@ export function validateMultiple(
       }
 
       next();
-    } catch {
+    } catch (error) {
       if (error instanceof ZodError) {
         const formatted = formatZodErrors(error);
         res.status(400).json({

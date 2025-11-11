@@ -68,7 +68,7 @@ router.post('/fields/:fieldId/soil-tests', async (req: AuthRequest, res, next) =
       success: true,
       data: soilTest,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -119,7 +119,7 @@ router.get('/fields/:fieldId/soil-tests', async (req: AuthRequest, res, next) =>
         trends,
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -160,7 +160,7 @@ router.get('/fields/:fieldId/soil-tests/:testId', async (req: AuthRequest, res, 
         auto_recommendations: recommendations,
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -207,7 +207,7 @@ router.put('/fields/:fieldId/soil-tests/:testId', async (req: AuthRequest, res, 
       success: true,
       data: updatedTest,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -242,7 +242,7 @@ router.delete('/fields/:fieldId/soil-tests/:testId', async (req: AuthRequest, re
       success: true,
       message: 'Soil test deleted successfully',
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });

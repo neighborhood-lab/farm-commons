@@ -75,7 +75,7 @@ router.post('/:id/assign', requireRole('admin', 'manager'), async (req: AuthRequ
       success: true,
       data: assignment,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -139,7 +139,7 @@ router.post('/:id/return', requireRole('admin', 'manager'), async (req: AuthRequ
       success: true,
       data: updatedAssignment,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -190,7 +190,7 @@ router.get('/:id/history', async (req: AuthRequest, res, next) => {
         history,
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -237,7 +237,7 @@ router.get('/workers/:id/equipment', async (req: AuthRequest, res, next) => {
         assigned_equipment: assignedEquipment,
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });

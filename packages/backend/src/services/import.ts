@@ -121,7 +121,7 @@ export async function importWorkers(
       if (workerData.hourly_rate && workerData.piece_rate) {
         warnings.push(`Row ${row}: Worker has both hourly_rate and piece_rate set`);
       }
-    } catch {
+    } catch (error) {
       const errorMessage = error instanceof z.ZodError
         ? error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')
         : error instanceof Error
@@ -162,7 +162,7 @@ export async function importWorkers(
           imported++;
         }
       });
-    } catch {
+    } catch (error) {
       errors.push({
         row: 0,
         message: `Database error: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -309,7 +309,7 @@ export async function importSchedules(
         row,
         data: { ...scheduleData, farm_id: farmId },
       });
-    } catch {
+    } catch (error) {
       const errorMessage = error instanceof z.ZodError
         ? error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')
         : error instanceof Error
@@ -347,7 +347,7 @@ export async function importSchedules(
           imported++;
         }
       });
-    } catch {
+    } catch (error) {
       errors.push({
         row: 0,
         message: `Database error: ${error instanceof Error ? error.message : 'Unknown error'}`,

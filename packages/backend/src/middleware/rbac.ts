@@ -54,11 +54,21 @@ const ROLE_PERMISSIONS: Record<UserRole, Record<Resource, Permission[]>> = {
   admin: {
     [Resource.WORKER]: [Permission.READ, Permission.WRITE, Permission.DELETE],
     [Resource.SCHEDULE]: [Permission.READ, Permission.WRITE, Permission.DELETE],
-    [Resource.TIME_ENTRY]: [Permission.READ, Permission.WRITE, Permission.DELETE, Permission.VERIFY],
+    [Resource.TIME_ENTRY]: [
+      Permission.READ,
+      Permission.WRITE,
+      Permission.DELETE,
+      Permission.VERIFY,
+    ],
     [Resource.FIELD]: [Permission.READ, Permission.WRITE, Permission.DELETE],
     [Resource.CERTIFICATION]: [Permission.READ, Permission.WRITE, Permission.DELETE],
     [Resource.FARM]: [Permission.READ, Permission.WRITE, Permission.DELETE],
-    [Resource.USER]: [Permission.READ, Permission.WRITE, Permission.DELETE, Permission.MANAGE_USERS],
+    [Resource.USER]: [
+      Permission.READ,
+      Permission.WRITE,
+      Permission.DELETE,
+      Permission.MANAGE_USERS,
+    ],
     [Resource.STATS]: [Permission.READ], // Can read all farm stats
   },
 };
@@ -66,11 +76,7 @@ const ROLE_PERMISSIONS: Record<UserRole, Record<Resource, Permission[]>> = {
 /**
  * Check if a role has a specific permission for a resource
  */
-export function hasPermission(
-  role: UserRole,
-  resource: Resource,
-  permission: Permission
-): boolean {
+export function hasPermission(role: UserRole, resource: Resource, permission: Permission): boolean {
   const permissions = ROLE_PERMISSIONS[role]?.[resource] || [];
   return permissions.includes(permission);
 }
@@ -117,9 +123,7 @@ export async function checkWorkerOwnership(
   // Managers and admins can access all workers in their farm
   if (userRole === 'manager' || userRole === 'admin') {
     // Verify worker belongs to the same farm
-    const worker = await db('workers')
-      .where({ id: workerId, farm_id: farmId })
-      .first();
+    const worker = await db('workers').where({ id: workerId, farm_id: farmId }).first();
     return !!worker;
   }
 
@@ -174,7 +178,7 @@ export function requireWorkerOwnership() {
       }
 
       next();
-    } catch {
+    } catch (error) {
       next(error);
     }
   };
@@ -191,9 +195,7 @@ export async function checkTimeEntryOwnership(
 ): Promise<boolean> {
   // Managers and admins can access all time entries in their farm
   if (userRole === 'manager' || userRole === 'admin') {
-    const entry = await db('time_entries')
-      .where({ id: timeEntryId, farm_id: farmId })
-      .first();
+    const entry = await db('time_entries').where({ id: timeEntryId, farm_id: farmId }).first();
     return !!entry;
   }
 
@@ -252,7 +254,7 @@ export function requireTimeEntryOwnership() {
       }
 
       next();
-    } catch {
+    } catch (error) {
       next(error);
     }
   };
@@ -269,9 +271,7 @@ export async function checkScheduleOwnership(
 ): Promise<boolean> {
   // Managers and admins can access all schedules in their farm
   if (userRole === 'manager' || userRole === 'admin') {
-    const schedule = await db('schedules')
-      .where({ id: scheduleId, farm_id: farmId })
-      .first();
+    const schedule = await db('schedules').where({ id: scheduleId, farm_id: farmId }).first();
     return !!schedule;
   }
 
@@ -330,7 +330,7 @@ export function requireScheduleOwnership() {
       }
 
       next();
-    } catch {
+    } catch (error) {
       next(error);
     }
   };
@@ -412,7 +412,7 @@ export function requireCertificationOwnership() {
       }
 
       next();
-    } catch {
+    } catch (error) {
       next(error);
     }
   };
@@ -423,9 +423,7 @@ export function requireCertificationOwnership() {
  * Workers only see their own data, managers/admins see all farm data
  */
 export async function getWorkerIdForUser(userId: string, farmId: string): Promise<string | null> {
-  const worker = await db('workers')
-    .where({ user_id: userId, farm_id: farmId })
-    .first();
+  const worker = await db('workers').where({ user_id: userId, farm_id: farmId }).first();
   return worker?.id || null;
 }
 

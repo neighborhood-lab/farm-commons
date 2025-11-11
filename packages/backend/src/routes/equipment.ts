@@ -61,13 +61,13 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: {
         data: equipment,
-        total: Number.Number.parseInt(count as string),
+        total: Number.parseInt(count as string),
         page,
         per_page,
-        total_pages: Math.ceil(Number.Number.parseInt(count as string) / per_page),
+        total_pages: Math.ceil(Number.parseInt(count as string) / per_page),
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -116,7 +116,7 @@ router.get('/:id', async (req: AuthRequest, res, next) => {
         current_assignment: currentAssignment || null,
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -138,7 +138,7 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
       success: true,
       data: equipment,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -166,7 +166,7 @@ router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res
       success: true,
       data: equipment,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -203,7 +203,7 @@ router.delete('/:id', requireRole('admin'), async (req: AuthRequest, res, next) 
       message: 'Equipment retired successfully',
       data: equipment,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -240,7 +240,7 @@ router.get('/:id/maintenance', async (req: AuthRequest, res, next) => {
       success: true,
       data: maintenanceLogs,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -274,7 +274,7 @@ router.post('/:id/maintenance', requireRole('admin', 'manager'), async (req: Aut
       success: true,
       data: maintenanceLog,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -312,7 +312,7 @@ router.put('/maintenance/:logId', requireRole('admin', 'manager'), async (req: A
       success: true,
       data: maintenanceLog,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -345,7 +345,7 @@ router.delete('/maintenance/:logId', requireRole('admin'), async (req: AuthReque
       success: true,
       message: 'Maintenance log deleted successfully',
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -384,7 +384,7 @@ router.get('/:id/assignments', async (req: AuthRequest, res, next) => {
       success: true,
       data: assignments,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -435,7 +435,7 @@ router.post('/:id/assign', requireRole('admin', 'manager'), async (req: AuthRequ
       success: true,
       data: assignment,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -491,7 +491,7 @@ router.post('/assignments/:assignmentId/return', requireRole('admin', 'manager')
       success: true,
       data: updatedAssignment,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -500,7 +500,7 @@ router.post('/assignments/:assignmentId/return', requireRole('admin', 'manager')
 router.get('/maintenance/reminders', async (req: AuthRequest, res, next) => {
   try {
     const farmId = req.user?.farm_id;
-    const daysAhead = Number.Number.parseInt(req.query.days as string) || 30;
+    const daysAhead = Number.parseInt(req.query.days as string) || 30;
 
     const upcomingDate = new Date();
     upcomingDate.setDate(upcomingDate.getDate() + daysAhead);
@@ -525,7 +525,7 @@ router.get('/maintenance/reminders', async (req: AuthRequest, res, next) => {
       success: true,
       data: reminders,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });

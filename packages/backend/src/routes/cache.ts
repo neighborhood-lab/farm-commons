@@ -23,7 +23,7 @@ router.get('/stats', authenticateToken, requireRole('admin'), (req, res) => {
       success: true,
       data: stats,
     });
-  } catch {
+  } catch (error) {
     res.status(500).json({
       success: false,
       error: 'Failed to retrieve cache statistics',
@@ -43,7 +43,7 @@ router.post('/stats/reset', authenticateToken, requireRole('admin'), (req, res) 
       success: true,
       message: 'Cache statistics reset successfully',
     });
-  } catch {
+  } catch (error) {
     res.status(500).json({
       success: false,
       error: 'Failed to reset cache statistics',
@@ -79,7 +79,7 @@ router.delete('/invalidate', authenticateToken, requireRole('admin'), async (req
       },
       message: `Invalidated ${deletedCount} cache entries`,
     });
-  } catch {
+  } catch (error) {
     res.status(500).json({
       success: false,
       error: 'Failed to invalidate cache',
@@ -114,7 +114,7 @@ router.delete('/invalidate/:resource', authenticateToken, requireRole('admin'), 
       },
       message: `Invalidated ${deletedCount} cache entries for resource: ${resource}`,
     });
-  } catch {
+  } catch (error) {
     res.status(500).json({
       success: false,
       error: 'Failed to invalidate cache',
@@ -135,7 +135,7 @@ router.delete('/all', authenticateToken, requireRole('admin'), async (req, res) 
       success: true,
       message: 'All cache entries cleared successfully',
     });
-  } catch {
+  } catch (error) {
     res.status(500).json({
       success: false,
       error: 'Failed to clear all cache',

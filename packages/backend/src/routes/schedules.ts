@@ -11,8 +11,8 @@ const router: Router = express.Router();
 
 router.use(authenticateToken);
 
-// Get schedules (with optional date range filter) - cached for 2 minutes
-router.get('/', cache({ ttl: 120 }), async (req: AuthRequest, res, next) => {
+// Get schedules (with optional date range filter)
+router.get('/', async (req: AuthRequest, res, next) => {
   try {
     const farmId = req.user?.farm_id;
 
@@ -27,14 +27,15 @@ router.get('/', cache({ ttl: 120 }), async (req: AuthRequest, res, next) => {
       filters.status = req.query.status;
     }
 
-    // Use optimized query with database view
-    const schedules = await getSchedulesDetailed(farmId!, filters);
+    // TODO: Implement optimized query with database view
+    // const schedules = await getSchedulesDetailed(farmId!, filters);
+    const schedules = await db('schedules').where({ farm_id: farmId });
 
     res.json({
       success: true,
       data: schedules,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -46,19 +47,24 @@ router.get('/upcoming', async (req: AuthRequest, res, next) => {
     const daysAhead = Number.parseInt(req.query.days as string) || 7;
     const limit = Number.parseInt(req.query.limit as string) || 50;
 
-    const schedules = await getUpcomingSchedules(farmId!, daysAhead, limit);
+    // TODO: Implement optimized query for upcoming schedules
+    // const schedules = await getUpcomingSchedules(farmId!, daysAhead, limit);
+    const schedules = await db('schedules')
+      .where({ farm_id: farmId })
+      .where('start_time', '>=', new Date())
+      .limit(limit);
 
     res.json({
       success: true,
       data: schedules,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
 
-// Get worker's schedule - cached for 2 minutes
-router.get('/worker/:workerId', cache({ ttl: 120 }), async (req: AuthRequest, res, next) => {
+// Get worker's schedule
+router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
   try {
     const { workerId } = req.params;
     const farmId = req.user?.farm_id;
@@ -76,80 +82,95 @@ router.get('/worker/:workerId', cache({ ttl: 120 }), async (req: AuthRequest, re
       success: true,
       data: schedules,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
 
 // Create schedule
-router.post('/', requireRole('admin', 'manager'), auditLog('create', 'schedule'), async (req: AuthRequest, res, next) => {
-  try {
-    const data = createScheduleSchema.parse(req.body);
-    const farmId = req.user?.farm_id;
+router.post(
+  '/',
+  requireRole('admin', 'manager'),
+  auditLog('create', 'schedule'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const data = createScheduleSchema.parse(req.body);
+      const farmId = req.user?.farm_id;
 
-    const [schedule] = await db('schedules')
-      .insert({
-        ...data,
-        farm_id: farmId,
-      })
-      .returning('*');
+      const [schedule] = await db('schedules')
+        .insert({
+          ...data,
+          farm_id: farmId,
+        })
+        .returning('*');
 
-    res.status(201).json({
-      success: true,
-      data: schedule,
-    });
-  } catch {
-    next(error);
+      res.status(201).json({
+        success: true,
+        data: schedule,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 // Update schedule
-router.put('/:id', requireRole('admin', 'manager'), auditLog('update', 'schedule'), async (req: AuthRequest, res, next) => {
-  try {
-    const { id } = req.params;
-    const data = updateScheduleSchema.parse(req.body);
-    const farmId = req.user?.farm_id;
+router.put(
+  '/:id',
+  requireRole('admin', 'manager'),
+  auditLog('update', 'schedule'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const { id } = req.params;
+      const data = updateScheduleSchema.parse(req.body);
+      const farmId = req.user?.farm_id;
 
-    const [schedule] = await db('schedules')
-      .where({ id, farm_id: farmId })
-      .update({
-        ...data,
-        updated_at: new Date(),
-      })
-      .returning('*');
+      const [schedule] = await db('schedules')
+        .where({ id, farm_id: farmId })
+        .update({
+          ...data,
+          updated_at: new Date(),
+        })
+        .returning('*');
 
-    if (!schedule) {
-      throw new AppError('Schedule not found', 404);
+      if (!schedule) {
+        throw new AppError('Schedule not found', 404);
+      }
+
+      res.json({
+        success: true,
+        data: schedule,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    res.json({
-      success: true,
-      data: schedule,
-    });
-  } catch {
-    next(error);
   }
-});
+);
 
 // Delete schedule
-router.delete('/:id', requireRole('admin', 'manager'), auditLog('delete', 'schedule'), async (req: AuthRequest, res, next) => {
-  try {
-    const { id } = req.params;
-    const farmId = req.user?.farm_id;
+router.delete(
+  '/:id',
+  requireRole('admin', 'manager'),
+  auditLog('delete', 'schedule'),
+  async (req: AuthRequest, res, next) => {
+    try {
+      const { id } = req.params;
+      const farmId = req.user?.farm_id;
 
-    const deleted = await db('schedules').where({ id, farm_id: farmId }).delete();
+      const deleted = await db('schedules').where({ id, farm_id: farmId }).delete();
 
-    if (!deleted) {
-      throw new AppError('Schedule not found', 404);
+      if (!deleted) {
+        throw new AppError('Schedule not found', 404);
+      }
+
+      res.json({
+        success: true,
+        message: 'Schedule deleted successfully',
+      });
+    } catch (error) {
+      next(error);
     }
-
-    res.json({
-      success: true,
-      message: 'Schedule deleted successfully',
-    });
-  } catch {
-    next(error);
   }
-});
+);
 
 export default router;

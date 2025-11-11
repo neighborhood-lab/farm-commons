@@ -61,9 +61,7 @@ export async function archiveOldTimeEntries(job: Job): Promise<void> {
     }
 
     // Find old time entries to archive
-    const oldEntries = await db('time_entries')
-      .where('clock_in', '<', oneYearAgo)
-      .select('*');
+    const oldEntries = await db('time_entries').where('clock_in', '<', oneYearAgo).select('*');
 
     if (oldEntries.length === 0) {
       logger.info('No time entries to archive');
@@ -82,9 +80,7 @@ export async function archiveOldTimeEntries(job: Job): Promise<void> {
       );
 
       // Delete from main table
-      await trx('time_entries')
-        .where('clock_in', '<', oneYearAgo)
-        .delete();
+      await trx('time_entries').where('clock_in', '<', oneYearAgo).delete();
     });
 
     const duration = Date.now() - startTime;
@@ -104,7 +100,7 @@ export async function archiveOldTimeEntries(job: Job): Promise<void> {
       cutoffDate: oneYearAgo.toISOString(),
       duration,
     } as any;
-  } catch {
+  } catch (error) {
     logger.error({ error }, 'Failed to archive old time entries');
     throw error;
   }
@@ -149,7 +145,7 @@ export async function cleanupExpiredSessions(job: Job): Promise<void> {
           // Set expiration for sessions without TTL (7 days)
           await redisClient.expire(key, 7 * 24 * 60 * 60);
         }
-      } catch {
+      } catch (error) {
         errorCount++;
         logger.warn({ key, error }, 'Error checking session key');
       }
@@ -179,7 +175,7 @@ export async function cleanupExpiredSessions(job: Job): Promise<void> {
       errorCount,
       duration,
     } as any;
-  } catch {
+  } catch (error) {
     logger.error({ error }, 'Failed to cleanup expired sessions');
     throw error;
   } finally {
@@ -310,7 +306,7 @@ export async function aggregateHistoricalStats(job: Job): Promise<void> {
       fieldStatsCount: fieldUtilization.length,
       duration,
     } as any;
-  } catch {
+  } catch (error) {
     logger.error({ error }, 'Failed to aggregate historical statistics');
     throw error;
   }

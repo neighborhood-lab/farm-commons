@@ -59,7 +59,7 @@ router.get('/workers', requireRole('admin', 'manager'), async (req: AuthRequest,
     );
 
     stream.pipe(res);
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -105,7 +105,7 @@ router.get('/time-entries', requireRole('admin', 'manager'), async (req: AuthReq
     );
 
     stream.pipe(res);
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -151,7 +151,7 @@ router.get('/schedules', requireRole('admin', 'manager'), async (req: AuthReques
     );
 
     stream.pipe(res);
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -197,7 +197,7 @@ router.get('/compliance', requireRole('admin', 'manager'), async (req: AuthReque
     );
 
     stream.pipe(res);
-  } catch {
+  } catch (error) {
     next(error);
   }
 });

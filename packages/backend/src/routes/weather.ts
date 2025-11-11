@@ -81,7 +81,7 @@ router.get('/current', async (req: AuthRequest, res, next) => {
       success: true,
       data: weather,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -101,7 +101,7 @@ router.get('/forecast', async (req: AuthRequest, res, next) => {
       success: true,
       data: forecast,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -121,7 +121,7 @@ router.get('/alerts', async (req: AuthRequest, res, next) => {
       success: true,
       data: alerts,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -141,7 +141,7 @@ router.get('/complete', async (req: AuthRequest, res, next) => {
       success: true,
       data: weatherData,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -174,7 +174,7 @@ router.get('/field/:fieldId/current', async (req: AuthRequest, res, next) => {
         weather,
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -204,7 +204,7 @@ router.get('/field/:fieldId/forecast', async (req: AuthRequest, res, next) => {
         forecast,
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -233,7 +233,7 @@ router.get('/field/:fieldId/complete', async (req: AuthRequest, res, next) => {
         ...weatherData,
       },
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -253,7 +253,7 @@ router.delete('/cache', async (req: AuthRequest, res, next) => {
       success: true,
       message: 'Weather cache cleared successfully',
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });

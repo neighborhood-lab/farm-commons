@@ -53,7 +53,7 @@ export function generateCacheKey(req: Request, prefix = 'api'): string {
  *
  * // Custom key generator
  * router.get('/api/fields', cache({
- *   keyGenerator: (req) => `fields:farm:${req.user.farmId}`
+ *   keyGenerator: (req) => `fields:farm:${req.user.farm_id}`
  * }), getFields);
  */
 export function cache(options: CacheOptions = {}) {
@@ -73,7 +73,7 @@ export function cache(options: CacheOptions = {}) {
 
     // Skip caching if specified query params are present
     if (skipQueryParams.length > 0) {
-      const hasSkipParam = skipQueryParams.some(param => req.query[param]);
+      const hasSkipParam = skipQueryParams.some((param) => req.query[param]);
       if (hasSkipParam) {
         return next();
       }
@@ -117,7 +117,8 @@ export function cache(options: CacheOptions = {}) {
             data,
           };
 
-          redisClient.setEx(cacheKey, ttl, JSON.stringify(cacheData))
+          redisClient
+            .setEx(cacheKey, ttl, JSON.stringify(cacheData))
             .then(() => {
               logger.debug({ cacheKey, ttl }, 'Response cached');
             })
@@ -136,7 +137,7 @@ export function cache(options: CacheOptions = {}) {
       };
 
       next();
-    } catch {
+    } catch (error) {
       cacheStats.errors++;
       logger.error({ error }, 'Cache middleware error');
       // On error, continue without caching
@@ -181,7 +182,7 @@ export async function invalidateCache(pattern: string): Promise<number> {
 
     logger.info({ pattern, deletedCount }, 'Cache invalidated');
     return deletedCount;
-  } catch {
+  } catch (error) {
     logger.error({ error, pattern }, 'Failed to invalidate cache');
     throw error;
   }
@@ -206,7 +207,7 @@ export async function invalidateAllCache(): Promise<void> {
   try {
     await redisClient.flushDb();
     logger.info('All cache invalidated');
-  } catch {
+  } catch (error) {
     logger.error({ error }, 'Failed to invalidate all cache');
     throw error;
   }
@@ -265,20 +266,24 @@ export async function warmCache(warmers: CacheWarmer[]): Promise<void> {
     warmers.map(async ({ key, fetcher, ttl = 300 }) => {
       try {
         const data = await fetcher();
-        await redisClient.setEx(key, ttl, JSON.stringify({
-          status: 200,
-          data,
-        }));
+        await redisClient.setEx(
+          key,
+          ttl,
+          JSON.stringify({
+            status: 200,
+            data,
+          })
+        );
         logger.debug({ key, ttl }, 'Cache warmed');
-      } catch {
+      } catch (error) {
         logger.error({ error, key }, 'Failed to warm cache');
         throw error;
       }
     })
   );
 
-  const successful = results.filter(r => r.status === 'fulfilled').length;
-  const failed = results.filter(r => r.status === 'rejected').length;
+  const successful = results.filter((r) => r.status === 'fulfilled').length;
+  const failed = results.filter((r) => r.status === 'rejected').length;
 
   logger.info({ successful, failed, total: warmers.length }, 'Cache warming completed');
 }

@@ -40,7 +40,7 @@ router.get('/pending', async (req: AuthRequest, res, next) => {
       success: true,
       data: pendingEntries,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -94,7 +94,7 @@ router.post('/:id/approve', async (req: AuthRequest, res, next) => {
       data: approvedEntry,
       message: 'Time entry approved successfully',
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -148,7 +148,7 @@ router.post('/:id/reject', async (req: AuthRequest, res, next) => {
       data: rejectedEntry,
       message: 'Time entry rejected',
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -200,7 +200,7 @@ router.post('/batch-approve', async (req: AuthRequest, res, next) => {
       data: approvedEntries,
       message: `Successfully approved ${approvedEntries.length} time entries`,
     });
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
