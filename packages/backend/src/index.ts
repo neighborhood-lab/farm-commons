@@ -1,7 +1,7 @@
 // Farm Commons Backend Server
 
 import 'dotenv/config';
-import express from 'express';
+import express, { type Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import pino from 'pino';
@@ -12,6 +12,9 @@ import authRoutes from './routes/auth.js';
 import workerRoutes from './routes/workers.js';
 import scheduleRoutes from './routes/schedules.js';
 import timeEntryRoutes from './routes/timeEntries.js';
+import statsRoutes from './routes/stats.js';
+import soilDataRoutes from './routes/soil-data.js';
+import invoiceRoutes from './routes/invoices.js';
 
 // Middleware
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
@@ -24,40 +27,47 @@ import {
   healthCheckRateLimiter,
 } from './middleware/rateLimiting.js';
 
-const app = express();
+const app: Express = express();
 const PORT = process.env.PORT || 3001;
 
 // Logger
 const logger = pino({
   level: process.env.LOG_LEVEL || 'info',
-  transport: process.env.NODE_ENV === 'development' ? {
-    target: 'pino-pretty',
-    options: {
-      colorize: true,
-    },
-  } : undefined,
+  transport:
+    process.env.NODE_ENV === 'development'
+      ? {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+          },
+        }
+      : undefined,
 });
 
 const httpLogger = pinoHttp({ logger });
 
 // Security middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
-      imgSrc: ["'self'", 'data:', 'https:'],
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+      },
     },
-  },
-  crossOriginEmbedderPolicy: false,
-}));
+    crossOriginEmbedderPolicy: false,
+  })
+);
 
 // CORS
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    credentials: true,
+  })
+);
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
@@ -67,7 +77,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(httpLogger);
 
 // Health check with rate limiting
-app.get('/health', healthCheckRateLimiter, (req, res) => {
+app.get('/health', healthCheckRateLimiter, (_req, res) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
@@ -81,9 +91,12 @@ app.use('/api/auth', authRateLimiter, authRoutes);
 app.use('/api/workers', readOnlyRateLimiter, workerRoutes);
 app.use('/api/schedules', writeRateLimiter, scheduleRoutes);
 app.use('/api/time-entries', writeRateLimiter, timeEntryRoutes);
+app.use('/api/stats', statsRoutes);
+app.use('/api', soilDataRoutes);
+app.use('/api/invoices', invoiceRoutes);
 
 // Welcome message
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.json({
     name: 'Farm Commons API',
     version: '0.1.0',
