@@ -5,6 +5,7 @@ import { createScheduleSchema, updateScheduleSchema, dateRangeSchema } from '@fa
 import db from '../db/connection.js';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { auditLog } from '../middleware/auditLog.js';
 
 const router: Router = express.Router();
 
@@ -67,7 +68,7 @@ router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
 });
 
 // Create schedule
-router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
+router.post('/', requireRole('admin', 'manager'), auditLog('create', 'schedule'), async (req: AuthRequest, res, next) => {
   try {
     const data = createScheduleSchema.parse(req.body);
     const farmId = req.user?.farm_id;
@@ -89,7 +90,7 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
 });
 
 // Update schedule
-router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
+router.put('/:id', requireRole('admin', 'manager'), auditLog('update', 'schedule'), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const data = updateScheduleSchema.parse(req.body);
@@ -117,7 +118,7 @@ router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res
 });
 
 // Delete schedule
-router.delete('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
+router.delete('/:id', requireRole('admin', 'manager'), auditLog('delete', 'schedule'), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const farmId = req.user?.farm_id;
