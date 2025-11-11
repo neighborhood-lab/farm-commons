@@ -1,6 +1,6 @@
 // Authentication resource
 import type { FarmCommonsClient } from '../client/base.js';
-import type { ApiResponse, AuthTokens, LoginCredentials, AuthUser } from '../types/index.js';
+import type { LoginCredentials, AuthUser } from '../types/index.js';
 
 export interface LoginResponse {
   user: AuthUser;
@@ -23,10 +23,7 @@ export class AuthResource {
    * Automatically sets the access token for subsequent requests
    */
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
-    const response = await this.client.post<LoginResponse>(
-      '/api/auth/login',
-      credentials
-    );
+    const response = await this.client.post<LoginResponse>('/api/auth/login', credentials);
 
     if (response.success && response.data) {
       // Automatically set the token for future requests
@@ -42,10 +39,7 @@ export class AuthResource {
    * Automatically sets the access token for subsequent requests
    */
   async register(data: RegisterData): Promise<LoginResponse> {
-    const response = await this.client.post<LoginResponse>(
-      '/api/auth/register',
-      data
-    );
+    const response = await this.client.post<LoginResponse>('/api/auth/register', data);
 
     if (response.success && response.data) {
       // Automatically set the token for future requests

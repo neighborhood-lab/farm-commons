@@ -6,7 +6,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "composite": true,
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "DOM"],
     "module": "ES2022",
     "target": "ES2022",
     "moduleResolution": "bundler",
@@ -16,7 +16,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "typeRoots": ["./node_modules/@types"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
