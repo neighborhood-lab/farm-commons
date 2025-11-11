@@ -33,7 +33,7 @@ export default function WorkersPage() {
   };
 
   if (isLoading) {
-    return <div className="text-center py-12">Loading workers...</div>;
+    return <div className="text-center py-12">{t('workers.loading')}</div>;
   }
 
   const workers = data?.data || [];
@@ -47,7 +47,7 @@ export default function WorkersPage() {
         </div>
         <button className="flex items-center gap-2 bg-earth-700 dark:bg-earth-600 text-white px-6 py-3 rounded-lg hover:bg-earth-800 dark:hover:bg-earth-700 transition-colors">
           <Plus size={20} />
-          Add Worker
+          {t('workers.addWorker')}
         </button>
       </div>
 
@@ -77,7 +77,7 @@ export default function WorkersPage() {
                         : 'bg-gray-100 text-gray-800'
                   }`}
                 >
-                  {worker.status}
+                  {t(`workers.status.${worker.status}`)}
                 </span>
               </div>
             </div>
@@ -96,7 +96,7 @@ export default function WorkersPage() {
               )}
               <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                 <Calendar size={16} />
-                <span>Hired: {formatDate(worker.hire_date)}</span>
+                <span>{t('workers.hired')}: {formatDate(worker.hire_date)}</span>
               </div>
             </div>
 
@@ -144,7 +144,7 @@ export default function WorkersPage() {
           <p className="text-gray-600 mb-6">Get started by adding your first farmworker</p>
           <button className="inline-flex items-center gap-2 bg-earth-700 text-white px-6 py-3 rounded-lg hover:bg-earth-800 transition-colors">
             <Plus size={20} />
-            Add First Worker
+            {t('workers.addFirstWorker')}
           </button>
         </div>
       )}

@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../lib/store';
 import { api } from '../lib/api';
 import type { AuthUser } from '@farm-commons/shared';
 
 export default function LoginPage() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -84,7 +86,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full bg-earth-700 dark:bg-earth-600 text-white py-3 rounded-lg font-medium hover:bg-earth-800 dark:hover:bg-earth-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? t('auth.signingIn') : t('auth.login')}
           </button>
         </form>
 

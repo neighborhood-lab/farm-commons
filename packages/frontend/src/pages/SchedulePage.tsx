@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Plus, Calendar as CalendarIcon } from 'lucide-react';
 import { format, startOfWeek, addDays } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { api } from '../lib/api';
 import type { Schedule } from '@farm-commons/shared';
 
 export default function SchedulePage() {
+  const { t } = useTranslation();
   const [currentWeek, setCurrentWeek] = useState(startOfWeek(new Date()));
 
   const { data: schedules, isLoading } = useQuery({
@@ -28,7 +30,7 @@ export default function SchedulePage() {
   };
 
   if (isLoading) {
-    return <div className="text-center py-12">Loading schedule...</div>;
+    return <div className="text-center py-12">{t('schedule.loading')}</div>;
   }
 
   return (
@@ -42,7 +44,7 @@ export default function SchedulePage() {
         </div>
         <button className="flex items-center gap-2 bg-earth-700 dark:bg-earth-600 text-white px-6 py-3 rounded-lg hover:bg-earth-800 dark:hover:bg-earth-700 transition-colors">
           <Plus size={20} />
-          Add Shift
+          {t('schedule.addShift')}
         </button>
       </div>
 
@@ -53,7 +55,7 @@ export default function SchedulePage() {
             onClick={() => setCurrentWeek(addDays(currentWeek, -7))}
             className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           >
-            ← Previous Week
+            {t('schedule.previousWeek')}
           </button>
           <div className="text-center">
             <p className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -64,7 +66,7 @@ export default function SchedulePage() {
             onClick={() => setCurrentWeek(addDays(currentWeek, 7))}
             className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           >
-            Next Week →
+            {t('schedule.nextWeek')}
           </button>
         </div>
       </div>

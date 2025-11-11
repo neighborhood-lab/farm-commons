@@ -1,0 +1,123 @@
+{
+  "app": {
+    "name": "Farm Commons",
+    "tagline": "Propiedad comunitaria",
+    "description": "Software de gestión agrícola compartido, propiedad comunitaria",
+    "forWhom": "Para los humanos que nos alimentan"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "emailPlaceholder": "tu@correo.com",
+    "passwordPlaceholder": "••••••••",
+    "signingIn": "Iniciando sesión...",
+    "loginFailed": "Error al iniciar sesión",
+    "builtWith": "Construido con tierra bajo las uñas",
+    "license": "Licencia AGPL-3.0 · Propiedad Comunitaria"
+  },
+  "nav": {
+    "dashboard": "Panel Principal",
+    "workers": "Trabajadores",
+    "schedule": "Horario",
+    "timeTracking": "Control de Tiempo"
+  },
+  "dashboard": {
+    "title": "Panel Principal",
+    "subtitle": "Bienvenido a Farm Commons - Resumen de las operaciones de tu granja",
+    "activeWorkers": "Trabajadores Activos",
+    "shiftsToday": "Turnos Hoy",
+    "hoursThisWeek": "Horas Esta Semana",
+    "fields": "Campos",
+    "loading": "Cargando...",
+    "welcome": "Bienvenido al MVP de Farm Commons",
+    "phase1Features": "Este es el MVP inicial (Producto Mínimo Viable) que muestra las características de la Fase 1:",
+    "feature1": "Gestión de Trabajadores: Directorio, certificaciones, información de contacto",
+    "feature2": "Programación: Horarios de trabajo diarios y asignaciones de campo",
+    "feature3": "Control de Tiempo: Entrada/salida, horas trabajadas, seguimiento de cumplimiento",
+    "footer": "Construido para trabajadores agrícolas y agricultores a pequeña escala, no para corporaciones.",
+    "communityOwned": "Propiedad comunitaria · Licencia AGPL-3.0 · Código Abierto"
+  },
+  "workers": {
+    "title": "Trabajadores",
+    "subtitle": "Gestiona tu fuerza laboral agrícola - {{count}} en total",
+    "addWorker": "Agregar Trabajador",
+    "addFirstWorker": "Agregar Primer Trabajador",
+    "loading": "Cargando trabajadores...",
+    "noWorkersTitle": "Aún no hay trabajadores",
+    "noWorkersDescription": "Comienza agregando tu primer trabajador agrícola",
+    "hired": "Contratado",
+    "skills": "Habilidades",
+    "moreSkills": "+{{count}} más",
+    "status": {
+      "active": "activo",
+      "seasonal": "temporal",
+      "inactive": "inactivo"
+    }
+  },
+  "schedule": {
+    "title": "Horario",
+    "subtitle": "Horario semanal y asignaciones de campo",
+    "addShift": "Agregar Turno",
+    "loading": "Cargando horario...",
+    "previousWeek": "← Semana Anterior",
+    "nextWeek": "Semana Siguiente →",
+    "noShiftsTitle": "No hay turnos programados",
+    "noShiftsDescription": "Comienza a planificar tu semana agregando turnos para tus trabajadores",
+    "status": {
+      "completed": "completado",
+      "inProgress": "en_progreso",
+      "scheduled": "programado"
+    }
+  },
+  "timeTracking": {
+    "title": "Control de Tiempo",
+    "subtitle": "Gestión de entrada/salida y horas"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "update": "Actualizar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "actions": "Acciones",
+    "yes": "Sí",
+    "no": "No",
+    "confirm": "Confirmar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "total": "Total",
+    "of": "de",
+    "more": "más"
+  },
+  "days": {
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado",
+    "sunday": "Domingo",
+    "mon": "Lun",
+    "tue": "Mar",
+    "wed": "Mié",
+    "thu": "Jue",
+    "fri": "Vie",
+    "sat": "Sáb",
+    "sun": "Dom"
+  },
+  "errors": {
+    "generic": "Ocurrió un error",
+    "networkError": "Error de red. Por favor verifica tu conexión.",
+    "unauthorized": "No estás autorizado para realizar esta acción",
+    "notFound": "No se encontró el recurso solicitado",
+    "serverError": "Error del servidor. Por favor intenta de nuevo más tarde."
+  }
+}
