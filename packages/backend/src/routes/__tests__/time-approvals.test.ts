@@ -9,7 +9,7 @@ const testDb: Knex = knex({
   client: 'pg',
   connection: {
     host: process.env.TEST_DB_HOST || 'localhost',
-    port: Number.Number.parseInt(process.env.TEST_DB_PORT || '5432'),
+    port: Number.parseInt(process.env.TEST_DB_PORT || '5432'),
     database: process.env.TEST_DB_NAME || 'farm_commons_test',
     user: process.env.TEST_DB_USER || 'postgres',
     password: process.env.TEST_DB_PASSWORD || 'postgres',

@@ -95,10 +95,18 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Convert form data with string dates to Certification format with Date objects
+    const certData = {
+      ...formData,
+      worker_id: workerId,
+      issue_date: new Date(formData.issue_date),
+      expiration_date: formData.expiration_date ? new Date(formData.expiration_date) : null,
+    };
+
     if (editingId) {
-      updateMutation.mutate({ id: editingId, data: formData });
+      updateMutation.mutate({ id: editingId, data: certData });
     } else {
-      createMutation.mutate(formData);
+      createMutation.mutate(certData);
     }
   };
 

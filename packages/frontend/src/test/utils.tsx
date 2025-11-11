@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { render, RenderOptions } from '@testing-library/react';
+import { render, RenderOptions, RenderResult } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -19,7 +19,7 @@ export function renderWithProviders(
     }),
     ...renderOptions
   }: { queryClient?: QueryClient } & Omit<RenderOptions, 'wrapper'> = {}
-) {
+): RenderResult & { queryClient: QueryClient } {
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>

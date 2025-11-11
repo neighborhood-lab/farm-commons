@@ -24,7 +24,7 @@ export class AppError extends Error implements ApiError {
 
 export function errorHandler(
   err: ApiError | ZodError,
-  _req: Request,
+  req: Request,
   res: Response,
   _next: NextFunction
 ): void {

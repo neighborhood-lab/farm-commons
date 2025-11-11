@@ -317,3 +317,36 @@ export interface EquipmentAssignment {
   created_at: Date;
   updated_at: Date;
 }
+
+// Analytics Data Types
+export interface WeeklyLaborHoursData {
+  date: string;
+  hours: number;
+  overtime: number;
+}
+
+export interface WorkerAttendanceData {
+  worker_id: string;
+  worker_name: string;
+  dates: {
+    date: string;
+    present: boolean;
+    hours: number;
+  }[];
+}
+
+export interface FieldUtilizationData {
+  field_name: string;
+  utilization: number;
+  area: number;
+  hours_used: number;
+  percentage: number;
+}
+
+export interface CertificationExpiryData {
+  id: string;
+  worker_name: string;
+  certification_name: string;
+  expiration_date: string;
+  days_until_expiry: number;
+}

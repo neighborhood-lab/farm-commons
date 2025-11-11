@@ -1,7 +1,8 @@
 // Route-specific rate limiting middleware with Redis support
 
 import { rateLimit } from 'express-rate-limit';
-import { RedisStore } from 'rate-limit-redis';
+// rate-limit-redis not installed yet - using in-memory store for now
+// import { RedisStore } from 'rate-limit-redis';
 import { createClient } from 'redis';
 import type { Request } from 'express';
 import type { AuthRequest } from './auth.js';
@@ -72,14 +73,14 @@ function createRateLimiter(options: {
   };
 
   // Use Redis store if available
+  // TODO: Install rate-limit-redis package to enable Redis-based rate limiting
   if (redisClient) {
-    return rateLimit({
-      ...baseConfig,
-      store: new RedisStore({
-        // @ts-expect-error - RedisStore types are compatible with redis v5
-        sendCommand: (...args: string[]) => redisClient!.sendCommand(args),
-      }),
-    });
+    // return rateLimit({
+    //   ...baseConfig,
+    //   store: new RedisStore({
+    //     sendCommand: (...args: string[]) => redisClient!.sendCommand(args),
+    //   }),
+    // });
   }
 
   // Fall back to in-memory store

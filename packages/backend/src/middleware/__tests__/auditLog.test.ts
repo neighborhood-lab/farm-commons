@@ -37,7 +37,7 @@ describe('Audit Logging Middleware', () => {
     mockRequest = {
       user: {
         id: 'user-123',
-        farmId: 'farm-123',
+        farm_id: 'farm-123',
         email: 'test@example.com',
         role: 'manager',
       },
@@ -75,7 +75,7 @@ describe('Audit Logging Middleware', () => {
       (db as any).mockImplementation(mockDb);
 
       await logAuditEvent({
-        farmId: 'farm-123',
+        farm_id: 'farm-123',
         userId: 'user-123',
         action: 'create',
         resourceType: 'worker',
@@ -108,7 +108,7 @@ describe('Audit Logging Middleware', () => {
       // Should not throw
       await expect(
         logAuditEvent({
-          farmId: 'farm-123',
+          farm_id: 'farm-123',
           userId: 'user-123',
           action: 'create',
         })

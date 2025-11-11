@@ -79,13 +79,13 @@ router.get('/farm', async (req: AuthRequest, res, next) => {
     res.json({
       success: true,
       data: {
-        total_workers: Number.Number.parseInt(total_workers as string),
-        active_workers: Number.Number.parseInt(active_workers as string),
-        total_fields: Number.Number.parseInt(total_fields as string),
-        active_schedules: Number.Number.parseInt(active_schedules as string),
+        total_workers: Number.parseInt(total_workers as string),
+        active_workers: Number.parseInt(active_workers as string),
+        total_fields: Number.parseInt(total_fields as string),
+        active_schedules: Number.parseInt(active_schedules as string),
         total_labor_hours: Number.parseFloat(total_labor_hours as string) || 0,
         month_labor_hours: Number.parseFloat(month_labor_hours as string) || 0,
-        unverified_entries: Number.Number.parseInt(unverified_entries as string),
+        unverified_entries: Number.parseInt(unverified_entries as string),
       },
     });
   } catch (error) {
@@ -172,8 +172,8 @@ router.get('/workers/:workerId', async (req: AuthRequest, res, next) => {
         days_worked: days_worked || 0,
         month_hours: Number.parseFloat(month_hours as string) || 0,
         week_hours: Number.parseFloat(week_hours as string) || 0,
-        completed_schedules: Number.Number.parseInt(completed_schedules as string),
-        upcoming_schedules: Number.Number.parseInt(upcoming_schedules as string),
+        completed_schedules: Number.parseInt(completed_schedules as string),
+        upcoming_schedules: Number.parseInt(upcoming_schedules as string),
         most_common_task: topTask?.task_type || null,
       },
     });
@@ -237,8 +237,8 @@ router.get('/labor-hours', async (req: AuthRequest, res, next) => {
         labor_hours: laborHours.map((item: Record<string, unknown>) => ({
           period: item.period,
           total_hours: Number.parseFloat(String(item.total_hours)),
-          worker_count: Number.Number.parseInt(String(item.worker_count)),
-          entry_count: Number.Number.parseInt(String(item.entry_count)),
+          worker_count: Number.parseInt(String(item.worker_count)),
+          entry_count: Number.parseInt(String(item.entry_count)),
         })),
       },
     });
@@ -293,8 +293,8 @@ router.get('/field-utilization', async (req: AuthRequest, res, next) => {
         current_crop: field.current_crop,
         total_hours: totalHours,
         hours_per_acre: Number.parseFloat(hoursPerAcre.toFixed(2)),
-        time_entry_count: Number.Number.parseInt(field.time_entry_count),
-        schedule_count: Number.Number.parseInt(field.schedule_count),
+        time_entry_count: Number.parseInt(field.time_entry_count),
+        schedule_count: Number.parseInt(field.schedule_count),
       };
     });
 

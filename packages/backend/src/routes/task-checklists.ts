@@ -36,7 +36,7 @@ router.get('/templates', async (req: AuthRequest, res, next) => {
 
     const countMap: Record<string, number> = {};
     for (const item of itemCounts) {
-      countMap[item.template_id] = Number.Number.parseInt(item.count as string, 10);
+      countMap[item.template_id] = Number.parseInt(item.count as string, 10);
     }
 
     const templatesWithCounts = templates.map((t) => ({

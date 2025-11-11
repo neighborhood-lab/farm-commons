@@ -46,38 +46,19 @@ export default function FieldUtilizationChart({ data }: FieldUtilizationChartPro
                 dataKey="hours_used"
                 nameKey="field_name"
               >
-                {data.map((entry, index) => (
+                {data.map((_entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
               <Tooltip
-                formatter={(
-                  value: number,
-                  name: string,
-                  props: { payload: FieldUtilizationData }
-                ) => {
-                  return [
-                    `${value.toFixed(1)} hours (${props.payload.percentage.toFixed(1)}%)`,
-                    props.payload.field_name,
-                  ];
-                }}
+                formatter={(value: number) => `${value.toFixed(1)} hours`}
                 contentStyle={{
                   backgroundColor: '#fff',
                   border: '1px solid #e2e8f0',
                   borderRadius: '0.375rem',
                 }}
               />
-              <Legend
-                verticalAlign="bottom"
-                height={36}
-                formatter={(value, entry: { payload?: FieldUtilizationData }) => {
-                  const payload = entry.payload;
-                  if (payload) {
-                    return `${payload.field_name} (${payload.hours_used.toFixed(1)}h)`;
-                  }
-                  return value;
-                }}
-              />
+              <Legend verticalAlign="bottom" height={36} />
             </PieChart>
           </ResponsiveContainer>
 
