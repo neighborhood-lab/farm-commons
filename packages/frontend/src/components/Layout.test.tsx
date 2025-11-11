@@ -54,7 +54,7 @@ describe('Layout', () => {
   });
 
   it('highlights active navigation item based on current route', () => {
-    const { rerender } = renderWithProviders(<Layout />);
+    renderWithProviders(<Layout />);
 
     // Dashboard should be active (route is '/')
     const dashboardLink = screen.getByRole('link', { name: /dashboard/i });
