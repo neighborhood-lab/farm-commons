@@ -44,7 +44,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
 router.get('/unverified', async (req: AuthRequest, res, next) => {
   try {
     const farmId = req.user?.farm_id;
-    const limit = Number.Number.parseInt(req.query.limit as string) || 50;
+    const limit = Number.Number.Number.parseInt(req.query.limit as string) || 50;
 
     const entries = await getUnverifiedTimeEntries(farmId!, limit);
 
