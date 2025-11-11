@@ -126,6 +126,24 @@ export const updateCertificationSchema = createCertificationSchema
   .partial()
   .omit({ worker_id: true });
 
+// Skill Schemas
+export const createSkillSchema = z.object({
+  name: z.string().min(1).max(200),
+  description: z.string().optional().nullable(),
+  category: z.string().max(100).optional().nullable(),
+});
+
+export const updateSkillSchema = createSkillSchema.partial();
+
+export const addWorkerSkillSchema = z.object({
+  skill_id: z.string().uuid(),
+  proficiency_level: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional().nullable(),
+  years_experience: z.number().int().min(0).max(100).optional().nullable(),
+  notes: z.string().optional().nullable(),
+});
+
+export const updateWorkerSkillSchema = addWorkerSkillSchema.partial().omit({ skill_id: true });
+
 // Query Schemas
 export const paginationSchema = z.object({
   page: z
@@ -149,7 +167,6 @@ export const dateRangeSchema = z.object({
     .transform((val) => new Date(val)),
 });
 
-<<<<<<< HEAD
 // Task Checklist Schemas
 export const createChecklistTemplateSchema = z.object({
   name: z.string().min(1).max(200),
@@ -192,7 +209,8 @@ export const completeChecklistItemSchema = z.object({
   completed: z.boolean(),
   notes: z.string().optional().nullable(),
   photo_url: z.string().url().optional().nullable(),
-=======
+});
+
 // Time Entry Approval Schemas
 export const approveTimeEntrySchema = z.object({
   notes: z.string().optional().nullable(),
@@ -204,7 +222,6 @@ export const rejectTimeEntrySchema = z.object({
 
 export const batchApprovalSchema = z.object({
   time_entry_ids: z.array(z.string().uuid()).min(1, 'At least one time entry ID is required'),
->>>>>>> develop
 });
 
 // Invoice Schemas
@@ -268,4 +285,79 @@ export const updateInvoiceSchema = z.object({
   tax_rate: z.number().min(0).max(100).optional(),
   notes: z.string().optional().nullable(),
   status: z.enum(['draft', 'sent', 'paid', 'overdue', 'cancelled']).optional(),
+});
+
+// Equipment Assignment Schemas
+export const assignEquipmentSchema = z.object({
+  worker_id: z.string().uuid(),
+  assignment_notes: z.string().optional().nullable(),
+});
+
+export const returnEquipmentSchema = z.object({
+  condition_on_return: z.enum(['excellent', 'good', 'fair', 'poor', 'damaged']),
+  return_notes: z.string().optional().nullable(),
+});
+
+// Statistics Query Schemas
+export const farmStatsQuerySchema = z.object({
+  start_date: z.string().or(z.date()).transform((val) => new Date(val)).optional(),
+  end_date: z.string().or(z.date()).transform((val) => new Date(val)).optional(),
+});
+
+export const workerStatsQuerySchema = z.object({
+  worker_id: z.string().uuid(),
+  start_date: z.string().or(z.date()).transform((val) => new Date(val)).optional(),
+  end_date: z.string().or(z.date()).transform((val) => new Date(val)).optional(),
+});
+
+export const laborHoursQuerySchema = z.object({
+  start_date: z.string().or(z.date()).transform((val) => new Date(val)),
+  end_date: z.string().or(z.date()).transform((val) => new Date(val)),
+  group_by: z.enum(['day', 'week', 'month']).default('week'),
+  worker_id: z.string().uuid().optional(),
+});
+
+export const fieldUtilizationQuerySchema = z.object({
+  start_date: z.string().or(z.date()).transform((val) => new Date(val)).optional(),
+  end_date: z.string().or(z.date()).transform((val) => new Date(val)).optional(),
+  field_id: z.string().uuid().optional(),
+});
+
+export const expiringCertificationsQuerySchema = z.object({
+  days: z.number().int().positive().default(30),
+  worker_id: z.string().uuid().optional(),
+});
+
+// File Upload Schemas
+export const fileUploadSchema = z.object({
+  file: z.any(), // Will be validated by multer middleware
+  file_type: z.enum(['certification', 'document', 'image']),
+  description: z.string().max(500).optional(),
+});
+
+export const fileValidationSchema = z.object({
+  filename: z.string().min(1).max(255),
+  mimetype: z.string().refine(
+    (mime) => {
+      const allowedMimes = [
+        'application/pdf',
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/webp',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      ];
+      return allowedMimes.includes(mime);
+    },
+    {
+      message: 'File type not allowed. Allowed types: PDF, JPEG, PNG, WEBP, DOC, DOCX',
+    }
+  ),
+  size: z.number().max(10 * 1024 * 1024, 'File size must be less than 10MB'),
+});
+
+export const certificationDocumentUploadSchema = z.object({
+  certification_id: z.string().uuid(),
+  document_url: z.string().url().optional(), // For direct URL uploads
 });

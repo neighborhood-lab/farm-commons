@@ -5,6 +5,7 @@ import { createWorkerSchema, updateWorkerSchema, paginationSchema } from '@farm-
 import db from '../db/connection.js';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { auditLog, auditReadAccess, auditListAccess } from '../middleware/auditLog.js';
 
 const router: Router = express.Router();
 
@@ -12,7 +13,7 @@ const router: Router = express.Router();
 router.use(authenticateToken);
 
 // List workers
-router.get('/', async (req: AuthRequest, res, next) => {
+router.get('/', auditListAccess('worker'), async (req: AuthRequest, res, next) => {
   try {
     const { page, per_page } = paginationSchema.parse(req.query);
     const farmId = req.user?.farm_id;
@@ -45,7 +46,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
 });
 
 // Get single worker
-router.get('/:id', async (req: AuthRequest, res, next) => {
+router.get('/:id', auditReadAccess('worker'), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const farmId = req.user?.farm_id;
@@ -66,7 +67,7 @@ router.get('/:id', async (req: AuthRequest, res, next) => {
 });
 
 // Create worker (managers and admins only)
-router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
+router.post('/', requireRole('admin', 'manager'), auditLog('create', 'worker'), async (req: AuthRequest, res, next) => {
   try {
     const data = createWorkerSchema.parse(req.body);
     const farmId = req.user?.farm_id;
@@ -88,7 +89,7 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
 });
 
 // Update worker
-router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
+router.put('/:id', requireRole('admin', 'manager'), auditLog('update', 'worker'), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const data = updateWorkerSchema.parse(req.body);
@@ -116,7 +117,7 @@ router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res
 });
 
 // Delete worker
-router.delete('/:id', requireRole('admin'), async (req: AuthRequest, res, next) => {
+router.delete('/:id', requireRole('admin'), auditLog('delete', 'worker'), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const farmId = req.user?.farm_id;
