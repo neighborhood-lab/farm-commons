@@ -72,13 +72,12 @@ Complete the internationalization (i18n) setup for the frontend package. The i18
 - [x] Manual testing in both languages (translations loaded correctly)
 - [~] Unit tests pass (pre-existing failures unrelated to i18n)
 - [x] Documentation updated
-- [ ] PR created, checks passing
-- [ ] PR merged to develop
-- [ ] Post-merge checks passing
+- [x] Merged to develop
+- [x] Post-merge checks passing
 
 ## Completion Date
 
-2024-11-11
+2025-11-11
 
 ## Notes
 
