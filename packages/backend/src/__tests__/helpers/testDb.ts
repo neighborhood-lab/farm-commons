@@ -15,7 +15,7 @@ export function getTestDb(): Knex {
       ...config.development,
       connection: process.env.TEST_DATABASE_URL || {
         host: process.env.POSTGRES_HOST || 'localhost',
-        port: parseInt(process.env.POSTGRES_PORT || '5432'),
+        port: Number.parseInt(process.env.POSTGRES_PORT || '5432'),
         database: process.env.TEST_POSTGRES_DB || 'farm_commons_test',
         user: process.env.POSTGRES_USER || 'postgres',
         password: process.env.POSTGRES_PASSWORD || 'password',
