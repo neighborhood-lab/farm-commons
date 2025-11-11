@@ -13,6 +13,9 @@ import authRoutes from './routes/auth.js';
 import workerRoutes from './routes/workers.js';
 import scheduleRoutes from './routes/schedules.js';
 import timeEntryRoutes from './routes/timeEntries.js';
+import certificationRoutes from './routes/certifications.js';
+import skillRoutes from './routes/skills.js';
+import equipmentAssignmentRoutes from './routes/equipment-assignments.js';
 import timeApprovalRoutes from './routes/time-approvals.js';
 import statsRoutes from './routes/stats.js';
 import taskChecklistRoutes from './routes/task-checklists.js';
@@ -97,11 +100,14 @@ app.use('/api/auth', authRoutes);
 app.use('/api/workers', workerRoutes);
 app.use('/api/schedules', scheduleRoutes);
 app.use('/api/time-entries', timeEntryRoutes);
+app.use('/api/certifications', certificationRoutes);
+app.use('/api/equipment-assignments', equipmentAssignmentRoutes);
+app.use('/api/skills', skillRoutes);
 app.use('/api/time-approvals', timeApprovalRoutes);
 app.use('/api/stats', statsRoutes);
-app.use('/api/task-checklists', taskChecklistRoutes);
 app.use('/api', soilDataRoutes);
 app.use('/api/invoices', invoiceRoutes);
+app.use('/api/task-checklists', taskChecklistRoutes);
 
 // Welcome message
 app.get('/', (_req, res) => {
