@@ -30,7 +30,7 @@ describe('Soil Data Tracking', () => {
       await testDb.migrate.latest({
         directory: './src/db/migrations',
       });
-    } catch (error) {
+    } catch {
       // Migrations might already be run, continue
       // eslint-disable-next-line no-console
       console.log('Migration setup:', error);

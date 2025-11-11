@@ -87,7 +87,7 @@ export class EmailService {
       });
 
       logger.info(`Email transporter initialized with host: ${this.config.host}`);
-    } catch (error) {
+    } catch {
       logger.error('Failed to initialize email transporter', error);
       throw error;
     }
@@ -106,7 +106,7 @@ export class EmailService {
       await this.transporter.verify();
       logger.info('SMTP connection verified successfully');
       return true;
-    } catch (error) {
+    } catch {
       logger.error('SMTP connection verification failed', error);
       return false;
     }
@@ -140,7 +140,7 @@ export class EmailService {
       });
 
       return true;
-    } catch (error) {
+    } catch {
       logger.error('Failed to send email', {
         to: options.to,
         subject: options.subject,
@@ -268,7 +268,7 @@ Farm Commons Team
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.1">
   <title>Schedule Notification</title>
   <style>
     body {
@@ -465,7 +465,7 @@ Farm Commons Team
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.1">
   <title>Certification Expiry Reminder</title>
   <style>
     body {

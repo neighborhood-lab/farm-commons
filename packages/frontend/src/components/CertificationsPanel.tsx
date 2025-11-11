@@ -127,7 +127,11 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
       return { text: 'No expiration', color: 'text-gray-600', bg: 'bg-gray-100', icon: null };
     }
 
-    const daysUntilExpiry = getDaysUntilExpiry(expirationDate);
+    // Calculate days until expiration
+    const expDate = typeof expirationDate === 'string' ? new Date(expirationDate) : expirationDate;
+    const today = new Date();
+    const diffTime = expDate.getTime() - today.getTime();
+    const daysUntilExpiry = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (daysUntilExpiry < 0) {
       return {

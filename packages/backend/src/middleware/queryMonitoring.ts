@@ -69,7 +69,7 @@ const metrics = new QueryMetrics();
  * Default configuration
  */
 const defaultConfig: QueryMonitoringConfig = {
-  slowQueryThreshold: parseInt(process.env.SLOW_QUERY_THRESHOLD || '100', 10), // 100ms default
+  slowQueryThreshold: Number.parseInt(process.env.SLOW_QUERY_THRESHOLD || '100', 10), // 100ms default
   logAllQueries: process.env.LOG_ALL_QUERIES === 'true',
   enabled: process.env.QUERY_MONITORING_ENABLED !== 'false', // Enabled by default
 };
@@ -205,7 +205,7 @@ export async function analyzeQuery(sql: string, bindings?: any[]) {
     const explainQuery = `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) ${sql}`;
     const result = await db.raw(explainQuery, bindings);
     return result.rows[0]['QUERY PLAN'];
-  } catch (error) {
+  } catch {
     console.error('Error analyzing query:', error);
     throw error;
   }

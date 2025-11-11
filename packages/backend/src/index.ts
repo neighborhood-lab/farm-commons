@@ -151,7 +151,7 @@ app.use('/api/task-checklists', taskChecklistRoutes);
 app.get('/', (_req, res) => {
   res.json({
     name: 'Farm Commons API',
-    version: '0.1.0',
+    version: '0.1.1',
     description: 'Shared farm management software, community owned. For the humans who feed us.',
     documentation: '/api/docs',
   });

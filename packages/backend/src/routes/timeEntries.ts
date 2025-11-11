@@ -35,7 +35,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: entries,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -44,7 +44,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
 router.get('/unverified', async (req: AuthRequest, res, next) => {
   try {
     const farmId = req.user?.farm_id;
-    const limit = parseInt(req.query.limit as string) || 50;
+    const limit = Number.parseInt(req.query.limit as string) || 50;
 
     const entries = await getUnverifiedTimeEntries(farmId!, limit);
 
@@ -52,7 +52,7 @@ router.get('/unverified', async (req: AuthRequest, res, next) => {
       success: true,
       data: entries,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -68,7 +68,7 @@ router.get('/active', async (req: AuthRequest, res, next) => {
       success: true,
       data: entries,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -92,7 +92,7 @@ router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
       success: true,
       data: entries,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -129,7 +129,7 @@ router.post('/clock-in', auditLog('create', 'time_entry'), async (req: AuthReque
       success: true,
       data: entry,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -169,7 +169,7 @@ router.post('/:id/clock-out', auditLog('update', 'time_entry'), async (req: Auth
       success: true,
       data: updatedEntry,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -198,7 +198,7 @@ router.post('/:id/verify', requireRole('admin', 'manager'), auditLog('update', '
       success: true,
       data: entry,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });

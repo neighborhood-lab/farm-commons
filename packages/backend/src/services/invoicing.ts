@@ -207,7 +207,7 @@ export async function generateInvoicePDF(options: InvoicePDFOptions): Promise<Bu
 
       // Finalize PDF
       doc.end();
-    } catch (error) {
+    } catch {
       reject(error);
     }
   });

@@ -34,7 +34,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: schedules,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -43,8 +43,8 @@ router.get('/', async (req: AuthRequest, res, next) => {
 router.get('/upcoming', async (req: AuthRequest, res, next) => {
   try {
     const farmId = req.user?.farm_id;
-    const daysAhead = parseInt(req.query.days as string) || 7;
-    const limit = parseInt(req.query.limit as string) || 50;
+    const daysAhead = Number.parseInt(req.query.days as string) || 7;
+    const limit = Number.parseInt(req.query.limit as string) || 50;
 
     const schedules = await getUpcomingSchedules(farmId!, daysAhead, limit);
 
@@ -52,7 +52,7 @@ router.get('/upcoming', async (req: AuthRequest, res, next) => {
       success: true,
       data: schedules,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -76,7 +76,7 @@ router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
       success: true,
       data: schedules,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -98,7 +98,7 @@ router.post('/', requireRole('admin', 'manager'), auditLog('create', 'schedule')
       success: true,
       data: schedule,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -126,7 +126,7 @@ router.put('/:id', requireRole('admin', 'manager'), auditLog('update', 'schedule
       success: true,
       data: schedule,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -147,7 +147,7 @@ router.delete('/:id', requireRole('admin', 'manager'), auditLog('delete', 'sched
       success: true,
       message: 'Schedule deleted successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });

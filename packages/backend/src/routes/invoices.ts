@@ -35,7 +35,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: invoices,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -72,7 +72,7 @@ router.get('/:id', async (req: AuthRequest, res, next) => {
       success: true,
       data: invoiceWithItems,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -176,7 +176,7 @@ router.post('/', requireRole('admin', 'manager'), async (req: AuthRequest, res, 
       success: true,
       data: invoice,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -231,7 +231,7 @@ router.post('/:id/items', requireRole('admin', 'manager'), async (req: AuthReque
       success: true,
       data: insertedItems,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -277,7 +277,7 @@ router.put('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, res
       success: true,
       data: updatedInvoice,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -324,7 +324,7 @@ router.delete(
         success: true,
         message: 'Invoice item deleted',
       });
-    } catch (error) {
+    } catch {
       next(error);
     }
   }
@@ -364,7 +364,7 @@ router.get('/:id/pdf', async (req: AuthRequest, res, next) => {
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="invoice-${invoice.invoice_number}.pdf"`);
     res.send(pdfBuffer);
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -392,7 +392,7 @@ router.delete('/:id', requireRole('admin', 'manager'), async (req: AuthRequest, 
       success: true,
       message: 'Invoice deleted',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });

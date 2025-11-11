@@ -40,7 +40,7 @@ describe('formatZodErrors', () => {
 
     try {
       schema.parse({ email: 'invalid', age: -5 });
-    } catch (error) {
+    } catch {
       if (error instanceof z.ZodError) {
         const formatted = formatZodErrors(error);
 
@@ -62,7 +62,7 @@ describe('formatZodErrors', () => {
 
     try {
       schema.parse({ user: { name: '', email: 'bad-email' } });
-    } catch (error) {
+    } catch {
       if (error instanceof z.ZodError) {
         const formatted = formatZodErrors(error);
 
@@ -79,7 +79,7 @@ describe('formatZodErrors', () => {
 
     try {
       schema.parse({ tags: ['valid', '', 'also-valid'] });
-    } catch (error) {
+    } catch {
       if (error instanceof z.ZodError) {
         const formatted = formatZodErrors(error);
 

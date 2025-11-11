@@ -88,7 +88,7 @@ router.get('/farm', async (req: AuthRequest, res, next) => {
         unverified_entries: Number.Number.parseInt(unverified_entries as string),
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -177,7 +177,7 @@ router.get('/workers/:workerId', async (req: AuthRequest, res, next) => {
         most_common_task: topTask?.task_type || null,
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -242,7 +242,7 @@ router.get('/labor-hours', async (req: AuthRequest, res, next) => {
         })),
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -318,7 +318,7 @@ router.get('/field-utilization', async (req: AuthRequest, res, next) => {
         },
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });

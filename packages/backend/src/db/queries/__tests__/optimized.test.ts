@@ -58,7 +58,7 @@ describe('Optimized Queries', () => {
         phone: '555-0100',
         hire_date: '2024-01-01',
         status: 'active',
-        hourly_rate: 20.0,
+        hourly_rate: 20.1,
       })
       .returning('*');
     testWorkerId1 = worker1.id;
@@ -71,7 +71,7 @@ describe('Optimized Queries', () => {
         phone: '555-0101',
         hire_date: '2024-02-01',
         status: 'active',
-        hourly_rate: 22.0,
+        hourly_rate: 22.1,
       })
       .returning('*');
     testWorkerId2 = worker2.id;
