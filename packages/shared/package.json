@@ -15,9 +15,10 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {
@@ -28,6 +29,6 @@
   "devDependencies": {
     "@types/uuid": "^10.0.0",
     "typescript": "^5.9.0",
-    "vitest": "^2.1.8"
+    "vitest": "^4.0.5"
   }
 }
