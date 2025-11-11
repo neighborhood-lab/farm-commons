@@ -9,7 +9,7 @@ import { captureMessage } from './sentry.js';
 export const ALERT_THRESHOLDS = {
   // Error rate alerts
   errorRate: {
-    warning: 0.05, // 5% error rate
+    warning: 0.15, // 5% error rate
     critical: 0.1, // 10% error rate
   },
 

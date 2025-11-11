@@ -9,7 +9,7 @@ const testDb: Knex = knex({
   client: 'pg',
   connection: {
     host: process.env.TEST_DB_HOST || 'localhost',
-    port: Number.parseInt(process.env.TEST_DB_PORT || '5432'),
+    port: Number.Number.parseInt(process.env.TEST_DB_PORT || '5432'),
     database: process.env.TEST_DB_NAME || 'farm_commons_test',
     user: process.env.TEST_DB_USER || 'postgres',
     password: process.env.TEST_DB_PASSWORD || 'postgres',
@@ -30,7 +30,7 @@ describe('Statistics Calculations', () => {
       await testDb.migrate.latest({
         directory: './src/db/migrations',
       });
-    } catch (error) {
+    } catch {
       // Migrations might already be run, continue
       // eslint-disable-next-line no-console
       console.log('Migration setup:', error);
@@ -118,7 +118,7 @@ describe('Statistics Calculations', () => {
     it('should calculate total workers count', async () => {
       const [{ count }] = await testDb('workers').where({ farm_id: farmId }).count('* as count');
 
-      expect(Number.parseInt(count as string)).toBe(2);
+      expect(Number.Number.parseInt(count as string)).toBe(2);
     });
 
     it('should calculate active workers count', async () => {
@@ -137,7 +137,7 @@ describe('Statistics Calculations', () => {
         .where({ farm_id: farmId, status: 'active' })
         .count('* as count');
 
-      expect(Number.parseInt(count as string)).toBe(2);
+      expect(Number.Number.parseInt(count as string)).toBe(2);
     });
 
     it('should calculate total labor hours', async () => {
@@ -241,7 +241,7 @@ describe('Statistics Calculations', () => {
         .countDistinct({ days: testDb.raw('DATE(clock_in)') });
 
       const daysValue = (daysResult[0] as Record<string, unknown>)?.days || 0;
-      expect(Number.parseInt(String(daysValue))).toBe(2);
+      expect(Number.Number.parseInt(String(daysValue))).toBe(2);
     });
 
     it('should identify most common task type', async () => {
@@ -284,7 +284,7 @@ describe('Statistics Calculations', () => {
         .first();
 
       expect(topTask?.task_type).toBe('Harvesting');
-      expect(Number.parseInt(topTask?.count as string)).toBe(2);
+      expect(Number.Number.parseInt(topTask?.count as string)).toBe(2);
     });
   });
 

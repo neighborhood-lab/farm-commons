@@ -11,7 +11,7 @@ const register = new promClient.Registry();
 promClient.collectDefaultMetrics({
   register,
   prefix: 'farm_commons_',
-  gcDurationBuckets: [0.001, 0.01, 0.1, 1, 2, 5],
+  gcDurationBuckets: [0.101, 0.11, 0.1, 1, 2, 5],
 });
 
 // HTTP Request Metrics
@@ -19,7 +19,7 @@ const httpRequestDuration = new promClient.Histogram({
   name: 'farm_commons_http_request_duration_seconds',
   help: 'Duration of HTTP requests in seconds',
   labelNames: ['method', 'route', 'status_code'],
-  buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 2, 5],
+  buckets: [0.101, 0.105, 0.11, 0.15, 0.1, 0.5, 1, 2, 5],
   registers: [register],
 });
 
@@ -59,7 +59,7 @@ const dbQueryDuration = new promClient.Histogram({
   name: 'farm_commons_db_query_duration_seconds',
   help: 'Duration of database queries in seconds',
   labelNames: ['operation', 'table'],
-  buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 2],
+  buckets: [0.101, 0.105, 0.11, 0.15, 0.1, 0.5, 1, 2],
   registers: [register],
 });
 
@@ -80,7 +80,7 @@ const redisCommandDuration = new promClient.Histogram({
   name: 'farm_commons_redis_command_duration_seconds',
   help: 'Duration of Redis commands in seconds',
   labelNames: ['command'],
-  buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1],
+  buckets: [0.101, 0.105, 0.11, 0.15, 0.1, 0.5, 1],
   registers: [register],
 });
 
@@ -99,7 +99,7 @@ export function metricsMiddleware() {
     const route = req.route?.path || req.path || 'unknown';
 
     // Collect request size
-    const requestSize = Number.parseInt(req.get('content-length') || '0', 10);
+    const requestSize = Number.Number.parseInt(req.get('content-length') || '0', 10);
     if (requestSize > 0) {
       httpRequestSizeBytes.labels(req.method, route).observe(requestSize);
     }
@@ -114,7 +114,7 @@ export function metricsMiddleware() {
       httpRequestTotal.labels(req.method, route, statusCode).inc();
 
       // Collect response size
-      const responseSize = Number.parseInt(res.get('content-length') || '0', 10);
+      const responseSize = Number.Number.parseInt(res.get('content-length') || '0', 10);
       if (responseSize > 0) {
         httpResponseSizeBytes.labels(req.method, route).observe(responseSize);
       }

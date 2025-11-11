@@ -6,6 +6,7 @@ import { calculatePreciseHours } from '@farm-commons/shared';
 import db from '../db/connection.js';
 import { authenticateToken, requireRole, type AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { auditLog } from '../middleware/auditLog.js';
 
 const router: Router = express.Router();
 
@@ -38,7 +39,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: entries,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -62,13 +63,13 @@ router.get('/worker/:workerId', async (req: AuthRequest, res, next) => {
       success: true,
       data: entries,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
 
 // Clock in
-router.post('/clock-in', async (req: AuthRequest, res, next) => {
+router.post('/clock-in', auditLog('create', 'time_entry'), async (req: AuthRequest, res, next) => {
   try {
     const data = clockInSchema.parse(req.body);
     const farmId = req.user?.farm_id;
@@ -99,13 +100,13 @@ router.post('/clock-in', async (req: AuthRequest, res, next) => {
       success: true,
       data: entry,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
 
 // Clock out
-router.post('/:id/clock-out', async (req: AuthRequest, res, next) => {
+router.post('/:id/clock-out', auditLog('update', 'time_entry'), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const { break_minutes, notes } = clockOutSchema.parse(req.body);
@@ -139,13 +140,13 @@ router.post('/:id/clock-out', async (req: AuthRequest, res, next) => {
       success: true,
       data: updatedEntry,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
 
 // Verify time entry (managers/admins only)
-router.post('/:id/verify', requireRole('admin', 'manager'), async (req: AuthRequest, res, next) => {
+router.post('/:id/verify', requireRole('admin', 'manager'), auditLog('update', 'time_entry'), async (req: AuthRequest, res, next) => {
   try {
     const { id } = req.params;
     const farmId = req.user?.farm_id;
@@ -168,7 +169,7 @@ router.post('/:id/verify', requireRole('admin', 'manager'), async (req: AuthRequ
       success: true,
       data: entry,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });

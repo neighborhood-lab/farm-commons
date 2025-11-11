@@ -68,7 +68,7 @@ router.post('/fields/:fieldId/soil-tests', async (req: AuthRequest, res, next) =
       success: true,
       data: soilTest,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -119,7 +119,7 @@ router.get('/fields/:fieldId/soil-tests', async (req: AuthRequest, res, next) =>
         trends,
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -160,7 +160,7 @@ router.get('/fields/:fieldId/soil-tests/:testId', async (req: AuthRequest, res, 
         auto_recommendations: recommendations,
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -207,7 +207,7 @@ router.put('/fields/:fieldId/soil-tests/:testId', async (req: AuthRequest, res, 
       success: true,
       data: updatedTest,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -242,7 +242,7 @@ router.delete('/fields/:fieldId/soil-tests/:testId', async (req: AuthRequest, re
       success: true,
       message: 'Soil test deleted successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -291,7 +291,7 @@ function generateRecommendations(soilTest: Record<string, string | number | null
     } else if (ph > 7.5) {
       recommendations.push('Soil is alkaline. Consider applying sulfur to lower pH.');
     } else {
-      recommendations.push('Soil pH is in optimal range (6.0-7.5).');
+      recommendations.push('Soil pH is in optimal range (6.1-7.5).');
     }
   }
 
