@@ -41,10 +41,7 @@ const DEFAULT_OPTIONS: Required<CurrencyFormatOptions> = {
  * formatCurrency(1234.56, { locale: 'es-MX', currency: 'MXN' }); // "$1,234.56"
  * formatCurrency(1234.56, { locale: 'es-ES', currency: 'EUR' }); // "1.234,56 €"
  */
-export function formatCurrency(
-  amount: number,
-  options: CurrencyFormatOptions = {}
-): string {
+export function formatCurrency(amount: number, options: CurrencyFormatOptions = {}): string {
   const opts = { ...DEFAULT_OPTIONS, ...options };
 
   try {
@@ -106,10 +103,7 @@ export function calculateHourlyWage(
  * calculatePieceRateEarnings(100, 0.50); // 50.00
  * calculatePieceRateEarnings(250, 1.25); // 312.50
  */
-export function calculatePieceRateEarnings(
-  units: number,
-  ratePerUnit: number
-): number {
+export function calculatePieceRateEarnings(units: number, ratePerUnit: number): number {
   if (units < 0 || ratePerUnit < 0) {
     throw new Error('Units and rate must be non-negative');
   }
@@ -127,10 +121,7 @@ export function calculatePieceRateEarnings(
  * @example
  * calculateMixedEarnings(500, 150); // 650.00
  */
-export function calculateMixedEarnings(
-  hourlyWage: number,
-  pieceRateEarnings: number
-): number {
+export function calculateMixedEarnings(hourlyWage: number, pieceRateEarnings: number): number {
   if (hourlyWage < 0 || pieceRateEarnings < 0) {
     throw new Error('Earnings must be non-negative');
   }
@@ -170,8 +161,15 @@ export function formatCurrencyLocaleAware(
  * parseCurrency("$1,234"); // 1234.00
  */
 export function parseCurrency(currencyString: string): number {
-  // Remove currency symbols, letters, and spaces
-  let cleaned = currencyString.replace(/[^\d,.-]/g, '');
+  // Check if amount is negative (either with minus sign or parentheses)
+  const isNegative =
+    currencyString.includes('-') || (currencyString.includes('(') && currencyString.includes(')'));
+
+  // Remove currency symbols, letters, spaces, and parentheses
+  let cleaned = currencyString.replace(/[^\d,.-]/g, '').replace(/[()]/g, '');
+
+  // Remove any remaining minus signs (we'll add it back at the end if needed)
+  cleaned = cleaned.replace(/-/g, '');
 
   // Handle European format (comma as decimal separator)
   // If there's a comma after the last period, or comma is the last separator
@@ -204,7 +202,8 @@ export function parseCurrency(currencyString: string): number {
     throw new Error('Invalid currency string');
   }
 
-  return parseFloat(value.toFixed(2));
+  const result = parseFloat(value.toFixed(2));
+  return isNegative ? -result : result;
 }
 
 /**

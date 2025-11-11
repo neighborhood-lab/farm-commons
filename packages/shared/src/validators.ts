@@ -78,8 +78,8 @@ export const createScheduleSchema = z.object({
     .string()
     .or(z.date())
     .transform((val) => new Date(val)),
-  start_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
-  end_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
+  start_time: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/),
+  end_time: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/),
   task_type: z.string().min(1).max(100),
   task_description: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
@@ -137,7 +137,10 @@ export const updateSkillSchema = createSkillSchema.partial();
 
 export const addWorkerSkillSchema = z.object({
   skill_id: z.string().uuid(),
-  proficiency_level: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional().nullable(),
+  proficiency_level: z
+    .enum(['beginner', 'intermediate', 'advanced', 'expert'])
+    .optional()
+    .nullable(),
   years_experience: z.number().int().min(0).max(100).optional().nullable(),
   notes: z.string().optional().nullable(),
 });
@@ -300,26 +303,56 @@ export const returnEquipmentSchema = z.object({
 
 // Statistics Query Schemas
 export const farmStatsQuerySchema = z.object({
-  start_date: z.string().or(z.date()).transform((val) => new Date(val)).optional(),
-  end_date: z.string().or(z.date()).transform((val) => new Date(val)).optional(),
+  start_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional(),
+  end_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional(),
 });
 
 export const workerStatsQuerySchema = z.object({
   worker_id: z.string().uuid(),
-  start_date: z.string().or(z.date()).transform((val) => new Date(val)).optional(),
-  end_date: z.string().or(z.date()).transform((val) => new Date(val)).optional(),
+  start_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional(),
+  end_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional(),
 });
 
 export const laborHoursQuerySchema = z.object({
-  start_date: z.string().or(z.date()).transform((val) => new Date(val)),
-  end_date: z.string().or(z.date()).transform((val) => new Date(val)),
+  start_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val)),
+  end_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val)),
   group_by: z.enum(['day', 'week', 'month']).default('week'),
   worker_id: z.string().uuid().optional(),
 });
 
 export const fieldUtilizationQuerySchema = z.object({
-  start_date: z.string().or(z.date()).transform((val) => new Date(val)).optional(),
-  end_date: z.string().or(z.date()).transform((val) => new Date(val)).optional(),
+  start_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional(),
+  end_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional(),
   field_id: z.string().uuid().optional(),
 });
 
@@ -393,9 +426,22 @@ export const createCropSchema = z.object({
   field_id: z.string().uuid(),
   crop_name: z.string().min(1).max(200),
   crop_variety: z.string().max(200).optional().nullable(),
-  planting_date: z.string().or(z.date()).transform((val) => new Date(val)),
-  expected_harvest_date: z.string().or(z.date()).transform((val) => new Date(val)).optional().nullable(),
-  actual_harvest_date: z.string().or(z.date()).transform((val) => new Date(val)).optional().nullable(),
+  planting_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val)),
+  expected_harvest_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional()
+    .nullable(),
+  actual_harvest_date: z
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val))
+    .optional()
+    .nullable(),
   planted_area_acres: z.number().positive().optional().nullable(),
   yield_amount: z.number().positive().optional().nullable(),
   yield_unit: z.string().max(50).optional().nullable(),
