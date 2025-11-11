@@ -17,29 +17,30 @@
   },
   "dependencies": {
     "@farm-commons/shared": "workspace:*",
+    "@nozbe/watermelondb": "^0.25.0",
+    "@react-native-async-storage/async-storage": "^2.1.0",
+    "@react-navigation/native": "^7.0.0",
+    "@react-navigation/native-stack": "^7.0.0",
+    "@tanstack/react-query": "^5.90.0",
+    "date-fns": "^4.1.0",
     "expo": "~54.0.0",
+    "expo-camera": "~16.0.0",
+    "expo-local-authentication": "~15.0.0",
+    "expo-location": "~18.0.0",
+    "expo-notifications": "~0.30.0",
     "expo-router": "^4.0.0",
     "react": "^19.0.0",
     "react-native": "0.82.0",
-    "@react-navigation/native": "^7.0.0",
-    "@react-navigation/native-stack": "^7.0.0",
-    "@react-native-async-storage/async-storage": "^2.1.0",
-    "react-native-paper": "^5.12.5",
-    "@tanstack/react-query": "^5.90.0",
-    "zustand": "^5.0.3",
-    "@nozbe/watermelondb": "^0.25.0",
-    "expo-location": "~18.0.0",
-    "expo-camera": "~16.0.0",
-    "expo-notifications": "~0.30.0",
-    "expo-local-authentication": "~15.0.0",
     "react-native-maps": "1.20.0",
-    "date-fns": "^4.1.0"
+    "react-native-paper": "^5.12.5",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
-    "@types/react": "^19.0.7",
     "@babel/core": "^7.26.0",
+    "@types/react": "^19.0.7",
+    "@vitest/ui": "^2.1.8",
+    "express-rate-limit": "^7.5.0",
     "typescript": "^5.9.0",
-    "vitest": "^2.1.8",
-    "@vitest/ui": "^2.1.8"
+    "vitest": "^2.1.8"
   }
 }
