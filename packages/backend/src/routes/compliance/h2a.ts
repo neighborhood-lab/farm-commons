@@ -55,13 +55,13 @@ router.get('/visas', async (req: AuthRequest, res, next) => {
       success: true,
       data: {
         data: visas,
-        total: parseInt(count as string),
+        total: Number.parseInt(count as string),
         page,
         per_page,
-        total_pages: Math.ceil(parseInt(count as string) / per_page),
+        total_pages: Math.ceil(Number.parseInt(count as string) / per_page),
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -70,7 +70,7 @@ router.get('/visas', async (req: AuthRequest, res, next) => {
 router.get('/visas/expiring', async (req: AuthRequest, res, next) => {
   try {
     const farmId = req.user?.farm_id;
-    const daysParam = req.query.days ? parseInt(req.query.days as string) : 60;
+    const daysParam = req.query.days ? Number.parseInt(req.query.days as string) : 60;
     const days = Math.min(Math.max(daysParam, 1), 365); // Clamp between 1-365 days
 
     const expiringVisas = await db('h2a_visas')
@@ -92,7 +92,7 @@ router.get('/visas/expiring', async (req: AuthRequest, res, next) => {
       success: true,
       data: expiringVisas,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -143,7 +143,7 @@ router.get('/visas/:id', async (req: AuthRequest, res, next) => {
         compliance_checks: complianceChecks,
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -171,7 +171,7 @@ router.post('/visas', requireRole('admin', 'manager'), async (req: AuthRequest, 
       success: true,
       data: visa,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -207,7 +207,7 @@ router.put('/visas/:id', requireRole('admin', 'manager'), async (req: AuthReques
       success: true,
       data: visa,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -236,7 +236,7 @@ router.delete('/visas/:id', requireRole('admin'), async (req: AuthRequest, res, 
       success: true,
       message: 'H-2A visa record deleted successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -271,7 +271,7 @@ router.get('/visas/:visaId/housing', async (req: AuthRequest, res, next) => {
       success: true,
       data: housing,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -302,7 +302,7 @@ router.post('/housing', requireRole('admin', 'manager'), async (req: AuthRequest
       success: true,
       data: housing,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -339,7 +339,7 @@ router.put('/housing/:id', requireRole('admin', 'manager'), async (req: AuthRequ
       success: true,
       data: housing,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -369,7 +369,7 @@ router.delete('/housing/:id', requireRole('admin'), async (req: AuthRequest, res
       success: true,
       message: 'Housing record deleted successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -404,7 +404,7 @@ router.get('/visas/:visaId/transportation', async (req: AuthRequest, res, next) 
       success: true,
       data: transportation,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -435,7 +435,7 @@ router.post('/transportation', requireRole('admin', 'manager'), async (req: Auth
       success: true,
       data: transportation,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -472,7 +472,7 @@ router.put('/transportation/:id', requireRole('admin', 'manager'), async (req: A
       success: true,
       data: transportation,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -502,7 +502,7 @@ router.delete('/transportation/:id', requireRole('admin'), async (req: AuthReque
       success: true,
       message: 'Transportation record deleted successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -542,7 +542,7 @@ router.get('/visas/:visaId/compliance-checks', async (req: AuthRequest, res, nex
       success: true,
       data: checks,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -573,7 +573,7 @@ router.post('/compliance-checks', requireRole('admin', 'manager'), async (req: A
       success: true,
       data: check,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -615,7 +615,7 @@ router.put('/compliance-checks/:id', requireRole('admin', 'manager'), async (req
       success: true,
       data: check,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -645,7 +645,7 @@ router.delete('/compliance-checks/:id', requireRole('admin'), async (req: AuthRe
       success: true,
       message: 'Compliance check deleted successfully',
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -711,13 +711,13 @@ router.get('/reports/compliance', async (req: AuthRequest, res, next) => {
         let overallStatus: 'compliant' | 'warning' | 'non-compliant' = 'compliant';
 
         if (
-          parseInt(complianceStats.overdue as string) > 0 ||
+          Number.parseInt(complianceStats.overdue as string) > 0 ||
           !housingCompliant ||
           visa.days_until_expiration < 30
         ) {
           overallStatus = 'non-compliant';
         } else if (
-          parseInt(complianceStats.pending as string) > 0 ||
+          Number.parseInt(complianceStats.pending as string) > 0 ||
           visa.days_until_expiration < 60
         ) {
           overallStatus = 'warning';
@@ -730,14 +730,14 @@ router.get('/reports/compliance', async (req: AuthRequest, res, next) => {
           visa_number: visa.visa_number,
           visa_status: visa.status,
           visa_expiration: visa.end_date,
-          days_until_expiration: parseInt(visa.days_until_expiration as string),
+          days_until_expiration: Number.parseInt(visa.days_until_expiration as string),
           housing_current: currentHousing || null,
           housing_compliant: !!housingCompliant,
-          transportation_records: parseInt(transportCount as string),
-          compliance_checks_total: parseInt(complianceStats.total as string),
-          compliance_checks_completed: parseInt(complianceStats.completed as string),
-          compliance_checks_pending: parseInt(complianceStats.pending as string),
-          compliance_checks_overdue: parseInt(complianceStats.overdue as string),
+          transportation_records: Number.parseInt(transportCount as string),
+          compliance_checks_total: Number.parseInt(complianceStats.total as string),
+          compliance_checks_completed: Number.parseInt(complianceStats.completed as string),
+          compliance_checks_pending: Number.parseInt(complianceStats.pending as string),
+          compliance_checks_overdue: Number.parseInt(complianceStats.overdue as string),
           overall_compliance_status: overallStatus,
         };
       })
@@ -755,7 +755,7 @@ router.get('/reports/compliance', async (req: AuthRequest, res, next) => {
         reports,
       },
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -783,7 +783,7 @@ router.get('/stats', async (req: AuthRequest, res, next) => {
       success: true,
       data: stats,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
