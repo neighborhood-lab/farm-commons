@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, MapPin, Maximize, Trash2, Edit2, Calendar } from 'lucide-react';
+import { Plus, MapPin, Maximize, Trash2, Edit2 } from 'lucide-react';
 import { api } from '../lib/api';
 import type { Field, PaginatedResponse } from '@farm-commons/shared';
 import FieldMap from '../components/FieldMap';
@@ -57,9 +57,7 @@ export default function FieldsPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Fields</h1>
-          <p className="text-gray-600 mt-2">
-            Manage your farm fields - {fields.length} total
-          </p>
+          <p className="text-gray-600 mt-2">Manage your farm fields - {fields.length} total</p>
         </div>
         <button
           onClick={handleCreateField}

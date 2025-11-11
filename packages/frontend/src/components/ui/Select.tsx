@@ -31,7 +31,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     },
     ref
   ) => {
-    const selectId = id || `select-${Math.random().toString(36).substr(2, 9)}`;
+    const selectId = id || `select-${crypto.randomUUID()}`;
     const hasError = !!error;
 
     const baseClasses =
@@ -46,10 +46,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full">
         {label && (
-          <label
-            htmlFor={selectId}
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor={selectId} className="mb-1 block text-sm font-medium text-gray-700">
             {label}
             {required && <span className="ml-1 text-red-500">*</span>}
           </label>
@@ -71,11 +68,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           )}
           {options.map((option) => (
-            <option
-              key={option.value}
-              value={option.value}
-              disabled={option.disabled}
-            >
+            <option key={option.value} value={option.value} disabled={option.disabled}>
               {option.label}
             </option>
           ))}

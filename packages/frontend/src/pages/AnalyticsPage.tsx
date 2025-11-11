@@ -1,5 +1,3 @@
-/* eslint-env browser */
-/* global Blob, URL, URLSearchParams, alert, navigator */
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {

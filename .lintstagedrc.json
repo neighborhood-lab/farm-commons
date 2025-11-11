@@ -1,0 +1,6 @@
+{
+  "packages/*/src/**/*.{ts,tsx}": ["eslint --fix --max-warnings=0", "prettier --write"],
+  "packages/*/src/**/*.{css,scss}": ["prettier --write"],
+  "*.{json,md,yml,yaml}": ["prettier --write"],
+  "packages/**/package.json": ["prettier --write"]
+}
