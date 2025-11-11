@@ -9,7 +9,7 @@ import {
   Plus,
   Trash2,
   Edit2,
-  Clock
+  Clock,
 } from 'lucide-react';
 import { api } from '../lib/api';
 import { formatDate } from '@farm-commons/shared';
@@ -17,6 +17,14 @@ import type { Certification } from '@farm-commons/shared';
 
 interface CertificationsPanelProps {
   workerId: string;
+}
+
+// Calculate days until expiration
+function getDaysUntilExpiry(expirationDate: Date | string): number {
+  const expDate = typeof expirationDate === 'string' ? new Date(expirationDate) : expirationDate;
+  const today = new Date();
+  const diffTime = expDate.getTime() - today.getTime();
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
 export default function CertificationsPanel({ workerId }: CertificationsPanelProps) {
@@ -40,7 +48,8 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
 
   // Create certification mutation
   const createMutation = useMutation({
-    mutationFn: (data: any) => api.post('/certifications', { ...data, worker_id: workerId }),
+    mutationFn: (data: Omit<Certification, 'id' | 'created_at' | 'updated_at'>) =>
+      api.post('/certifications', { ...data, worker_id: workerId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['certifications', workerId] });
       resetForm();
@@ -49,7 +58,13 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
 
   // Update certification mutation
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => api.put(`/certifications/${id}`, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<Omit<Certification, 'id' | 'created_at' | 'updated_at'>>;
+    }) => api.put(`/certifications/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['certifications', workerId] });
       resetForm();
@@ -101,17 +116,9 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this certification?')) {
+    if (globalThis.confirm('Are you sure you want to delete this certification?')) {
       deleteMutation.mutate(id);
     }
-  };
-
-  // Calculate days until expiration
-  const getDaysUntilExpiry = (expirationDate: Date | string): number => {
-    const expDate = typeof expirationDate === 'string' ? new Date(expirationDate) : expirationDate;
-    const today = new Date();
-    const diffTime = expDate.getTime() - today.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
   // Get expiry status and styling
@@ -127,35 +134,35 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
         text: `Expired ${Math.abs(daysUntilExpiry)} days ago`,
         color: 'text-red-700',
         bg: 'bg-red-100',
-        icon: <XCircle size={16} className="text-red-600" />
+        icon: <XCircle size={16} className="text-red-600" />,
       };
     } else if (daysUntilExpiry <= 30) {
       return {
         text: `Expires in ${daysUntilExpiry} days`,
         color: 'text-red-700',
         bg: 'bg-red-100',
-        icon: <AlertTriangle size={16} className="text-red-600" />
+        icon: <AlertTriangle size={16} className="text-red-600" />,
       };
     } else if (daysUntilExpiry <= 60) {
       return {
         text: `Expires in ${daysUntilExpiry} days`,
         color: 'text-orange-700',
         bg: 'bg-orange-100',
-        icon: <AlertTriangle size={16} className="text-orange-600" />
+        icon: <AlertTriangle size={16} className="text-orange-600" />,
       };
     } else if (daysUntilExpiry <= 90) {
       return {
         text: `Expires in ${daysUntilExpiry} days`,
         color: 'text-yellow-700',
         bg: 'bg-yellow-100',
-        icon: <Clock size={16} className="text-yellow-600" />
+        icon: <Clock size={16} className="text-yellow-600" />,
       };
     } else {
       return {
         text: `Expires in ${daysUntilExpiry} days`,
         color: 'text-green-700',
         bg: 'bg-green-100',
-        icon: null
+        icon: null,
       };
     }
   };
@@ -175,7 +182,9 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
             <FileText size={24} className="text-earth-600" />
             <div>
               <h2 className="text-xl font-semibold text-gray-900">Certifications</h2>
-              <p className="text-sm text-gray-600">{certs.length} certification{certs.length !== 1 ? 's' : ''} on file</p>
+              <p className="text-sm text-gray-600">
+                {certs.length} certification{certs.length === 1 ? '' : 's'} on file
+              </p>
             </div>
           </div>
           {!isAddingNew && (
@@ -219,15 +228,15 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
                   type="text"
                   required
                   value={formData.issuing_organization}
-                  onChange={(e) => setFormData({ ...formData, issuing_organization: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, issuing_organization: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-earth-500 focus:border-transparent"
                   placeholder="e.g., State Department of Agriculture"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Issue Date *
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Issue Date *</label>
                 <input
                   type="date"
                   required
@@ -248,9 +257,7 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Document URL
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Document URL</label>
                 <input
                   type="url"
                   value={formData.document_url}
@@ -297,7 +304,9 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
           <div className="text-center py-8">
             <FileText size={48} className="mx-auto text-gray-400 mb-3" />
             <p className="text-gray-600">No certifications on file</p>
-            <p className="text-sm text-gray-500 mt-1">Add certifications to track worker qualifications and expiry dates</p>
+            <p className="text-sm text-gray-500 mt-1">
+              Add certifications to track worker qualifications and expiry dates
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -352,7 +361,9 @@ export default function CertificationsPanel({ workerId }: CertificationsPanelPro
 
                       {/* Expiry Warning */}
                       {cert.expiration_date && (
-                        <div className={`mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${expiryStatus.bg}`}>
+                        <div
+                          className={`mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${expiryStatus.bg}`}
+                        >
                           {expiryStatus.icon}
                           <span className={`text-sm font-medium ${expiryStatus.color}`}>
                             {expiryStatus.text}
