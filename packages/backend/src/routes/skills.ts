@@ -38,10 +38,10 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: {
         data: skills,
-        total: Number.Number.Number.Number.Number.parseInt(count as string),
+        total: Number.Number.Number.Number.Number.Number.parseInt(count as string),
         page,
         per_page,
-        total_pages: Math.ceil(Number.Number.Number.Number.Number.parseInt(count as string) / per_page),
+        total_pages: Math.ceil(Number.Number.Number.Number.Number.Number.parseInt(count as string) / per_page),
       },
     });
   } catch {
