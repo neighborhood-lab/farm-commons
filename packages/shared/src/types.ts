@@ -53,6 +53,7 @@ export interface Field {
   name: string;
   size_acres: number;
   location_gps: { lat: number; lng: number } | null;
+  boundary_gps?: { lat: number; lng: number }[] | null;
   current_crop: string | null;
   soil_type: string | null;
   notes: string | null;
@@ -78,6 +79,8 @@ export interface Schedule {
 
 export type ScheduleStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
 
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
+
 export interface TimeEntry {
   id: string;
   farm_id: string;
@@ -92,6 +95,10 @@ export interface TimeEntry {
   notes: string | null;
   verified_by: string | null;
   verified_at: Date | null;
+  approval_status: ApprovalStatus;
+  approved_by: string | null;
+  approved_at: Date | null;
+  rejection_reason: string | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -105,6 +112,29 @@ export interface Certification {
   expiration_date: Date | null;
   document_url: string | null;
   verified: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface Skill {
+  id: string;
+  farm_id: string;
+  name: string;
+  description: string | null;
+  category: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export type ProficiencyLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
+
+export interface WorkerSkill {
+  id: string;
+  worker_id: string;
+  skill_id: string;
+  proficiency_level: ProficiencyLevel | null;
+  years_experience: number | null;
+  notes: string | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -161,35 +191,129 @@ export interface FarmStats {
   scheduled_shifts_today: number;
 }
 
-// Chart Data Types
-export interface WeeklyLaborHoursData {
-  date: string; // ISO date string
-  hours: number;
-  workers: number;
+// Weather Types
+export interface WeatherCondition {
+  id: number;
+  main: string;
+  description: string;
+  icon: string;
 }
 
-export interface WorkerAttendanceData {
-  worker_id: string;
-  worker_name: string;
-  dates: {
-    date: string; // ISO date string
-    present: boolean;
-    hours: number;
-  }[];
+export interface CurrentWeather {
+  temp: number;
+  feels_like: number;
+  temp_min: number;
+  temp_max: number;
+  pressure: number;
+  humidity: number;
+  conditions: WeatherCondition[];
+  wind_speed: number;
+  wind_deg: number;
+  clouds: number;
+  dt: number;
 }
 
-export interface FieldUtilizationData {
-  field_id: string;
-  field_name: string;
-  hours_used: number;
-  percentage: number;
+export interface ForecastDay {
+  date: Date;
+  temp_min: number;
+  temp_max: number;
+  conditions: WeatherCondition[];
+  pop: number; // Probability of precipitation
+  humidity: number;
 }
 
-export interface CertificationExpiryData {
+export interface WeatherAlert {
+  event: string;
+  start: Date;
+  end: Date;
+  description: string;
+  severity: 'minor' | 'moderate' | 'severe' | 'extreme';
+}
+
+export interface WeatherData {
+  current: CurrentWeather;
+  forecast: ForecastDay[];
+  alerts: WeatherAlert[];
+  location: {
+    name: string;
+    lat: number;
+    lon: number;
+  };
+  last_updated: Date;
+}
+
+// Invoice Types
+export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
+
+export interface Invoice {
   id: string;
+  farm_id: string;
+  invoice_number: string;
+  invoice_date: Date;
+  due_date: Date;
+  client_name: string;
+  client_address: string | null;
+  client_email: string | null;
+  period_start: Date;
+  period_end: Date;
+  subtotal: number;
+  tax_rate: number;
+  tax_amount: number;
+  total_amount: number;
+  status: InvoiceStatus;
+  paid_date: Date | null;
+  notes: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface InvoiceItem {
+  id: string;
+  invoice_id: string;
+  time_entry_id: string | null;
+  worker_id: string | null;
+  description: string;
+  quantity: number; // hours worked
+  rate: number; // hourly rate
+  amount: number; // quantity * rate
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface InvoiceWithItems extends Invoice {
+  items: InvoiceItem[];
+}
+
+// Equipment Types
+export type EquipmentStatus = 'available' | 'in_use' | 'maintenance' | 'retired';
+export type EquipmentCondition = 'excellent' | 'good' | 'fair' | 'poor' | 'damaged';
+
+export interface Equipment {
+  id: string;
+  farm_id: string;
+  name: string;
+  type: string;
+  model: string | null;
+  serial_number: string | null;
+  purchase_date: Date | null;
+  status: EquipmentStatus;
+  notes: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface EquipmentAssignment {
+  id: string;
+  farm_id: string;
+  equipment_id: string;
   worker_id: string;
-  worker_name: string;
-  certification_name: string;
-  expiration_date: Date;
-  days_until_expiry: number;
+  assigned_at: Date;
+  returned_at: Date | null;
+  assigned_by: string | null;
+  returned_by: string | null;
+  assignment_notes: string | null;
+  return_notes: string | null;
+  condition_on_return: EquipmentCondition | null;
+  created_at: Date;
+  updated_at: Date;
 }
