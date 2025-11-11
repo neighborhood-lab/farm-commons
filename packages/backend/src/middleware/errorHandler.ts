@@ -22,17 +22,16 @@ export class AppError extends Error implements ApiError {
 
 export function errorHandler(
   err: ApiError | ZodError,
-  req: Request,
+  _req: Request,
   res: Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next: NextFunction
+  _next: NextFunction
 ): void {
   // Handle Zod validation errors
   if (err instanceof ZodError) {
     res.status(400).json({
       success: false,
       error: 'Validation error',
-      details: err.errors,
+      details: err.issues,
     });
     return;
   }
@@ -41,12 +40,11 @@ export function errorHandler(
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal server error';
 
+  // eslint-disable-next-line no-console
   console.error('Error:', {
     message: err.message,
     statusCode,
     stack: err.stack,
-    url: req.url,
-    method: req.method,
   });
 
   res.status(statusCode).json({
