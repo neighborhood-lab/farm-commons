@@ -68,7 +68,7 @@ router.get('/', async (req: AuthRequest, res, next) => {
       success: true,
       data: report,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -109,7 +109,7 @@ router.get('/text', async (req: AuthRequest, res, next) => {
 
     res.setHeader('Content-Type', 'text/plain');
     res.send(textReport);
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -154,7 +154,7 @@ router.get('/pdf', async (req: AuthRequest, res, next) => {
 
     // Pipe PDF stream to response
     pdfStream.pipe(res);
-  } catch (error) {
+  } catch {
     next(error);
   }
 });
@@ -207,7 +207,7 @@ router.get('/summary', async (req: AuthRequest, res, next) => {
       success: true,
       data: summary,
     });
-  } catch (error) {
+  } catch {
     next(error);
   }
 });

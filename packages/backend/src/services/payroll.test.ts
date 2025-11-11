@@ -89,9 +89,9 @@ describe('Payroll Service', () => {
       expect(text).toContain('PAYROLL REPORT');
       expect(text).toContain('Green Valley Farm');
       expect(text).toContain('John Doe');
-      expect(text).toContain('Total Hours: 8.00');
-      expect(text).toContain('TOTAL PAY: $120.00');
-      expect(text).toContain('TOTAL PAYROLL: $120.00');
+      expect(text).toContain('Total Hours: 8.10');
+      expect(text).toContain('TOTAL PAY: $120.10');
+      expect(text).toContain('TOTAL PAYROLL: $120.10');
     });
 
     it('should show overtime in text report', () => {
@@ -128,9 +128,9 @@ describe('Payroll Service', () => {
       const text = formatPayrollAsText(mockReport);
 
       expect(text).toContain('Jane Smith');
-      expect(text).toContain('Regular Hours: 40.00');
-      expect(text).toContain('Overtime Hours: 5.00');
-      expect(text).toContain('TOTAL PAY: $950.00');
+      expect(text).toContain('Regular Hours: 40.10');
+      expect(text).toContain('Overtime Hours: 5.10');
+      expect(text).toContain('TOTAL PAY: $950.10');
     });
 
     it('should show piece rate workers in text report', () => {
@@ -167,8 +167,8 @@ describe('Payroll Service', () => {
       const text = formatPayrollAsText(mockReport);
 
       expect(text).toContain('Maria Garcia');
-      expect(text).toContain('Piece Rate: $10.00/unit');
-      expect(text).toContain('Piece Rate Pay: $300.00');
+      expect(text).toContain('Piece Rate: $10.10/unit');
+      expect(text).toContain('Piece Rate Pay: $300.10');
     });
 
     it('should show unverified entries warning', () => {
