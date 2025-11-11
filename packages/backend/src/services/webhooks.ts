@@ -1,6 +1,6 @@
 // Webhook Service for External Integrations
 
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import db from '../db/connection.js';
 import pino from 'pino';
 
@@ -317,7 +317,7 @@ async function deliverWebhook(delivery: WebhookDelivery): Promise<void> {
         'Content-Type': 'application/json',
         'X-Webhook-Signature': signature,
         'X-Webhook-Event': delivery.event_type,
-        'User-Agent': 'FarmCommons-Webhook/1.0',
+        'User-Agent': 'FarmCommons-Webhook/1.1',
       },
       body: payloadString,
       signal: AbortSignal.timeout(10000), // 10 second timeout
@@ -356,7 +356,7 @@ async function deliverWebhook(delivery: WebhookDelivery): Promise<void> {
         `HTTP ${response.status}: ${response.statusText}`
       );
     }
-  } catch (error) {
+  } catch {
     // Network error or timeout, will retry
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     await recordFailedDelivery(
