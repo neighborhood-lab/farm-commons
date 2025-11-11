@@ -230,8 +230,8 @@ describe('Timezone Utilities', () => {
 describe('Date Range Utilities', () => {
   it('should format date range in same month', () => {
     const range: DateRange = {
-      start: new Date('2024-01-10T00:00:00Z'),
-      end: new Date('2024-01-20T23:59:59Z'),
+      start: new Date(2024, 0, 10), // January 10, 2024 in local timezone
+      end: new Date(2024, 0, 20, 23, 59, 59), // January 20, 2024 in local timezone
     };
     const formatted = formatDateRange(range);
     expect(formatted).toContain('Jan');
@@ -299,14 +299,14 @@ describe('Date Comparison and Utilities', () => {
   });
 
   it('should check if dates are on different days', () => {
-    const date1 = new Date('2024-01-15T23:00:00Z');
-    const date2 = new Date('2024-01-16T01:00:00Z');
+    const date1 = new Date(2024, 0, 15, 23, 0, 0); // January 15, 2024 at 11 PM local
+    const date2 = new Date(2024, 0, 16, 1, 0, 0); // January 16, 2024 at 1 AM local
     expect(isSameDay(date1, date2)).toBe(false);
   });
 
   it('should get dates in range', () => {
-    const start = new Date('2024-01-10T00:00:00Z');
-    const end = new Date('2024-01-15T00:00:00Z');
+    const start = new Date(2024, 0, 10); // January 10, 2024 in local timezone
+    const end = new Date(2024, 0, 15); // January 15, 2024 in local timezone
     const dates = getDatesInRange(start, end);
     expect(dates).toHaveLength(6); // Inclusive: 10, 11, 12, 13, 14, 15
     expect(dates[0].getDate()).toBe(10);
@@ -314,8 +314,8 @@ describe('Date Comparison and Utilities', () => {
   });
 
   it('should handle single day range', () => {
-    const start = new Date('2024-01-15T00:00:00Z');
-    const end = new Date('2024-01-15T23:59:59Z');
+    const start = new Date(2024, 0, 15, 0, 0, 0); // January 15, 2024 at midnight local
+    const end = new Date(2024, 0, 15, 23, 59, 59); // January 15, 2024 at 11:59:59 PM local
     const dates = getDatesInRange(start, end);
     expect(dates).toHaveLength(1);
   });
